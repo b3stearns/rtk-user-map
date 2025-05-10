@@ -1,0 +1,524 @@
+2025-05-08 02:00:38,210 - INFO - Starting script...
+2025-05-08 02:00:38,212 - INFO - Running script at 2025-05-08 02:00:38.211705
+2025-05-08 02:00:38,213 - ERROR - ChromeDriver not found at /usr/local/bin/chromedriver
+2025-05-08 02:03:42,989 - INFO - Starting script...
+2025-05-08 02:03:42,990 - INFO - Running script at 2025-05-08 02:03:42.990414
+2025-05-08 02:03:42,991 - ERROR - ChromeDriver not found at /usr/local/bin/chromedriver
+2025-05-08 02:06:59,146 - INFO - Starting script...
+2025-05-08 02:06:59,146 - INFO - Running script at 2025-05-08 02:06:59.146802
+2025-05-08 02:06:59,148 - INFO - ChromeDriver found at /usr/bin/chromedriver
+2025-05-08 02:07:03,245 - INFO - Cleaned processed rows, retained 0 entries
+2025-05-08 02:07:03,252 - INFO - Loaded 0 processed rows
+2025-05-08 02:07:04,685 - INFO - Navigating to login page...
+2025-05-08 02:07:09,996 - INFO - No modal detected.
+2025-05-08 02:07:10,023 - INFO - Username field found.
+2025-05-08 02:07:10,587 - INFO - Logging in...
+2025-05-08 02:07:10,960 - INFO - Navigating to log page...
+2025-05-08 02:07:10,961 - INFO - Scraping page 1...
+2025-05-08 02:07:11,741 - INFO - Log table found.
+2025-05-08 02:07:12,243 - INFO - Found 21 rows on page 1.
+2025-05-08 02:07:16,330 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:28', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:16,548 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:18', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:16,816 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:15', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:17,053 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:13', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:17,268 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:11', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:17,469 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:10', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:17,664 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:09', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:07:19,782 - INFO - No modal detected.
+2025-05-08 02:07:19,977 - INFO - Navigating to page 2...
+2025-05-08 02:07:19,977 - INFO - Scraping page 2...
+2025-05-08 02:07:19,996 - INFO - Log table found.
+2025-05-08 02:07:20,015 - INFO - Found 21 rows on page 2.
+2025-05-08 02:07:20,086 - INFO - Duplicate row found (ID: mthielen_1)
+2025-05-08 02:12:59,246 - INFO - Starting script...
+2025-05-08 02:12:59,247 - INFO - Running script at 2025-05-08 02:12:59.247035
+2025-05-08 02:12:59,248 - INFO - ChromeDriver found at /usr/bin/chromedriver
+2025-05-08 02:13:01,899 - INFO - Loaded 13 processed rows
+2025-05-08 02:13:01,906 - WARNING - Error parsing timestamp '1918': time data '1918' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,907 - WARNING - Error parsing timestamp '268': time data '268' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,908 - WARNING - Error parsing timestamp '12768': time data '12768' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,908 - WARNING - Error parsing timestamp '1': time data '1' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,909 - WARNING - Error parsing timestamp '513': time data '513' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,910 - WARNING - Error parsing timestamp '152': time data '152' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,910 - WARNING - Error parsing timestamp '1': time data '1' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,911 - WARNING - Error parsing timestamp '60': time data '60' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,911 - WARNING - Error parsing timestamp '8': time data '8' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,912 - WARNING - Error parsing timestamp '228': time data '228' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,912 - WARNING - Error parsing timestamp '16': time data '16' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,913 - WARNING - Error parsing timestamp '648': time data '648' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,913 - WARNING - Error parsing timestamp '4011': time data '4011' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:01,918 - INFO - Cleaned processed rows, retained 13 entries
+2025-05-08 02:13:01,938 - INFO - Loaded 13 processed rows
+2025-05-08 02:13:03,586 - INFO - Navigating to login page...
+2025-05-08 02:13:08,946 - INFO - No modal detected.
+2025-05-08 02:13:08,979 - INFO - Username field found.
+2025-05-08 02:13:09,543 - INFO - Logging in...
+2025-05-08 02:13:09,933 - INFO - Navigating to log page...
+2025-05-08 02:13:09,934 - INFO - Scraping page 1...
+2025-05-08 02:13:10,800 - INFO - Log table found.
+2025-05-08 02:13:10,843 - INFO - Found 2 rows on page 1.
+2025-05-08 02:13:11,240 - WARNING - Stale element detected, retrying...
+2025-05-08 02:13:11,353 - INFO - Starting script...
+2025-05-08 02:13:11,354 - INFO - Running script at 2025-05-08 02:13:11.354215
+2025-05-08 02:13:11,356 - INFO - ChromeDriver found at /usr/bin/chromedriver
+2025-05-08 02:13:12,357 - INFO - Loaded 13 processed rows
+2025-05-08 02:13:12,360 - WARNING - Error parsing timestamp '513': time data '513' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,360 - WARNING - Error parsing timestamp '1918': time data '1918' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,361 - WARNING - Error parsing timestamp '8': time data '8' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,361 - WARNING - Error parsing timestamp '268': time data '268' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,362 - WARNING - Error parsing timestamp '60': time data '60' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,362 - WARNING - Error parsing timestamp '648': time data '648' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,363 - WARNING - Error parsing timestamp '152': time data '152' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,363 - WARNING - Error parsing timestamp '16': time data '16' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,364 - WARNING - Error parsing timestamp '4011': time data '4011' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,364 - WARNING - Error parsing timestamp '1': time data '1' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,365 - WARNING - Error parsing timestamp '228': time data '228' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,366 - WARNING - Error parsing timestamp '1': time data '1' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,366 - WARNING - Error parsing timestamp '12768': time data '12768' does not match format '%Y/%m/%d %H:%M:%S'
+2025-05-08 02:13:12,371 - INFO - Cleaned processed rows, retained 13 entries
+2025-05-08 02:13:12,391 - INFO - Loaded 13 processed rows
+2025-05-08 02:13:14,270 - INFO - Navigating to login page...
+2025-05-08 02:13:14,434 - INFO - No modal detected.
+2025-05-08 02:13:14,562 - INFO - Navigating to page 2...
+2025-05-08 02:13:14,562 - INFO - Scraping page 2...
+2025-05-08 02:13:14,584 - INFO - Log table found.
+2025-05-08 02:13:14,618 - INFO - Found 21 rows on page 2.
+2025-05-08 02:13:14,691 - WARNING - Invalid timestamp format '1', using current time for row_id
+2025-05-08 02:13:15,143 - WARNING - Invalid timestamp format '378', using current time for row_id
+2025-05-08 02:13:15,758 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 18:54:39', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:13:15,798 - WARNING - Invalid timestamp format '686', using current time for row_id
+2025-05-08 02:13:16,101 - WARNING - Invalid timestamp format '2', using current time for row_id
+2025-05-08 02:13:16,439 - WARNING - Invalid timestamp format '7', using current time for row_id
+2025-05-08 02:13:16,453 - INFO - Duplicate row found (ID: lakner24_2025/05/08 02:13:16)
+2025-05-08 02:13:19,578 - INFO - No modal detected.
+2025-05-08 02:13:19,599 - INFO - Username field found.
+2025-05-08 02:13:20,014 - INFO - Logging in...
+2025-05-08 02:13:20,376 - INFO - Navigating to log page...
+2025-05-08 02:13:20,377 - INFO - Scraping page 1...
+2025-05-08 02:13:21,158 - INFO - Log table found.
+2025-05-08 02:13:21,228 - INFO - Found 2 rows on page 1.
+2025-05-08 02:13:21,716 - WARNING - Stale element detected, retrying...
+2025-05-08 02:13:24,916 - INFO - No modal detected.
+2025-05-08 02:13:25,091 - INFO - Navigating to page 2...
+2025-05-08 02:13:25,091 - INFO - Scraping page 2...
+2025-05-08 02:13:25,115 - INFO - Log table found.
+2025-05-08 02:13:25,145 - INFO - Found 21 rows on page 2.
+2025-05-08 02:13:25,204 - WARNING - Invalid timestamp format '1', using current time for row_id
+2025-05-08 02:13:25,603 - WARNING - Invalid timestamp format '378', using current time for row_id
+2025-05-08 02:13:26,149 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 18:54:39', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:13:26,197 - WARNING - Invalid timestamp format '686', using current time for row_id
+2025-05-08 02:13:26,481 - WARNING - Invalid timestamp format '2', using current time for row_id
+2025-05-08 02:13:26,497 - INFO - Duplicate row found (ID: lakner24_2025/05/08 02:13:26)
+2025-05-08 02:19:06,414 - INFO - Starting script...
+2025-05-08 02:19:06,417 - INFO - Running script at 2025-05-08 02:19:06.417144
+2025-05-08 02:19:06,419 - INFO - ChromeDriver found at /usr/bin/chromedriver
+2025-05-08 02:19:08,431 - INFO - Loaded 20 processed rows
+2025-05-08 02:19:08,431 - WARNING - Invalid processed row format: lakner24_16
+2025-05-08 02:19:08,432 - WARNING - Invalid processed row format: lakner24_8
+2025-05-08 02:19:08,432 - WARNING - Invalid processed row format: lakner24_2025/05/08 02:13:16
+2025-05-08 02:19:08,433 - WARNING - Invalid processed row format: lakner24_228
+2025-05-08 02:19:08,433 - WARNING - Invalid processed row format: lakner24_2025/05/08 02:13:15
+2025-05-08 02:19:08,433 - WARNING - Invalid processed row format: Vietfarm_2025/05/08 02:13:15
+2025-05-08 02:19:08,434 - WARNING - Invalid processed row format: mthielen_2025/05/08 02:13:14
+2025-05-08 02:19:08,434 - WARNING - Invalid processed row format: lakner24_60
+2025-05-08 02:19:08,435 - WARNING - Invalid processed row format: Vaksdal_513
+2025-05-08 02:19:08,435 - WARNING - Invalid processed row format: truenavtest_1
+2025-05-08 02:19:08,435 - WARNING - Invalid processed row format: Vietfarm_268
+2025-05-08 02:19:08,436 - WARNING - Invalid processed row format: lakner24_648
+2025-05-08 02:19:08,436 - WARNING - Invalid processed row format: abertk_12768
+2025-05-08 02:19:08,436 - WARNING - Invalid processed row format: lakner24_152
+2025-05-08 02:19:08,436 - WARNING - Invalid processed row format: mthielen_2025/05/08 02:13:25
+2025-05-08 02:19:08,437 - WARNING - Invalid processed row format: lakner24_1918
+2025-05-08 02:19:08,437 - WARNING - Invalid processed row format: dykstrartk_4011
+2025-05-08 02:19:08,437 - WARNING - Invalid processed row format: mthielen_1
+2025-05-08 02:19:08,438 - WARNING - Invalid processed row format: Vietfarm_2025/05/08 02:13:25
+2025-05-08 02:19:08,438 - WARNING - Invalid processed row format: lakner24_2025/05/08 02:13:26
+2025-05-08 02:19:08,440 - INFO - Cleaned processed rows, retained 0 entries
+2025-05-08 02:19:08,443 - INFO - Loaded 0 processed rows
+2025-05-08 02:19:10,192 - INFO - Navigating to login page...
+2025-05-08 02:19:15,540 - INFO - No modal detected.
+2025-05-08 02:19:15,567 - INFO - Username field found.
+2025-05-08 02:19:16,132 - INFO - Logging in...
+2025-05-08 02:19:16,540 - INFO - Navigating to log page...
+2025-05-08 02:19:16,540 - INFO - Scraping page 1...
+2025-05-08 02:19:17,350 - INFO - Log table found.
+2025-05-08 02:19:17,847 - INFO - Found 21 rows on page 1.
+2025-05-08 02:19:18,215 - WARNING - Invalid timestamp format '1' in row - Row Data: ['mthielen', 'AUTO', 'Wollman', '165.23.127.158', 'Successful', 'Success', 'E465B86A06E5', '7.19127', '1', '2025/05/08 02:00:47', '1', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '$GPGGA,020030,4330.9895,N,09639.7262,W,1,8,1,0,M,-32,M,3,0*54', '1', '0', '0', '0', 'Download']
+2025-05-08 02:19:18,838 - WARNING - Invalid timestamp format '297' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.41', 'Successful', 'Success', 'A0B7651D9AD5', '3.96998', '297', '2025/05/08 01:54:50', '', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,021917.00,4430.1485,N,09844.9175,W,4,35,0.5,441.5,M,-25.9,M,2.0,0827*72', '0', '0', '297', '0', 'Download']
+2025-05-08 02:19:19,517 - WARNING - Invalid timestamp format '8' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.41', 'Successful', 'Success', 'A0B7651D9AD5', '3.96998', '8', '2025/05/08 01:53:48', '50', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,015412.00,4430.1385,N,09844.8683,W,4,34,0.4,441.0,M,-25.9,M,2.0,0827*70', '0', '1', '7', '0', 'Download']
+2025-05-08 02:19:20,147 - WARNING - Invalid timestamp format '16' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.41', 'Successful', 'Success', 'A0B7651D9AD5', '3.96998', '16', '2025/05/08 01:52:07', '89', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,015312.00,4430.1385,N,09844.8683,W,4,34,0.4,441.0,M,-25.9,M,2.0,0827*77', '0', '1', '15', '0', 'Download']
+2025-05-08 02:19:20,854 - WARNING - Invalid timestamp format '228' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.41', 'Successful', 'Success', 'A0B7651D9AD5', '3.96998', '228', '2025/05/08 01:32:48', '1147', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,015132.00,4430.1385,N,09844.8683,W,4,34,0.4,441.0,M,-25.9,M,2.0,0827*77', '0', '1', '227', '0', 'Download']
+2025-05-08 02:19:21,484 - WARNING - Invalid timestamp format '1' in row - Row Data: ['truenavtest', 'AUTO', '', '216.224.124.66', 'Successful', 'Success', 'A842E3B1C36D', '0.44014', '1', '2025/05/08 01:13:55', '22', 'GET /AUTO HTTP/1.0 User-Agent: NTRIP SWMAPS_IOS/1.0.0 Authorization: Basic dHJ1ZW5hdnRlc3Q6dHJ1ZW5hdg== Accept: */* Connection: close', '$GPGGA,011306,4328.7890,N,09644.2213,W,1,5,1.0,459.7,M,-26.4,M,-1,0*69', '1', '0', '0', '0', 'Download']
+2025-05-08 02:19:21,988 - WARNING - Invalid timestamp format '544' in row - Row Data: ['Vaksdal', 'PRSRTCM3', 'Jon Lickiss', '174.215.242.170', 'Successful', 'Success', 'C05D898E4531', '10.13583', '544', '2025/05/08 00:42:05', '5439', 'GET /PRSRTCM3 HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '$GPGGA,021217,4310.0431,N,09644.2180,W,1,8,1,0,M,-32,M,3,0*5B', '544', '0', '0', '0', 'Download']
+2025-05-08 02:19:22,451 - WARNING - Invalid timestamp format '1918' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.41', 'Successful', 'Success', 'A0B7651D9AD5', '1.32198', '1918', '2025/05/07 22:52:40', '9597', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,013212.00,4430.1385,N,09844.8683,W,4,35,0.4,441.0,M,-25.9,M,3.0,0827*70', '1', '0', '1917', '0', 'Download']
+2025-05-08 02:19:22,854 - WARNING - Invalid timestamp format '60' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.168', 'Successful', 'Success', 'A0B7651D9AD5', '0.41188', '60', '2025/05/07 22:11:48', '367', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,221627.00,4430.0601,N,09841.3117,W,4,30,0.5,437.6,M,-26.0,M,4.0,0827*73', '1', '0', '59', '0', 'Download']
+2025-05-08 02:19:23,230 - WARNING - Invalid timestamp format '268' in row - Row Data: ['Vietfarm', 'AUTO', 'Jon Lickiss', '174.215.243.183', 'Successful', 'Success', 'C05D89AE4C99', '12.32442', '268', '2025/05/07 21:34:11', '2674', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmlldGZhcm06RHYwMDE5ODA=', '$GPGGA,221822,4327.1730,N,09707.2167,W,1,8,1,0,M,-32,M,3,0*5D', '268', '0', '0', '0', 'Download']
+2025-05-08 02:19:23,631 - WARNING - Invalid timestamp format '12768' in row - Row Data: ['abertk', 'AUTO', 'Brad Stearns', '172.56.12.178', 'Successful', 'Success', 'A0B7651EFC6D', '0.50595', '12768', '2025/05/07 20:41:46', '12812', 'GET /AUTO HTTP/1.0 User-Agent: NTRIP GNSSInternetRadio/ Accept: */* Connection: Keep-Alive Authorization: Basic YWJlcnRrOmFiZXJ0aw==', '$GPGGA,001432.00,4414.11131180,N,09730.71433809,W,4,33,0.5,525.3668,M,-25.8437,M,02,3637*53', '2', '2', '12764', '0', 'Download']
+2025-05-08 02:19:24,023 - WARNING - Invalid timestamp format '4156' in row - Row Data: ['dykstrartk', 'AUTO', 'Blake', '174.215.248.137', 'Successful', 'Success', 'A0B7651E3231', '2.56285', '4156', '2025/05/07 20:33:16', '', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic ZHlrc3RyYXJ0azpydGtkeWtzdHJh Connection:close', '$GPGGA,021917.00,4323.2981,N,09658.4575,W,4,36,0.5,427.0,M,-27.7,M,3.0,0906*7E', '0', '1', '4155', '0', 'Download']
+2025-05-08 02:19:24,397 - WARNING - Invalid timestamp format '648' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.48373', '648', '2025/05/07 19:50:48', '3305', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,204432.00,4430.6037,N,09841.9680,W,4,31,0.5,435.9,M,-26.0,M,2.0,0827*7E', '0', '2', '646', '0', 'Download']
+2025-05-08 02:19:24,813 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:28', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:25,003 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:18', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:25,197 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:15', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:25,382 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:13', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:25,574 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:11', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:25,800 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:10', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:26,008 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:09', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:28,132 - INFO - No modal detected.
+2025-05-08 02:19:28,276 - INFO - Navigating to page 2...
+2025-05-08 02:19:28,277 - INFO - Scraping page 2...
+2025-05-08 02:19:28,294 - INFO - Log table found.
+2025-05-08 02:19:28,313 - INFO - Found 21 rows on page 2.
+2025-05-08 02:19:28,771 - WARNING - Invalid timestamp format '1' in row - Row Data: ['mthielen', 'AUTO', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:08', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:29,345 - WARNING - Invalid timestamp format '378' in row - Row Data: ['Vietfarm', 'AUTO', 'Jon Lickiss', '174.215.243.183', 'Successful', 'Success', 'A0B7651E3231', '11.19589', '378', '2025/05/07 19:11:07', '3770', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmlldGZhcm06RHYwMDE5ODA=', '$GPGGA,201339,4324.9923,N,09708.8327,W,1,8,1,0,M,-32,M,3,0*5A', '378', '0', '0', '0', 'Download']
+2025-05-08 02:19:29,910 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 18:54:39', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:30,218 - WARNING - Invalid timestamp format '686' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.2657', '686', '2025/05/07 18:53:20', '3435', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,195012.00,4428.9658,N,09844.3688,W,4,37,0.4,441.1,M,-26.0,M,2.0,0827*71', '0', '1', '685', '0', 'Download']
+2025-05-08 02:19:30,738 - WARNING - Invalid timestamp format '2' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.20927', '2', '2025/05/07 18:52:49', '19', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,185242.00,4428.8769,N,09844.0038,W,4,37,0.4,440.9,M,-26.0,M,2.0,0827*72', '0', '1', '1', '0', 'Download']
+2025-05-08 02:19:31,319 - WARNING - Invalid timestamp format '7' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.14415', '7', '2025/05/07 18:51:53', '44', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,185212.00,4428.8769,N,09843.9420,W,4,37,0.4,440.4,M,-26.0,M,2.0,0827*79', '0', '1', '6', '0', 'Download']
+2025-05-08 02:19:31,879 - WARNING - Invalid timestamp format '52' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.3881', '52', '2025/05/07 18:47:12', '269', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,185117.00,4428.8869,N,09843.9875,W,4,37,0.4,440.6,M,-26.0,M,2.0,0827*7E', '0', '1', '51', '0', 'Download']
+2025-05-08 02:19:32,372 - WARNING - Invalid timestamp format '1' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.33863', '1', '2025/05/07 18:46:49', '11', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,184637.00,4428.8967,N,09844.1726,W,2,37,0.5,440.9,M,-26.0,M,5.0,0000*71', '0', '1', '0', '0', 'Download']
+2025-05-08 02:19:32,864 - WARNING - Invalid timestamp format '32' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.19433', '32', '2025/05/07 18:43:49', '168', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,184612.00,4428.8967,N,09844.1179,W,4,36,0.5,440.7,M,-26.0,M,2.0,0827*79', '0', '1', '31', '0', 'Download']
+2025-05-08 02:19:33,306 - WARNING - Invalid timestamp format '2189' in row - Row Data: ['Vaksdal', 'PRSRTCM3', 'Jon Lickiss', '174.215.242.170', 'Successful', 'Success', 'C05D898E4531', '10.57433', '2189', '2025/05/07 18:37:20', '21881', 'GET /PRSRTCM3 HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '$GPGGA,004142,4309.8396,N,09644.3842,W,1,8,1,0,M,-32,M,3,0*53', '2189', '0', '0', '0', 'Download']
+2025-05-08 02:19:33,726 - WARNING - Invalid timestamp format '114' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.44721', '114', '2025/05/07 18:33:59', '578', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,184312.00,4428.9066,N,09844.0788,W,4,36,0.4,440.8,M,-26.0,M,3.0,0827*73', '0', '1', '113', '0', 'Download']
+2025-05-08 02:19:34,117 - WARNING - Invalid timestamp format '20' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.30263', '20', '2025/05/07 18:31:59', '108', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,183322.00,4428.7881,N,09844.0668,W,4,37,0.4,441.5,M,-26.0,M,2.0,0827*7B', '0', '1', '19', '0', 'Download']
+2025-05-08 02:19:34,524 - WARNING - Invalid timestamp format '11' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.20281', '11', '2025/05/07 18:30:41', '66', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,183122.00,4428.7802,N,09843.9251,W,4,37,0.4,441.4,M,-26.0,M,2.0,0827*73', '0', '1', '10', '0', 'Download']
+2025-05-08 02:19:34,874 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', '', '0', '0', '2025/05/07 18:30:21', '9', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:35,174 - WARNING - Invalid timestamp format '9' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.06084', '9', '2025/05/07 18:29:19', '50', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,182947.00,4428.8988,N,09843.9276,W,4,37,0.4,440.4,M,-26.0,M,3.0,0827*70', '0', '1', '8', '0', 'Download']
+2025-05-08 02:19:35,652 - WARNING - Invalid timestamp format '6' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.03575', '6', '2025/05/07 18:28:29', '38', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,182842.00,4428.9729,N,09843.9632,W,4,37,0.4,441.3,M,-26.0,M,2.0,0827*73', '0', '1', '5', '0', 'Download']
+2025-05-08 02:19:36,070 - WARNING - Invalid timestamp format '25' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.19204', '25', '2025/05/07 18:26:06', '131', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,182752.00,4428.9981,N,09844.0038,W,4,37,0.4,440.7,M,-26.0,M,2.0,0827*76', '0', '0', '25', '0', 'Download']
+2025-05-08 02:19:36,489 - WARNING - Invalid timestamp format '11' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.31809', '11', '2025/05/07 18:24:55', '59', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,182532.00,4428.8254,N,09843.9266,W,4,36,0.4,440.4,M,-26.0,M,2.0,0827*75', '0', '1', '10', '0', 'Download']
+2025-05-08 02:19:36,941 - WARNING - Invalid timestamp format '6' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', 'A0B7651D9AD5', '4.33918', '6', '2025/05/07 18:24:06', '35', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,182417.00,4428.7782,N,09843.9236,W,4,36,0.4,441.4,M,-26.0,M,2.0,0827*76', '0', '0', '6', '0', 'Download']
+2025-05-08 02:19:37,331 - WARNING - Invalid timestamp format '3047' in row - Row Data: ['dhaugaard', 'AUTO', 'Jon Lickiss', '174.235.212.166', 'Successful', 'Success', 'A0B7651E5569', '18.78946', '3047', '2025/05/07 17:52:15', '', 'GET /AUTO HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic ZGhhdWdhYXJkOmRoYXVnYWFyZA==', 'Ntrip-GGA: $GPGGA,021927,4352.0830,N,09713.1953,W,4,00,0.7,517.4,M,-26.5,M,5.0,3631*53', '0', '0', '3044', '3', 'Download']
+2025-05-08 02:19:39,594 - INFO - No modal detected.
+2025-05-08 02:19:39,717 - INFO - Navigating to page 3...
+2025-05-08 02:19:39,718 - INFO - Scraping page 3...
+2025-05-08 02:19:39,735 - INFO - Log table found.
+2025-05-08 02:19:39,753 - INFO - Found 21 rows on page 3.
+2025-05-08 02:19:40,211 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', 'A0B7651D9AD5', '0.43803', '889', '2025/05/07 17:09:41', '4453', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,182327.00,4428.7782,N,09844.0359,W,4,36,0.4,441.6,M,-26.0,M,3.0,0827*77', '0', '1', '888', '0', 'Download']
+2025-05-08 02:19:40,552 - WARNING - Invalid timestamp format '2' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.38', 'Successful', 'Success', 'A0B7651D9AD5', '0.43773', '2', '2025/05/07 17:08:49', '18', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,170842.00,4430.5310,N,09841.9926,W,1,08,1.7,432.0,M,-26.0,M,,*50', '2', '0', '0', '0', 'Download']
+2025-05-08 02:19:41,151 - WARNING - Invalid timestamp format '102' in row - Row Data: ['dhaugaard', 'AUTO', 'Jon Lickiss', '174.235.212.166', 'Successful', 'Success', 'A0B7651E5569', '17.71445', '102', '2025/05/07 16:56:11', '1009', 'GET /AUTO HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic ZGhhdWdhYXJkOmRoYXVnYWFyZA==', 'Ntrip-GGA: $GPGGA,171233,4352.5418,N,09712.7988,W,4,00,0.8,533.4,M,-26.5,M,2.0,3631*55', '6', '0', '91', '5', 'Download']
+2025-05-08 02:19:41,678 - WARNING - Invalid timestamp format '5' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.171', 'Successful', 'Success', 'A0B7651D9AD5', '0.45945', '5', '2025/05/07 16:23:05', '89', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,162312.00,4430.5224,N,09842.0129,W,4,24,0.6,436.3,M,-26.0,M,2.0,0827*7B', '1', '0', '4', '0', 'Download']
+2025-05-08 02:19:42,246 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.171', 'Successful', 'Success', '', '0', '1', '2025/05/07 16:22:38', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,162227.00,,,,,0,,,,M,,M,,*4A', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:42,503 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.170', 'Successful', 'Success', '', '0', '0', '2025/05/07 16:20:16', '932', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:19:42,807 - WARNING - Invalid timestamp format '14' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.44', 'Successful', 'Success', 'A0B7651D9AD5', '0.41407', '14', '2025/05/07 16:18:31', '134', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,161922.00,4430.5305,N,09841.9921,W,4,27,0.4,436.2,M,-26.0,M,3.0,0827*78', '0', '0', '14', '0', 'Download']
+2025-05-08 02:19:43,309 - WARNING - Invalid timestamp format '3' in row - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.44', 'Successful', 'Success', 'A0B7651D9AD5', '0.41238', '3', '2025/05/07 16:18:02', '17', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,161757.00,4430.5903,N,09841.9572,W,5,09,0.9,436.6,M,-26.0,M,3.0,0827*76', '1', '0', '0', '2', 'Download']
+2025-05-08 02:19:43,764 - WARNING - Invalid timestamp format '307' in row - Row Data: ['worthrtk', 'AUTO', 'Blake', '145.40.69.43', 'Successful', 'Success', 'C82E1891CBA5', '8.87915', '307', '2025/05/07 16:04:12', '1612', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic d29ydGhydGs6cnRrd29ydGg= Connection:close', '$GPGGA,162932.00,4503.4723,N,10007.6451,W,4,30,0.4,614.0,M,-23.6,M,2.0,1007*72', '0', '1', '306', '0', 'Download']
+2025-05-08 02:40:53,459 - INFO - Starting script...
+2025-05-08 02:40:53,461 - INFO - Running script at 2025-05-08 02:40:53.461538
+2025-05-08 02:40:53,467 - INFO - ChromeDriver found at /usr/bin/chromedriver
+2025-05-08 02:40:55,963 - INFO - Loaded 37 processed rows
+2025-05-08 02:40:55,976 - INFO - Cleaned processed rows, retained 37 entries
+2025-05-08 02:40:56,013 - INFO - Loaded 37 processed rows
+2025-05-08 02:40:57,454 - INFO - Navigating to login page...
+2025-05-08 02:41:02,817 - INFO - No modal detected.
+2025-05-08 02:41:02,850 - INFO - Username field found.
+2025-05-08 02:41:03,420 - INFO - Logging in...
+2025-05-08 02:41:03,790 - INFO - Navigating to log page...
+2025-05-08 02:41:03,791 - INFO - Scraping page 1...
+2025-05-08 02:41:04,682 - INFO - Log table found.
+2025-05-08 02:41:05,138 - INFO - Found 21 rows on page 1.
+2025-05-08 02:41:15,605 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:28', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:15,902 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:18', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:16,207 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:15', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:16,520 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:13', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:16,839 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:11', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:17,133 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:10', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:19,299 - INFO - No modal detected.
+2025-05-08 02:41:19,436 - INFO - Navigating to page 2...
+2025-05-08 02:41:19,437 - INFO - Scraping page 2...
+2025-05-08 02:41:19,453 - INFO - Log table found.
+2025-05-08 02:41:19,472 - INFO - Found 21 rows on page 2.
+2025-05-08 02:41:20,630 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:08', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:21,659 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 18:54:39', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:28,467 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.39', 'Successful', 'Success', '', '0', '0', '2025/05/07 18:30:21', '9', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:33,633 - INFO - No modal detected.
+2025-05-08 02:41:33,759 - INFO - Navigating to page 3...
+2025-05-08 02:41:33,760 - INFO - Scraping page 3...
+2025-05-08 02:41:33,781 - INFO - Log table found.
+2025-05-08 02:41:33,801 - INFO - Found 21 rows on page 3.
+2025-05-08 02:41:34,354 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '3179', '2025/05/07 17:52:15', '', 'GET /AUTO HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic ZGhhdWdhYXJkOmRoYXVnYWFyZA==', 'Ntrip-GGA: $GPGGA,024127,4352.0477,N,09713.2168,W,4,00,0.7,516.5,M,-26.5,M,3.0,3631*54', '0', '0', '3176', '3', 'Download']
+2025-05-08 02:41:37,315 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.171', 'Successful', 'Success', '', '0', '1', '2025/05/07 16:22:38', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,162227.00,,,,,0,,,,M,,M,,*4A', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:37,698 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.170', 'Successful', 'Success', '', '0', '0', '2025/05/07 16:20:16', '932', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:43,809 - INFO - Skipping row: Empty Miner SN - Row Data: ['dykstrartk', 'AUTO', 'Blake', '174.235.211.66', 'Successful', 'Success', '', '0', '2', '2025/05/07 14:39:57', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic ZHlrc3RyYXJ0azpydGtkeWtzdHJh Connection:close', '$GPGGA,143947.00,,,,,0,,,,M,,M,,*44', '0', '0', '0', '0', 'Download']
+2025-05-08 02:41:47,910 - INFO - No modal detected.
+2025-05-08 02:41:48,040 - INFO - Navigating to page 4...
+2025-05-08 02:41:48,040 - INFO - Scraping page 4...
+2025-05-08 02:41:48,060 - INFO - Log table found.
+2025-05-08 02:41:48,077 - INFO - Found 21 rows on page 4.
+2025-05-08 02:41:50,318 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:41:52,239 - INFO - Appended 50 rows in batch
+2025-05-08 02:42:10,397 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.169', 'Successful', 'Success', '', '0', '0', '2025/05/06 22:06:12', '20', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:42:15,098 - INFO - No modal detected.
+2025-05-08 02:42:15,219 - INFO - Navigating to page 5...
+2025-05-08 02:42:15,220 - INFO - Scraping page 5...
+2025-05-08 02:42:15,235 - INFO - Log table found.
+2025-05-08 02:42:15,250 - INFO - Found 21 rows on page 5.
+2025-05-08 02:42:30,689 - INFO - No modal detected.
+2025-05-08 02:42:30,808 - INFO - Navigating to page 6...
+2025-05-08 02:42:30,809 - INFO - Scraping page 6...
+2025-05-08 02:42:30,824 - INFO - Log table found.
+2025-05-08 02:42:30,842 - INFO - Found 21 rows on page 6.
+2025-05-08 02:42:40,013 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:42:41,029 - INFO - Appended 50 rows in batch
+2025-05-08 02:42:55,590 - INFO - No modal detected.
+2025-05-08 02:42:55,661 - INFO - Navigating to page 7...
+2025-05-08 02:42:55,662 - INFO - Scraping page 7...
+2025-05-08 02:42:55,672 - INFO - Log table found.
+2025-05-08 02:42:55,682 - INFO - Found 21 rows on page 7.
+2025-05-08 02:43:05,788 - INFO - No modal detected.
+2025-05-08 02:43:05,873 - INFO - Navigating to page 8...
+2025-05-08 02:43:05,874 - INFO - Scraping page 8...
+2025-05-08 02:43:05,888 - INFO - Log table found.
+2025-05-08 02:43:05,902 - INFO - Found 21 rows on page 8.
+2025-05-08 02:43:09,376 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.47', 'Successful', 'Success', '', '0', '2', '2025/05/06 17:17:37', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,171727.00,,,,,0,,,,M,,M,,*4D', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:11,538 - INFO - Skipping row: Empty Miner SN - Row Data: ['dykstrartk', 'AUTO', 'Blake', '174.235.209.137', 'Successful', 'Success', '', '0', '2', '2025/05/06 13:59:24', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic ZHlrc3RyYXJ0azpydGtkeWtzdHJh Connection:close', '$GPGGA,135917.00,,,,,0,,,,M,,M,,*40', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:12,338 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.166', 'Successful', 'Success', '', '0', '2', '2025/05/06 13:36:01', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,133552.00,,,,,0,,,,M,,M,,*4B', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:14,778 - INFO - No modal detected.
+2025-05-08 02:43:14,864 - INFO - Navigating to page 9...
+2025-05-08 02:43:14,864 - INFO - Scraping page 9...
+2025-05-08 02:43:14,881 - INFO - Log table found.
+2025-05-08 02:43:14,897 - INFO - Found 21 rows on page 9.
+2025-05-08 02:43:15,483 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.244.67', 'Successful', 'Success', '', '0', '0', '2025/05/06 13:06:47', '25', 'GET /auto HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP TnlAgClient/1.0 Accept: */* Authorization: Basic Z2FyeWhhYWs6Z2FyeWhhYWs=', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:15,653 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.244.67', 'Successful', 'Success', '', '0', '0', '2025/05/06 13:06:21', '25', 'GET /auto HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP TnlAgClient/1.0 Accept: */* Authorization: Basic Z2FyeWhhYWs6Z2FyeWhhYWs=', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:17,878 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:43:18,937 - INFO - Appended 50 rows in batch
+2025-05-08 02:43:30,573 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.170', 'Successful', 'Success', '', '0', '0', '2025/05/05 23:49:52', '20', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:34,628 - INFO - No modal detected.
+2025-05-08 02:43:34,700 - INFO - Navigating to page 10...
+2025-05-08 02:43:34,701 - INFO - Scraping page 10...
+2025-05-08 02:43:34,710 - INFO - Log table found.
+2025-05-08 02:43:34,723 - INFO - Found 21 rows on page 10.
+2025-05-08 02:43:35,001 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.244.67', 'Successful', 'Success', '', '0', '0', '2025/05/05 22:44:59', '13077', 'GET /AUTO HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic ZGhhdWdhYXJkOmRoYXVnYWFyZA==', 'Ntrip-GGA: $GPGGA,022231,4353.7562,N,09652.1624,W,4,00,0.7,517.3,M,-26.9,M,2.0,2553*51', '0', '0', '1309', '0', 'Download']
+2025-05-08 02:43:35,835 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '145.40.69.40', 'Successful', 'Success', '', '0', '2', '2025/05/05 21:56:05', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,215557.00,,,,,0,,,,M,,M,,*49', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:36,867 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.234.183.92', 'Successful', 'Success', '', '0', '0', '2025/05/05 21:18:01', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:43,218 - INFO - No modal detected.
+2025-05-08 02:43:43,294 - INFO - Navigating to page 11...
+2025-05-08 02:43:43,294 - INFO - Scraping page 11...
+2025-05-08 02:43:43,307 - INFO - Log table found.
+2025-05-08 02:43:43,322 - INFO - Found 21 rows on page 11.
+2025-05-08 02:43:47,200 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.234.188.150', 'Successful', 'Success', '', '0', '0', '2025/05/05 20:29:06', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:43:52,077 - INFO - No modal detected.
+2025-05-08 02:43:52,148 - INFO - Navigating to page 12...
+2025-05-08 02:43:52,149 - INFO - Scraping page 12...
+2025-05-08 02:43:52,159 - INFO - Log table found.
+2025-05-08 02:43:52,170 - INFO - Found 21 rows on page 12.
+2025-05-08 02:43:53,676 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:43:54,629 - INFO - Appended 50 rows in batch
+2025-05-08 02:44:06,255 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', 'AUTO', 'Wollman', '166.199.111.51', 'Failure', 'Invalid password', '', '0', '0', '2025/05/05 18:56:10', '0', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic bXRoaWVsZW46bXRnaWVsZW5fMQ==', '', '0', '0', '0', '0', '']
+2025-05-08 02:44:06,492 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', 'AUTO', 'Wollman', '166.199.111.51', 'Failure', 'Invalid password', '', '0', '0', '2025/05/05 18:55:50', '0', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic bXRoaWVsZW46bXRnaWVsZW5fMQ==', '', '0', '0', '0', '0', '']
+2025-05-08 02:44:12,465 - INFO - No modal detected.
+2025-05-08 02:44:12,546 - INFO - Navigating to page 13...
+2025-05-08 02:44:12,547 - INFO - Scraping page 13...
+2025-05-08 02:44:12,562 - INFO - Log table found.
+2025-05-08 02:44:12,579 - INFO - Found 21 rows on page 13.
+2025-05-08 02:44:16,209 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.247.152', 'Successful', 'Success', '', '0', '0', '2025/05/05 17:13:22', '26', 'GET /auto HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP TnlAgClient/1.0 Accept: */* Authorization: Basic Z2FyeWhhYWs6Z2FyeWhhYWs=', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:16,365 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.247.152', 'Successful', 'Success', '', '0', '0', '2025/05/05 17:12:56', '25', 'GET /auto HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP TnlAgClient/1.0 Accept: */* Authorization: Basic Z2FyeWhhYWs6Z2FyeWhhYWs=', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:16,519 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.247.152', 'Successful', 'Success', '', '0', '0', '2025/05/05 17:12:30', '25', 'GET /auto HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP TnlAgClient/1.0 Accept: */* Authorization: Basic Z2FyeWhhYWs6Z2FyeWhhYWs=', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:16,673 - INFO - Skipping row: Empty Miner SN - Row Data: ['garyhaak', 'auto', 'Jon Lickiss', '174.215.247.152', 'Successful', 'Success', '', '0', '0', '2025/05/05 17:12:05', '25', 'GET /auto HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP TnlAgClient/1.0 Accept: */* Authorization: Basic Z2FyeWhhYWs6Z2FyeWhhYWs=', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:17,819 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.168', 'Successful', 'Success', '', '0', '0', '2025/05/05 16:36:43', '8', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:17,976 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.168', 'Successful', 'Success', '', '0', '2', '2025/05/05 16:36:17', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,163607.00,,,,,0,,,,M,,M,,*4D', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:20,377 - INFO - No modal detected.
+2025-05-08 02:44:20,441 - INFO - Navigating to page 14...
+2025-05-08 02:44:20,441 - INFO - Scraping page 14...
+2025-05-08 02:44:20,451 - INFO - Log table found.
+2025-05-08 02:44:20,462 - INFO - Found 21 rows on page 14.
+2025-05-08 02:44:21,451 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.174', 'Successful', 'Success', '', '0', '0', '2025/05/05 15:28:02', '21', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:25,218 - INFO - Skipping row: Empty Miner SN - Row Data: ['lakner24', 'AUTO', 'Brad Stearns', '147.75.51.167', 'Successful', 'Success', '', '0', '2', '2025/05/05 13:04:16', '29', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic bGFrbmVyMjQ6bGFrbmVyMjQ= Connection:close', '$GPGGA,130407.00,,,,,0,,,,M,,M,,*49', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:28,852 - INFO - No modal detected.
+2025-05-08 02:44:28,921 - INFO - Navigating to page 15...
+2025-05-08 02:44:28,922 - INFO - Scraping page 15...
+2025-05-08 02:44:28,932 - INFO - Log table found.
+2025-05-08 02:44:28,944 - INFO - Found 21 rows on page 15.
+2025-05-08 02:44:29,893 - INFO - Skipping row: Empty Miner SN - Row Data: ['dykstrartk', 'AUTO', 'Blake', '174.215.247.128', 'Successful', 'Success', '', '0', '2', '2025/05/05 10:38:31', '14', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic ZHlrc3RyYXJ0azpydGtkeWtzdHJh Connection:close', '$GPGGA,103822.00,,,,,0,,,,M,,M,,*42', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:30,574 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:44:31,719 - INFO - Appended 50 rows in batch
+2025-05-08 02:44:45,593 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 22:00:40', '18', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidExtNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:45,752 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 22:00:18', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidExtNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:45,909 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 21:59:56', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidExtNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:46,073 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 21:59:34', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidExtNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:48,153 - INFO - No modal detected.
+2025-05-08 02:44:48,222 - INFO - Navigating to page 16...
+2025-05-08 02:44:48,223 - INFO - Scraping page 16...
+2025-05-08 02:44:48,233 - INFO - Log table found.
+2025-05-08 02:44:48,244 - INFO - Found 21 rows on page 16.
+2025-05-08 02:44:53,188 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:54:23', '0', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:53,359 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:54:01', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:53,512 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:53:39', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:53,669 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:53:17', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:53,825 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:52:55', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:53,985 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:52:33', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:56,062 - INFO - No modal detected.
+2025-05-08 02:44:56,130 - INFO - Navigating to page 17...
+2025-05-08 02:44:56,131 - INFO - Scraping page 17...
+2025-05-08 02:44:56,142 - INFO - Log table found.
+2025-05-08 02:44:56,154 - INFO - Found 21 rows on page 17.
+2025-05-08 02:44:56,420 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 21:59:12', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidExtNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:56,577 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:37:25', '4', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:56,729 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:37:03', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:56,881 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:36:57', '2', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:57,038 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:36:35', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:57,194 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:36:13', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:57,348 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:35:51', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:57,505 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:35:29', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:57,716 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:35:07', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:57,873 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:34:45', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,034 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:34:23', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,189 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:34:01', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,344 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:33:38', '19', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,497 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:33:16', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,651 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:32:54', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,821 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:32:32', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:58,979 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:32:10', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:44:59,172 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:31:49', '20', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:45:02,130 - INFO - No modal detected.
+2025-05-08 02:45:02,208 - INFO - Navigating to page 18...
+2025-05-08 02:45:02,209 - INFO - Scraping page 18...
+2025-05-08 02:45:02,226 - INFO - Log table found.
+2025-05-08 02:45:02,237 - INFO - Found 21 rows on page 18.
+2025-05-08 02:45:02,464 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.245.213', 'Successful', 'Success', '', '0', '0', '2025/05/04 20:52:11', '17956', 'GET /AUTO HTTP/1.1 Host: rtk.geodnet.com Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic ZGhhdWdhYXJkOmRoYXVnYWFyZA==', 'Ntrip-GGA: $GPGGA,011759,4348.3724,N,09658.2445,W,4,00,4.0,510.7,M,-26.8,M,7.0,3725*5E', '0', '0', '1797', '0', 'Download']
+2025-05-08 02:45:11,253 - INFO - No modal detected.
+2025-05-08 02:45:11,332 - INFO - Navigating to page 19...
+2025-05-08 02:45:11,333 - INFO - Scraping page 19...
+2025-05-08 02:45:11,343 - INFO - Log table found.
+2025-05-08 02:45:11,354 - INFO - Found 21 rows on page 19.
+2025-05-08 02:45:12,755 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:45:13,643 - INFO - Appended 50 rows in batch
+2025-05-08 02:45:31,284 - INFO - No modal detected.
+2025-05-08 02:45:31,360 - INFO - Navigating to page 20...
+2025-05-08 02:45:31,361 - INFO - Scraping page 20...
+2025-05-08 02:45:31,376 - INFO - Log table found.
+2025-05-08 02:45:31,391 - INFO - Found 21 rows on page 20.
+2025-05-08 02:45:38,103 - INFO - Skipping row: Empty Miner SN - Row Data: ['Vaksdal', 'AUTO', 'Jon Lickiss', '174.215.243.50', 'Successful', 'Success', '', '0', '0', '2025/05/04 14:52:20', '15', 'GET /AUTO HTTP/1.0 Host: rtk.geodnet.com:2101 User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Accept: */* Connection: close Authorization: Basic VmFrc2RhbDpWYWtzZGFs', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:45:40,187 - INFO - No modal detected.
+2025-05-08 02:45:40,263 - INFO - Navigating to page 21...
+2025-05-08 02:45:40,263 - INFO - Scraping page 21...
+2025-05-08 02:45:40,277 - INFO - Log table found.
+2025-05-08 02:45:40,293 - INFO - Found 21 rows on page 21.
+2025-05-08 02:45:40,483 - INFO - Skipping row: Empty Miner SN - Row Data: ['worthrtk', 'AUTO', 'Blake', '147.75.51.173', 'Successful', 'Success', '', '0', '0', '2025/05/04 17:48:18', '9', 'GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic d29ydGhydGs6cnRrd29ydGg= Connection:close', '', '0', '0', '0', '0', 'Download']
+2025-05-08 02:45:40,698 - INFO - Duplicate row found (ID: worthrtk_2025/05/04 17:47:52_11)
+2025-05-08 02:45:40,734 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 02:45:42,659 - INFO - Appended 35 rows in batch
+2025-05-08 02:45:52,664 - INFO - Scraped 335 rows in 296.68 seconds
+2025-05-08 02:45:52,677 - INFO - Outside 6:00 AM to 8:00 PM - Sleeping for 900 seconds
+2025-05-08 03:00:52,670 - INFO - Loaded 372 processed rows
+2025-05-08 03:00:53,608 - INFO - Navigating to login page...
+2025-05-08 03:00:58,856 - INFO - No modal detected.
+2025-05-08 03:00:58,874 - INFO - Username field found.
+2025-05-08 03:00:59,340 - INFO - Logging in...
+2025-05-08 03:00:59,426 - INFO - Navigating to log page...
+2025-05-08 03:00:59,427 - INFO - Scraping page 1...
+2025-05-08 03:00:59,989 - INFO - Log table found.
+2025-05-08 03:01:00,094 - INFO - Found 2 rows on page 1.
+2025-05-08 03:01:00,255 - WARNING - Stale element detected, retrying...
+2025-05-08 03:01:03,399 - INFO - No modal detected.
+2025-05-08 03:01:03,507 - INFO - Navigating to page 2...
+2025-05-08 03:01:03,507 - INFO - Scraping page 2...
+2025-05-08 03:01:03,519 - INFO - Log table found.
+2025-05-08 03:01:03,531 - INFO - Found 21 rows on page 2.
+2025-05-08 03:01:04,327 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:11', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 03:01:04,548 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:10', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 03:01:04,763 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:09', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 03:01:04,959 - INFO - Skipping row: Empty Miner SN - Row Data: ['mthielen', '', 'Wollman', '174.201.102.11', 'Successful', 'Success', '', '0', '0', '2025/05/07 19:30:08', '0', 'GET / HTTP/1.1 Host: rtk.geodnet.com/AUTO Ntrip-Version: Ntrip/2.0 User-Agent: NTRIP NtripClientiOS/Version: 1.0 Authorization: Basic bXRoaWVsZW46bXRoaWVsZW5fMQ==', '', '0', '0', '0', '0', 'Download']
+2025-05-08 03:01:05,191 - INFO - Duplicate row found (ID: Vietfarm_2025/05/07 19:11:07_3770)
+2025-05-08 03:01:05,277 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 03:01:06,829 - INFO - Appended 1 rows in batch
+2025-05-08 03:01:16,834 - INFO - Scraped 1 rows in 24.23 seconds
+2025-05-08 03:01:16,837 - INFO - Outside 6:00 AM to 8:00 PM - Sleeping for 3540 seconds
+2025-05-08 04:00:16,676 - INFO - Loaded 373 processed rows
+2025-05-08 04:00:17,765 - INFO - Navigating to login page...
+2025-05-08 04:00:23,016 - INFO - No modal detected.
+2025-05-08 04:00:23,050 - INFO - Username field found.
+2025-05-08 04:00:23,432 - INFO - Logging in...
+2025-05-08 04:00:23,522 - INFO - Navigating to log page...
+2025-05-08 04:00:23,523 - INFO - Scraping page 1...
+2025-05-08 04:00:24,166 - INFO - Log table found.
+2025-05-08 04:00:24,185 - INFO - Found 21 rows on page 1.
+2025-05-08 04:00:28,733 - INFO - Duplicate row found (ID: mthielen_2025/05/08 02:00:47_1)
+2025-05-08 04:00:28,806 - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-08 04:00:30,521 - INFO - Appended 12 rows in batch
+2025-05-08 04:00:40,520 - INFO - Scraped 12 rows in 23.96 seconds
+2025-05-08 04:00:40,523 - INFO - Outside 6:00 AM to 8:00 PM - Sleeping for 3600 seconds
+2025-05-08 05:00:40,345 - INFO - Loaded 385 processed rows
+2025-05-08 05:00:41,975 - INFO - Navigating to login page...
+2025-05-08 05:00:42,604 - INFO - Modal dismissed.
+2025-05-08 05:00:42,620 - INFO - Username field found.
+2025-05-08 05:00:43,538 - ERROR - WebDriver error: Message: stale element reference: stale element not found
+  (Session info: chrome=135.0.7049.84); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+#0 0x556c49f46d0a <unknown>
+#1 0x556c499f75f0 <unknown>
+#2 0x556c49a0ac0b <unknown>
+#3 0x556c49a099c2 <unknown>
+#4 0x556c499feb19 <unknown>
+#5 0x556c499fcd6f <unknown>
+#6 0x556c49a00a88 <unknown>
+#7 0x556c49a00b13 <unknown>
+#8 0x556c49a4360a <unknown>
+#9 0x556c49a6e662 <unknown>
+#10 0x556c49a3c4ba <unknown>
+#11 0x556c49a6e82e <unknown>
+#12 0x556c49a94660 <unknown>
+#13 0x556c49a6e433 <unknown>
+#14 0x556c49a3aea3 <unknown>
+#15 0x556c49a3bb01 <unknown>
+#16 0x556c49f0bb5b <unknown>
+#17 0x556c49f0fa41 <unknown>
+#18 0x556c49ef2c52 <unknown>
+#19 0x556c49f105b4 <unknown>
+#20 0x556c49ed6f0f <unknown>
+#21 0x556c49f34db8 <unknown>
+#22 0x556c49f34f96 <unknown>
+#23 0x556c49f45b56 <unknown>
+#24 0x7efcc24ccaa4 <unknown>
+#25 0x7efcc2559c3c <unknown>
+
+2025-05-08 05:00:43,598 - ERROR - Traceback (most recent call last):
+  File "/app/geodnet_scraper_updated.py", line 241, in main
+    login_button = WebDriverWait(driver, 10).until(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/selenium/webdriver/support/wait.py", line 96, in until
+    value = method(self._driver)
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/selenium/webdriver/support/expected_conditions.py", line 365, in _predicate
+    if element and element.is_enabled():
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/selenium/webdriver/remote/webelement.py", line 192, in is_enabled
+    return self._execute(Command.IS_ELEMENT_ENABLED)["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/selenium/webdriver/remote/webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 347, in execute
+    self.error_handler.check_response(response)
+  File "/opt/venv/lib/python3.12/site-packages/selenium/webdriver/remote/errorhandler.py", line 229, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.StaleElementReferenceException: Message: stale element reference: stale element not found
+  (Session info: chrome=135.0.7049.84); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+#0 0x556c49f46d0a <unknown>
+#1 0x556c499f75f0 <unknown>
+#2 0x556c49a0ac0b <unknown>
+#3 0x556c49a099c2 <unknown>
+#4 0x556c499feb19 <unknown>
+#5 0x556c499fcd6f <unknown>
+#6 0x556c49a00a88 <unknown>
+#7 0x556c49a00b13 <unknown>
+#8 0x556c49a4360a <unknown>
+#9 0x556c49a6e662 <unknown>
+#10 0x556c49a3c4ba <unknown>
+#11 0x556c49a6e82e <unknown>
+#12 0x556c49a94660 <unknown>
+#13 0x556c49a6e433 <unknown>
+#14 0x556c49a3aea3 <unknown>
+#15 0x556c49a3bb01 <unknown>
+#16 0x556c49f0bb5b <unknown>
+#17 0x556c49f0fa41 <unknown>
+#18 0x556c49ef2c52 <unknown>
+#19 0x556c49f105b4 <unknown>
+#20 0x556c49ed6f0f <unknown>
+#21 0x556c49f34db8 <unknown>
+#22 0x556c49f34f96 <unknown>
+#23 0x556c49f45b56 <unknown>
+#24 0x7efcc24ccaa4 <unknown>
+#25 0x7efcc2559c3c <unknown>
+
+
