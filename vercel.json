@@ -1,12 +1,1 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/sheets",
-      "destination": "/api/sheets.js"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
+{ "builds": [{ "src": "*.html", "use": "@vercel/static" }, { "src": "**/*.{css,png,ico}", "use": "@vercel/static" }], "outputDirectory": ".", "routes": [{ "src": "/(.*)", "dest": "/$1" }] }
