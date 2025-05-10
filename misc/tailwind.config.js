@@ -1,8 +1,6 @@
-/** @type {import('tailwindcss').Config} */
+// misc/tailwind.config.js
 module.exports = {
-  content: [
-    "./index.html", // Scan index.html for Tailwind classes
-  ],
+  content: ['./index.html', './src/**/*.js'], // Include src/UserMap.js
   theme: {
     extend: {},
   },
