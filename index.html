@@ -12,26 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
-    .container { 
-      display: flex; 
-      flex-direction: column; 
-      height: 100vh; 
-      background-color: #f0f4f8; 
-    }
-    .branding {
-      display: flex;
-      align-items: center;
-      margin-right: 2rem;
-    }
-    .branding img {
-      height: 40px;
-      width: auto;
-    }
-    #map { 
-      flex: 1; 
-      height: calc(100vh - 60px); /* Adjust for header height */
-    }
+    /* Keep only styles that can't easily be moved to Tailwind */
     .leaflet-popup-content {
       font-size: 0.9rem;
       line-height: 1.4;
@@ -64,39 +45,11 @@
       50% { opacity: 0.8; }
       100% { opacity: 0.5; }
     }
-    .leaflet-control-legend {
-      background: white;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    .legend-item img {
-      width: 30px;
-      height: 30px;
-      margin-right: 5px;
-    }
-    .legend-item span {
-      font-size: 0.9rem;
-    }
-    .leaflet-control-logo {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-    }
-    .leaflet-control-logo img {
-      width: 200px;
-      height: auto;
-    }
   </style>
 </head>
-<body>
-  <div id="root"></div>
+<body class="m-0 font-sans">
+  <div id="root" class="flex flex-col h-screen bg-gray-100"></div>
   <script src="/src/UserMap.js"></script>
-</body>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93db9751e8c07bcf',t:'MTc0NjkwMjY5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93dbfae4c880bf73',t:'MTc0NjkwNjc3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
