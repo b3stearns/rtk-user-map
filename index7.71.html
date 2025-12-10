@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTK User Map</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <style>
+        #map { height: 100vh; width: 100%; }
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            gap: 15px;
+            font-family: Arial, sans-serif;
+        }
+        select, button {
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .info-bar {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 90%;
+            font-family: Arial, sans-serif;
+            display: none;
+        }
+        .info-bar.active { display: block; }
+        .info-bar-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .logo-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .logo-bar img { height: 40px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <div class="controls">
+        <select id="timeframeFilter">
+            <option value="12h">Last 12 Hours</option>
+            <option value="1d">Last 1 Day</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="all" selected>All Time (1 Year)</option>
+        </select>
+        <select id="userFilter">
+            <option value="">All Users</option>
+        </select>
+        <button onclick="updateMap()">Apply Filter</button>
+        <div style="font-size:12px; color:#666;">Auto-refresh: 30s</div>
+    </div>
+
+    <div class="info-bar" id="infoBar">
+        <div class="info-bar-close" onclick="this.parentElement.style.display='none'">×</div>
+        <div id="infoContent"></div>
+    </div>
+
+    <div class="logo-bar">
+        <img src="truenav-logo.png" alt="TrueNav">
+        <img src="GeodnetLogo.png" alt="GEODNET">
+    </div>
+
+    <script>
+        let map, markers = [], clusterer, sheetData = [], allUsers = new Set();
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 44.5, lng: -98.0 },
+                zoom: 7,
+                mapTypeId: "hybrid"
+            });
+            loadSheetData();
+            setInterval(loadSheetData, 30000); // Auto-refresh every 30s
+        }
+
+        function parseNMEA(nmea) {
+            if (!nmea || typeof nmea !== 'string') return null;
+            nmea = nmea.trim();
+            if (nmea.includes("Ntrip-GGA:")) nmea = nmea.split("Ntrip-GGA:")[1].trim();
+            const parts = nmea.split(",");
+            if (parts.length < 6 || !parts[0].includes("GGA")) return null;
+            const latStr = parts[2]?.trim(), latDir = parts[3]?.trim();
+            const lonStr = parts[4]?.trim(), lonDir = parts[5]?.trim();
+            if (!latStr || !lonStr || latStr === "" || lonStr === "") return null;
+            try {
+                const lat = parseInt(latStr.slice(0,2)) + parseFloat(latStr.slice(2))/60;
+                const lon = parseInt(lonStr.slice(0,3)) + parseFloat(lonStr.slice(3))/60;
+                const finalLat = latDir === "S" ? -lat : lat;
+                const finalLon = lonDir === "W" ? -lon : lon;
+                if (Math.abs(finalLat) > 90 || Math.abs(finalLon) > 180) return null;
+                return { lat: finalLat, lng: finalLon };
+            } catch { return null; }
+        }
+
+        function loadSheetData() {
+            const url = "https://sheets.googleapis.com/v4/spreadsheets/1E6u3Eyx_GHFpIbWGmEc6b00KoiWD0DsSSJwHZx686EA/values/Sheet1!A:Z?key=AIzaSyCmDQKUXiUOiCQ_qhtUwQpxaaVtWQBIAj8";
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    const rows = data.values || [];
+                    const headers = rows[0] || [];
+                    sheetData = rows.slice(1).map(r => {
+                        const obj = {};
+                        headers.forEach((h,i) => obj[h] = (r[i] || "").trim());
+                        if (obj["Username"]) allUsers.add(obj["Username"]);
+                        return obj;
+                    });
+                    populateUserDropdown();
+                    updateMap();
+                })
+                .catch(() => console.log("Sheet load failed - retrying soon"));
+        }
+
+        function populateUserDropdown() {
+            const select = document.getElementById("userFilter");
+            select.innerHTML = '<option value="">All Users</option>';
+            [...allUsers].sort().forEach(user => {
+                const opt = document.createElement("option");
+                opt.value = user;
+                opt.textContent = user;
+                select.appendChild(opt);
+            });
+        }
+
+        function updateMap() {
+            if (clusterer) clusterer.clearMarkers();
+            markers = [];
+
+            const timeframe = document.getElementById("timeframeFilter").value;
+            const selectedUser = document.getElementById("userFilter").value;
+            const now = Date.now();
+            const cutoff = {
+                "12h": 12*3600000, "1d": 24*3600000, "7d": 7*24*3600000,
+                "30d": 30*24*3600000, "all": Infinity
+            }[timeframe];
+
+            sheetData.forEach(row => {
+                if (selectedUser && row["Username"] !== selectedUser) return;
+
+                const nmea = row["Latest nmea"] || row["gga"] || row["Nmea"] || "";
+                const latLng = parseNMEA(nmea);
+                if (!latLng) return;
+
+                const timeStr = row["Sign in time (GPS Time)"] || "";
+                if (!timeStr) return;
+                const rowTime = new Date(timeStr.replace(/\//g, "-")).getTime();
+                if (isNaN(rowTime) || now - rowTime > cutoff) return;
+
+                const marker = new google.maps.Marker({
+                    position: latLng,
+                    title: row["Username"] || "Unknown"
+                });
+
+                marker.addListener("click", () => {
+                    document.getElementById("infoContent").innerHTML = `
+                        <strong>${row["Username"] || "Unknown User"}</strong><br>
+                        Mountpoint: ${row["Mountpoint"] || "N/A"}<br>
+                        Time: ${timeStr}<br>
+                        Session: ${row["Session time(s)"] || "0"}s<br>
+                        Fix Rate: ${row["RTK Fix Rate(%)"] || "0"}%
+                    `;
+                    document.getElementById("infoBar").classList.add("active");
+                });
+
+                markers.push(marker);
+            });
+
+            clusterer = new MarkerClusterer(map, markers, {
+                imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
+            });
+        }
+
+        // Load scripts
+        const clusterScript = document.createElement("script");
+        clusterScript.src = "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js";
+        clusterScript.onload = () => {
+            const mapScript = document.createElement("script");
+            mapScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCmDQKUXiUOiCQ_qhtUwQpxaaVtWQBIAj8&callback=initMap";
+            document.head.appendChild(mapScript);
+        };
+        document.head.appendChild(clusterScript);
+    </script>
+</body>
+</html>
