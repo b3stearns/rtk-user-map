@@ -275,14 +275,41 @@
                 console.error("Error in Sheet2 fetch:", error);
             }
             
-            // Fetch User Data from Vercel Backend
+            // Direct fetch from external API
             try {
-                const response = await fetch("/api/rovers");
-                if (!response.ok) throw new Error("API Fetch failed");
-                const logs = await response.json();
-                
-                console.log("✅ API loaded", logs.length, "logs");
-                if (logs.length > 0) console.log("First log sample:", logs[0]);
+                const endMs = Date.now();
+                const startMs = endMs - (7 * 24 * 60 * 60 * 1000); // last 7 days
+
+                const formatDate = (ms) => new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
+
+                const payload = {
+                    current: 1,
+                    pageSize: 5000,
+                    username: "",
+                    mountpoint: "",
+                    partner: "",
+                    times: [formatDate(startMs), formatDate(endMs)],
+                    userCaseSensitive: true,
+                    mountCaseSensitive: true,
+                    start: startMs,
+                    end: endMs
+                };
+
+                const response = await fetch("https://rtk.geodnet.com/api/v1/be/rtkLogs", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer truenav:6b5c58f69bcabd945a420ad243d13c96'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const json = await response.json();
+                console.log("Direct API response code:", json.code);
+
+                const logs = json.code === 0 && json.data && json.data.list ? json.data.list : [];
+                console.log("✅ Loaded", logs.length, "logs");
 
                 const usernameFilter = document.getElementById("usernameFilter");
                 logs.forEach(log => {
@@ -333,7 +360,6 @@
 
                         marker.addListener("click", () => {
                             if (activeMarker === marker) { closeInfoBar(); return; }
-                            
                             const shortStation = log.station ? log.station.slice(-4) : "N/A";
                             const contentItems = [];
                             const baseStation = baseStations.find(bs => bs.station === log.station);
@@ -370,21 +396,16 @@
                 });
 
                 updateMarkers("1d", "all", "all");
-                
-                document.getElementById("timeframeFilter").addEventListener("change", (e) => {
-                    updateMarkers(e.target.value, document.getElementById("hardwareFilter").value, document.getElementById("usernameFilter").value);
-                });
-                document.getElementById("hardwareFilter").addEventListener("change", (e) => {
-                    updateMarkers(document.getElementById("timeframeFilter").value, e.target.value, document.getElementById("usernameFilter").value);
-                });
-                document.getElementById("usernameFilter").addEventListener("change", (e) => {
-                    updateMarkers(document.getElementById("timeframeFilter").value, document.getElementById("hardwareFilter").value, e.target.value);
-                });
+
+                // Filter listeners
+                document.getElementById("timeframeFilter").addEventListener("change", (e) => updateMarkers(e.target.value, document.getElementById("hardwareFilter").value, document.getElementById("usernameFilter").value));
+                document.getElementById("hardwareFilter").addEventListener("change", (e) => updateMarkers(document.getElementById("timeframeFilter").value, e.target.value, document.getElementById("usernameFilter").value));
+                document.getElementById("usernameFilter").addEventListener("change", (e) => updateMarkers(document.getElementById("timeframeFilter").value, document.getElementById("hardwareFilter").value, e.target.value));
 
             } catch (error) {
                 console.error("Error fetching API:", error);
             }
-            
+
             function updateSummaryPanel(selectedUsername) {
                 const summaryPanel = document.getElementById("userSummaryPanel");
                 const visibleLogs = userMarkers.filter(m => m.marker.map !== null);
