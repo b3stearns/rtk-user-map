@@ -1,3 +1,4 @@
 export default async function handler(req, res) {
-  res.status(200).json([]);   // Return empty array for now
+  console.log("API route hit - returning empty for now");
+  res.status(200).json([]); 
 }
