@@ -195,7 +195,6 @@
                 zoom: 2,
                 mapId: "3fb7b56b54e97cfecb8a4769",
             });
-            const bounds = new google.maps.LatLngBounds();
             let baseStations = [];
             let userMarkers = [];
             let usernames = new Set();
@@ -262,7 +261,6 @@
                             position: { lat, lng: lon }, map: map, title: name, content: pin.element, zIndex: 1
                         });
                         baseStations.push({ station, lat, lon, row, headers, siteName, city });
-                        bounds.extend({ lat, lng: lon });
                         marker.addListener("click", () => {
                             if (activeMarker === marker) { closeInfoBar(); return; }
                             const shortStation = station ? station.slice(-4) : "N/A";
@@ -282,9 +280,10 @@
                 const response = await fetch("/api/rovers");
                 if (!response.ok) throw new Error("API Fetch failed");
                 const logs = await response.json();
-                const logs = await response.json();
-                console.log("✅ API loaded", logs.length, "logs");   // ← ADD THIS
-                console.log("First log sample:", logs[0]);           // ← ADD THIS
+                
+                console.log("✅ API loaded", logs.length, "logs");
+                if (logs.length > 0) console.log("First log sample:", logs[0]);
+
                 const usernameFilter = document.getElementById("usernameFilter");
                 logs.forEach(log => {
                     if (log.username && !usernames.has(log.username)) {
@@ -329,7 +328,7 @@
                             signInTime: log.loginTime, 
                             hardwareType, 
                             username: log.username,
-                            rawLog: log // Keep raw data for summary math
+                            rawLog: log
                         });
 
                         marker.addListener("click", () => {
@@ -372,7 +371,6 @@
 
                 updateMarkers("1d", "all", "all");
                 
-                // EVENT LISTENERS FOR FILTERS
                 document.getElementById("timeframeFilter").addEventListener("change", (e) => {
                     updateMarkers(e.target.value, document.getElementById("hardwareFilter").value, document.getElementById("usernameFilter").value);
                 });
@@ -387,14 +385,9 @@
                 console.error("Error fetching API:", error);
             }
             
-            // MATH FOR THE SUMMARY PANEL (NOW CALCULATES FOR ALL VISIBLE LOGS)
             function updateSummaryPanel(selectedUsername) {
                 const summaryPanel = document.getElementById("userSummaryPanel");
-                
-                // Grab all markers that are currently visible on the map
                 const visibleLogs = userMarkers.filter(m => m.marker.map !== null);
-
-                // Determine the title based on the dropdown selection
                 const panelTitle = selectedUsername === "all" ? "Map Data Summary" : `${selectedUsername} Summary`;
 
                 if (visibleLogs.length === 0) {
@@ -409,12 +402,11 @@
                 visibleLogs.forEach(m => {
                     const log = m.rawLog;
                     totalDuration += Number(log.duration) || 0;
-                    
                     const gga = log.ggaStats || {};
-                    sumSP += Number(gga["1"]) || 0;     // 1 = SP
-                    sumDGPS += Number(gga["2"]) || 0;   // 2 = DGPS
-                    sumFix += Number(gga["4"]) || 0;    // 4 = Fix
-                    sumFloat += Number(gga["5"]) || 0;  // 5 = Float
+                    sumSP += Number(gga["1"]) || 0;
+                    sumDGPS += Number(gga["2"]) || 0;
+                    sumFix += Number(gga["4"]) || 0;
+                    sumFloat += Number(gga["5"]) || 0;
 
                     totalAgeSum += Number(log.avgAge) || 0;
                     if (Number(log.maxAge) > maxAge) maxAge = Number(log.maxAge);
@@ -428,8 +420,6 @@
                 const totalPoints = sumSP + sumDGPS + sumFix + sumFloat;
                 const fixRate = totalPoints > 0 ? ((sumFix / totalPoints) * 100).toFixed(1) : 0;
                 const avgAge = visibleLogs.length > 0 ? (totalAgeSum / visibleLogs.length).toFixed(2) : 0;
-                
-                // Geodnet distance is in KM, convert to miles
                 const avgDistance = validDistanceCount > 0 ? ((totalDistanceSum / validDistanceCount) * 0.621371).toFixed(2) : 0;
 
                 summaryPanel.innerHTML = `
@@ -490,13 +480,12 @@
                     map.setZoom(2);
                 }
 
-                // Call summary panel update after markers are filtered
                 updateSummaryPanel(selectedUsername);
             }
         }
         
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 3958.8; // Miles
+            const R = 3958.8;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
