@@ -1,13 +1,15 @@
 export default async function handler(req, res) {
   try {
+    console.log("🚀 API route started");
+
     const endMs = Date.now();
-    const startMs = endMs - (30 * 24 * 60 * 60 * 1000); // Reduced to 30 days
+    const startMs = endMs - (7 * 24 * 60 * 60 * 1000); // Only last 7 days
 
     const formatDate = (ms) => new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
 
     const payload = {
       current: 1,
-      pageSize: 10000,
+      pageSize: 5000,
       username: "",
       mountpoint: "",
       partner: "",
@@ -28,75 +30,21 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload)
     });
 
-    const json = await response.json();
-
-    if (json.code !== 0) {
-      console.error("External API Error:", json);
-      return res.status(500).json({ error: 'External API failed', details: json });
-    }
-
-    const cleanMapData = json.data.list.map(log => ({
-      id: log._id,
-      username: log.username,
-      station: log.station,
-      lat: log.lat,
-      lng: log.lng,
-      status: log.status,
-      loginTime: new Date(log.loginTime).toISOString(),
-      distance: log.distance,
-      request: log.request,
-      partner: log.partner,
-      ip: log.ip,
-      duration: log.duration,
-      totalGGA: log.totalGGA,
-      msg: log.msg,
-      avgAge: log.avgAge,
-      maxAge: log.maxAge,
-      ggaStats: log.ggaStats
-    }));
-
-    res.status(200).json(cleanMapData);
-
-  } catch (error) {
-    console.error("Handler error:", error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-}
     console.log("External API status:", response.status);
 
     const json = await response.json();
-    console.log("External API response code:", json.code);
+    console.log("External response code:", json.code);
 
     if (json.code !== 0 || !json.data || !json.data.list) {
-      console.error("API Error:", json);
-      return res.status(500).json({ error: 'Failed to fetch or authenticate', details: json });
+      console.error("External API failed:", json);
+      return res.status(500).json({ error: "External API error", details: json });
     }
 
-    const cleanMapData = json.data.list.map(log => ({
-      id: log._id,
-      username: log.username,
-      station: log.station,
-      lat: log.lat,
-      lng: log.lng,
-      status: log.status,
-      loginTime: new Date(log.loginTime).toISOString(),
-      distance: log.distance,
-      request: log.request,
-      partner: log.partner,
-      ip: log.ip,
-      duration: log.duration,
-      totalGGA: log.totalGGA,
-      msg: log.msg,
-      avgAge: log.avgAge,
-      maxAge: log.maxAge,
-      ggaStats: log.ggaStats
-    }));
-
-    console.log(`Successfully returned ${cleanMapData.length} records`);
-    res.status(200).json(cleanMapData);
+    console.log(`✅ Success - ${json.data.list.length} records`);
+    res.status(200).json(json.data.list);
 
   } catch (error) {
-    console.error("Handler error:", error.message);
-    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+    console.error("Handler crashed:", error.message);
+    res.status(500).json({ error: error.message });
   }
 }
