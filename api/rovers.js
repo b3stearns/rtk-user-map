@@ -1,8 +1,8 @@
 export default async function handler(req, res) {
   try {
-    // 1. Dynamically calculate timestamps for the last 7 days
+    // 1. Dynamically calculate timestamps for the last 365 days
     const endMs = Date.now();
-    const startMs = endMs - (7 * 24 * 60 * 60 * 1000);
+    const startMs = endMs - (365 * 24 * 60 * 60 * 1000);
 
     // Format dates to "YYYY-MM-DD HH:MM:SS" for the 'times' array
     const formatDate = (ms) => new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     // 2. Build the exact payload
     const payload = {
       current: 1,
-      pageSize: 5000, // Grabs all logs at once to avoid pagination
+      pageSize: 20000, // Increased to grab up to 20,000 logs at once
       username: "",
       mountpoint: "",
       partner: "",
