@@ -29,6 +29,33 @@
             border-radius: 3px;
             border: 1px solid #ccc;
         }
+        #userSummaryPanel {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            display: none;
+            font-family: Arial, sans-serif;
+            min-width: 320px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .summary-header {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            text-align: center;
+        }
         .info-bar {
             position: absolute;
             bottom: 60px;
@@ -135,6 +162,9 @@
             <option value="all">All Users</option>
         </select>
     </div>
+    
+    <div id="userSummaryPanel"></div>
+
     <div class="info-bar" id="infoBar">
         <div class="info-bar-content" id="infoBarContent"></div>
         <span class="info-bar-close" onclick="closeInfoBar()">✖</span>
@@ -147,6 +177,7 @@
         let activeMarker = null;
         const infoBar = document.getElementById("infoBar");
         const infoBarContent = document.getElementById("infoBarContent");
+        
         function closeInfoBar() {
             infoBar.classList.remove("active");
             activeMarker = null;
@@ -155,8 +186,8 @@
                 activeLine = null;
             }
         }
+
         async function initMap() {
-            console.log("initMap called");
             const { Map } = await google.maps.importLibrary("maps");
             const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
             const map = new Map(document.getElementById("map"), {
@@ -187,43 +218,36 @@
                 "Checker": { icon: "/default.png", name: "default" }
             };
             const defaultIcon = { icon: "/default.png", name: "default" };
+            
             function isWithinLast12Hours(timestampStr) {
                 try {
                     const normalizedTime = timestampStr.replace(/\//g, '-');
                     const signInTime = new Date(normalizedTime + " UTC");
                     const now = new Date();
-                    const timeDiff = now - signInTime;
-                    const hoursDiff = timeDiff / (1000 * 60 * 60);
-                    return hoursDiff <= 12;
+                    return (now - signInTime) / (1000 * 60 * 60) <= 12;
                 } catch (e) {
-                    console.error("Error parsing timestamp:", timestampStr, e);
                     return false;
                 }
             }
+
             map.addListener("click", () => {
                 closeInfoBar();
             });
-            // Fetch Sheet2 data (Base Stations)
+
+            // Fetch Base Stations
             try {
-                const sheet2Response = await fetch(
-                    "https://sheets.googleapis.com/v4/spreadsheets/1E6u3Eyx_GHFpIbWGmEc6b00KoiWD0DsSSJwHZx686EA/values/Sheet2!A1:Z?key=AIzaSyCmDQKUXiUOiCQ_qhtUwQpxaaVtWQBIAj8"
-                );
-                console.log("Sheet2 Fetch response status:", sheet2Response.status);
-                if (!sheet2Response.ok) throw new Error("Sheet2 Fetch failed: " + sheet2Response.statusText);
+                const sheet2Response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/1E6u3Eyx_GHFpIbWGmEc6b00KoiWD0DsSSJwHZx686EA/values/Sheet2!A1:Z?key=AIzaSyCmDQKUXiUOiCQ_qhtUwQpxaaVtWQBIAj8");
+                if (!sheet2Response.ok) throw new Error("Sheet2 Fetch failed");
                 const sheet2Data = await sheet2Response.json();
-                console.log("Sheet2 Fetched data:", sheet2Data);
                 const rows = sheet2Data.values;
-                const headers = rows[0].map(header => header.toLowerCase());
+                const headers = rows[0].map(h => h.toLowerCase());
                 const latIndex = headers.indexOf("latitude");
                 const lonIndex = headers.indexOf("longitude");
                 const nameIndex = headers.indexOf("name");
                 const stationIndex = headers.indexOf("station");
                 const siteNameIndex = headers.indexOf("site name");
                 const cityIndex = headers.indexOf("city");
-                if (latIndex === -1 || lonIndex === -1 || stationIndex === -1) {
-                    console.error("Latitude, Longitude, or Station column not found in Sheet2 headers");
-                    return;
-                }
+                
                 rows.slice(1).forEach(row => {
                     const lat = parseFloat(row[latIndex]);
                     const lon = parseFloat(row[lonIndex]);
@@ -231,55 +255,32 @@
                     const station = row[stationIndex];
                     const siteName = siteNameIndex !== -1 ? row[siteNameIndex] : "N/A";
                     const city = cityIndex !== -1 ? row[cityIndex] : "N/A";
-                    console.log(`Sheet2 Row: Lat=${lat}, Lng=${lon}, Station=${station}`);
+                    
                     if (!isNaN(lat) && !isNaN(lon)) {
-                        const pin = new PinElement({
-                            background: "blue",
-                            borderColor: "white",
-                            glyphColor: "white",
-                            scale: 1.0
-                        });
+                        const pin = new PinElement({ background: "blue", borderColor: "white", glyphColor: "white", scale: 1.0 });
                         const marker = new AdvancedMarkerElement({
-                            position: { lat, lng: lon },
-                            map: map,
-                            title: name,
-                            content: pin.element,
-                            zIndex: 1,
+                            position: { lat, lng: lon }, map: map, title: name, content: pin.element, zIndex: 1
                         });
                         baseStations.push({ station, lat, lon, row, headers, siteName, city });
                         bounds.extend({ lat, lng: lon });
                         marker.addListener("click", () => {
-                            if (activeMarker === marker) {
-                                closeInfoBar();
-                                return;
-                            }
+                            if (activeMarker === marker) { closeInfoBar(); return; }
                             const shortStation = station ? station.slice(-4) : "N/A";
-                            const contentItems = [
-                                `<b>Station (Last 4):</b> ${shortStation}`,
-                                `<b>Site Name:</b> ${siteName}`,
-                                `<b>City:</b> ${city}`
-                            ];
-                            const content = contentItems.join('<br>');
-                            infoBarContent.innerHTML = content;
+                            infoBarContent.innerHTML = `<b>Station (Last 4):</b> ${shortStation}<br><b>Site Name:</b> ${siteName}<br><b>City:</b> ${city}`;
                             infoBar.classList.add("active");
                             activeMarker = marker;
-                            if (activeLine) {
-                                activeLine.setMap(null);
-                                activeLine = null;
-                            }
+                            if (activeLine) activeLine.setMap(null);
                         });
-                    } else {
-                        console.warn(`Sheet2 Row: Invalid lat/lng`, { lat, lon });
                     }
                 });
             } catch (error) {
-                console.error("Error in Sheet2 fetch or processing:", error);
+                console.error("Error in Sheet2 fetch:", error);
             }
             
-            // Fetch Data from the new Vercel Backend
+            // Fetch User Data from Vercel Backend
             try {
                 const response = await fetch("/api/rovers");
-                if (!response.ok) throw new Error("API Fetch failed: " + response.statusText);
+                if (!response.ok) throw new Error("API Fetch failed");
                 const logs = await response.json();
 
                 const usernameFilter = document.getElementById("usernameFilter");
@@ -293,7 +294,7 @@
                     }
                 });
 
-                logs.forEach((log, index) => {
+                logs.forEach((log) => {
                     if (log.lat !== undefined && log.lng !== undefined) {
                         const latLon = { lat: log.lat, lng: log.lng };
                         
@@ -307,11 +308,8 @@
                             }
                         }
                         
-                        const isRecent = isWithinLast12Hours(log.loginTime);
                         const markerDiv = document.createElement("div");
-                        if (isRecent) {
-                            markerDiv.className = "glow-wrapper";
-                        }
+                        if (isWithinLast12Hours(log.loginTime)) markerDiv.className = "glow-wrapper";
                         const markerImg = document.createElement("img");
                         markerImg.src = iconUrl;
                         markerImg.style.width = "40px";
@@ -319,32 +317,28 @@
                         markerDiv.appendChild(markerImg);
                         
                         const marker = new AdvancedMarkerElement({
-                            position: latLon,
-                            map: null,
-                            title: log.username || "User Marker",
-                            zIndex: 2,
-                            content: markerDiv
+                            position: latLon, map: null, title: log.username || "User Marker", zIndex: 2, content: markerDiv
                         });
 
-                        const signInTime = log.loginTime;
-                        const userStation = log.station;
-                        const username = log.username;
-
-                        userMarkers.push({ marker, latLon, userStation, signInTime, hardwareType, username });
+                        userMarkers.push({ 
+                            marker, 
+                            latLon, 
+                            userStation: log.station, 
+                            signInTime: log.loginTime, 
+                            hardwareType, 
+                            username: log.username,
+                            rawLog: log // Keep raw data for summary math
+                        });
 
                         marker.addListener("click", () => {
-                            if (activeMarker === marker) {
-                                closeInfoBar();
-                                return;
-                            }
+                            if (activeMarker === marker) { closeInfoBar(); return; }
                             
-                            const shortStation = userStation ? userStation.slice(-4) : "N/A";
+                            const shortStation = log.station ? log.station.slice(-4) : "N/A";
                             const contentItems = [];
+                            const baseStation = baseStations.find(bs => bs.station === log.station);
                             
-                            const baseStation = baseStations.find(bs => bs.station === userStation);
                             if (baseStation) {
-                                const baseLatLon = { lat: baseStation.lat, lng: baseStation.lon };
-                                const distanceMiles = calculateDistance(latLon.lat, latLon.lng, baseLatLon.lat, baseLatLon.lng);
+                                const distanceMiles = calculateDistance(latLon.lat, latLon.lng, baseStation.lat, baseStation.lon);
                                 const colorClass = distanceMiles < 25 ? "highlight-green" : distanceMiles <= 35 ? "highlight-orange" : "highlight-red";
                                 contentItems.push(`<b>Distance to Station:</b> <span class="${colorClass}">${distanceMiles.toFixed(2)} miles</span>`);
                             } else {
@@ -352,55 +346,199 @@
                             }
                             
                             contentItems.push(`<b>username:</b> <span class="bold-data">${log.username || ''}</span>`);
-                            if (log.duration) contentItems.push(`<b>session time(s):</b> <span class="bold-data">${secondsToHms(log.duration)}</span>`);
+                            if (log.duration) contentItems.push(`<b>session time:</b> <span class="bold-data">${secondsToHms(log.duration)}</span>`);
                             contentItems.push(`<b>Sign in time (CST):</b> ${gpsToCst(log.loginTime)}`);
-                            
-                            if (log.status === 0 || log.msg === "Success") {
-                                contentItems.push(`<b>message:</b> <span class="highlight-green">Success</span>`);
-                            }
-                            
+                            if (log.status === 0 || log.msg === "Success") contentItems.push(`<b>message:</b> <span class="highlight-green">Success</span>`);
                             contentItems.push(`<b>station:</b> ${shortStation}`);
                             if (log.partner) contentItems.push(`<b>partner:</b> ${log.partner}`);
                             if (log.totalGGA) contentItems.push(`<b>no. of gga:</b> ${log.totalGGA}`);
                             if (log.ip) contentItems.push(`<b>ip:</b> ${log.ip}`);
                             if (log.request) contentItems.push(`<b>request:</b> ${log.request}`);
                             
-                            const content = contentItems.join('<br>');
-                            infoBarContent.innerHTML = content;
+                            infoBarContent.innerHTML = contentItems.join('<br>');
                             infoBar.classList.add("active");
                             activeMarker = marker;
                             
                             if (activeLine) activeLine.setMap(null);
                             activeLine = new google.maps.Polyline({
                                 path: [latLon, baseStation ? { lat: baseStation.lat, lng: baseStation.lon } : latLon],
-                                geodesic: true,
-                                strokeColor: "#FF0000",
-                                strokeOpacity: 1.0,
-                                strokeWeight: 2,
-                                map: map,
+                                geodesic: true, strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2, map: map,
                             });
                         });
                     }
                 });
 
                 updateMarkers("1d", "all", "all");
-                userMarkers.forEach(marker => {
-                    const signInDate = new Date(marker.signInTime.replace(/\//g, '-') + " UTC");
-                    const withinTimeframe = signInDate.getTime() >= (new Date().getTime() - 24 * 60 * 60 * 1000);
-                    if (withinTimeframe) {
-                        marker.marker.setMap(map);
-                        bounds.extend(marker.latLon);
+                
+                // EVENT LISTENERS FOR FILTERS
+                document.getElementById("timeframeFilter").addEventListener("change", (e) => {
+                    updateMarkers(e.target.value, document.getElementById("hardwareFilter").value, document.getElementById("usernameFilter").value);
+                });
+                document.getElementById("hardwareFilter").addEventListener("change", (e) => {
+                    updateMarkers(document.getElementById("timeframeFilter").value, e.target.value, document.getElementById("usernameFilter").value);
+                });
+                document.getElementById("usernameFilter").addEventListener("change", (e) => {
+                    updateMarkers(document.getElementById("timeframeFilter").value, document.getElementById("hardwareFilter").value, e.target.value);
+                });
+
+            } catch (error) {
+                console.error("Error fetching API:", error);
+            }
+            
+            // MATH FOR THE SUMMARY PANEL (NOW CALCULATES FOR ALL VISIBLE LOGS)
+            function updateSummaryPanel(selectedUsername) {
+                const summaryPanel = document.getElementById("userSummaryPanel");
+                
+                // Grab all markers that are currently visible on the map
+                const visibleLogs = userMarkers.filter(m => m.marker.map !== null);
+
+                // Determine the title based on the dropdown selection
+                const panelTitle = selectedUsername === "all" ? "Map Data Summary" : `${selectedUsername} Summary`;
+
+                if (visibleLogs.length === 0) {
+                    summaryPanel.innerHTML = `<h3 class="summary-header">${panelTitle}</h3><p style="margin:0; text-align:center;">No logs found for current filters.</p>`;
+                    summaryPanel.style.display = "block";
+                    return;
+                }
+
+                let totalDuration = 0, sumFix = 0, sumFloat = 0, sumDGPS = 0, sumSP = 0;
+                let totalAgeSum = 0, maxAge = 0, totalDistanceSum = 0, validDistanceCount = 0;
+
+                visibleLogs.forEach(m => {
+                    const log = m.rawLog;
+                    totalDuration += Number(log.duration) || 0;
+                    
+                    const gga = log.ggaStats || {};
+                    sumSP += Number(gga["1"]) || 0;     // 1 = SP
+                    sumDGPS += Number(gga["2"]) || 0;   // 2 = DGPS
+                    sumFix += Number(gga["4"]) || 0;    // 4 = Fix
+                    sumFloat += Number(gga["5"]) || 0;  // 5 = Float
+
+                    totalAgeSum += Number(log.avgAge) || 0;
+                    if (Number(log.maxAge) > maxAge) maxAge = Number(log.maxAge);
+
+                    if (log.distance) {
+                        totalDistanceSum += Number(log.distance);
+                        validDistanceCount++;
                     }
                 });
+
+                const totalPoints = sumSP + sumDGPS + sumFix + sumFloat;
+                const fixRate = totalPoints > 0 ? ((sumFix / totalPoints) * 100).toFixed(1) : 0;
+                const avgAge = visibleLogs.length > 0 ? (totalAgeSum / visibleLogs.length).toFixed(2) : 0;
                 
-                if (!bounds.isEmpty()) {
-                    map.fitBounds(bounds);
+                // Geodnet distance is in KM, convert to miles
+                const avgDistance = validDistanceCount > 0 ? ((totalDistanceSum / validDistanceCount) * 0.621371).toFixed(2) : 0;
+
+                summaryPanel.innerHTML = `
+                    <h3 class="summary-header">${panelTitle}</h3>
+                    <div class="summary-grid">
+                        <div><b>Time Connected:</b> ${secondsToHms(totalDuration)}</div>
+                        <div><b>Avg Fix Rate:</b> ${fixRate}%</div>
+                        <div><b>Avg Age:</b> ${avgAge}s</div>
+                        <div><b>Max Age:</b> ${maxAge}s</div>
+                        <div><b>Total SP:</b> ${sumSP}</div>
+                        <div><b>Total DGPS:</b> ${sumDGPS}</div>
+                        <div><b>Total Fix:</b> ${sumFix}</div>
+                        <div><b>Total Float:</b> ${sumFloat}</div>
+                        <div style="grid-column: span 2; text-align: center; border-top: 1px solid #eee; padding-top: 5px; margin-top: 5px;">
+                            <b>Avg Distance from Station:</b> ${avgDistance} miles
+                        </div>
+                    </div>
+                `;
+                summaryPanel.style.display = "block";
+            }
+
+            function updateMarkers(timeframe, hardwareType, selectedUsername) {
+                const now = new Date();
+                let timeThreshold;
+                switch (timeframe) {
+                    case "12h": timeThreshold = now.getTime() - 12 * 60 * 60 * 1000; break;
+                    case "1d": timeThreshold = now.getTime() - 24 * 60 * 60 * 1000; break;
+                    case "2d": timeThreshold = now.getTime() - 2 * 24 * 60 * 60 * 1000; break;
+                    case "7d": timeThreshold = now.getTime() - 7 * 24 * 60 * 60 * 1000; break;
+                    case "30d": timeThreshold = now.getTime() - 30 * 24 * 60 * 60 * 1000; break;
+                    case "thisyear": timeThreshold = new Date(now.getFullYear(), 0, 1).getTime(); break;
+                    default: timeThreshold = now.getTime() - 24 * 60 * 60 * 1000;
+                }
+                
+                const newBounds = new google.maps.LatLngBounds();
+                
+                userMarkers.forEach(m => {
+                    const signInDate = new Date(m.signInTime.replace(/\//g, '-') + " UTC");
+                    const withinTimeframe = signInDate.getTime() >= timeThreshold;
+                    const matchesHardware = hardwareType === "all" || m.hardwareType === hardwareType;
+                    const matchesUsername = selectedUsername === "all" || m.username === selectedUsername;
+                    
+                    if (withinTimeframe && matchesHardware && matchesUsername) {
+                        m.marker.setMap(map);
+                        newBounds.extend(m.latLon);
+                    } else {
+                        m.marker.setMap(null);
+                    }
+                });
+
+                if (!newBounds.isEmpty()) {
+                    map.fitBounds(newBounds);
+                    if (selectedUsername !== "all") {
+                        setTimeout(() => { if(map.getZoom() > 14) map.setZoom(12); }, 100); 
+                    }
                 } else {
                     map.setCenter({ lat: 0, lng: 0 });
                     map.setZoom(2);
                 }
-                
-                document.getElementById("timeframeFilter").addEventListener("change", (e) => {
-                    updateMarkers(e.target.value, document.getElementById("hardwareFilter").value, document.getElementById("usernameFilter").value);
-                });
-                document.getElementById("hardwareFilter").addEventListener("change", (e
+
+                // Call summary panel update after markers are filtered
+                updateSummaryPanel(selectedUsername);
+            }
+        }
+        
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3958.8; // Miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+        function gpsToCst(gpsTime) {
+            if (!gpsTime) return "N/A";
+            try {
+                const normalizedTime = gpsTime.replace(/\//g, '-');
+                const date = new Date(normalizedTime + " UTC");
+                if (isNaN(date.getTime())) return "Invalid Date";
+                const cstOffset = isDST(date) ? -5 : -6;
+                date.setHours(date.getHours() + cstOffset);
+                const hours = date.getHours() % 12 || 12;
+                const minutes = String(date.getMinutes()).padStart(2, "0");
+                const seconds = String(date.getSeconds()).padStart(2, "0");
+                const ampm = date.getHours() >= 12 ? "PM" : "AM";
+                const timezone = isDST(date) ? "CDT" : "CST";
+                return `${date.toLocaleDateString('en-US')} ${hours}:${minutes}:${seconds} ${ampm} ${timezone}`;
+            } catch (e) { return "Error"; }
+        }
+        function isDST(date) {
+            const year = date.getFullYear();
+            const dstStart = new Date(year, 2, 14 - (new Date(year, 2, 1).getDay() + 1) % 7, 2);
+            const dstEnd = new Date(year, 10, 7 - (new Date(year, 10, 1).getDay() + 1) % 7, 2);
+            return date >= dstStart && date < dstEnd;
+        }
+        function secondsToHms(seconds) {
+            if (!seconds || isNaN(seconds)) return "0h 0m 0s";
+            const s = parseInt(seconds);
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            return `${h}h ${m}m ${sec}s`;
+        }
+
+        (function() {
+            const script = document.createElement('script');
+            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCmDQKUXiUOiCQ_qhtUwQpxaaVtWQBIAj8&callback=initMap&v=weekly&libraries=marker&loading=async";
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        })();
+    </script>
+</body>
+</html>
