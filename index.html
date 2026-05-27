@@ -282,7 +282,9 @@
                 const response = await fetch("/api/rovers");
                 if (!response.ok) throw new Error("API Fetch failed");
                 const logs = await response.json();
-
+const logs = await response.json();
+console.log("✅ API loaded", logs.length, "logs");   // ← ADD THIS
+console.log("First log sample:", logs[0]);           // ← ADD THIS
                 const usernameFilter = document.getElementById("usernameFilter");
                 logs.forEach(log => {
                     if (log.username && !usernames.has(log.username)) {
