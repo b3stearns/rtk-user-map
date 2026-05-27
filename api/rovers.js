@@ -1,16 +1,13 @@
 export default async function handler(req, res) {
   try {
-    // 1. Dynamically calculate timestamps for the last 365 days
     const endMs = Date.now();
     const startMs = endMs - (365 * 24 * 60 * 60 * 1000);
 
-    // Format dates to "YYYY-MM-DD HH:MM:SS" for the 'times' array
     const formatDate = (ms) => new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
 
-    // 2. Build the exact payload
     const payload = {
       current: 1,
-      pageSize: 20000, // Increased to grab up to 20,000 logs at once
+      pageSize: 20000, 
       username: "",
       mountpoint: "",
       partner: "",
@@ -21,7 +18,6 @@ export default async function handler(req, res) {
       end: endMs
     };
 
-    // 3. Fetch the data directly from Geodnet
     const response = await fetch('https://rtk.geodnet.com/api/v1/be/rtkLogs', {
       method: 'POST', 
       headers: {
@@ -36,13 +32,11 @@ export default async function handler(req, res) {
 
     const json = await response.json();
 
-    // Prevent errors if the API fails or token expires
     if (json.code !== 0 || !json.data || !json.data.list) {
       console.error("API Error:", json);
       return res.status(500).json({ error: 'Failed to fetch or authenticate' });
     }
 
-    // 4. Strip out the heavy data and keep EXACTLY what index.html needs
     const cleanMapData = json.data.list.map(log => ({
       id: log._id,
       username: log.username,
@@ -52,15 +46,18 @@ export default async function handler(req, res) {
       status: log.status,
       loginTime: new Date(log.loginTime).toISOString(),
       distance: log.distance,
-      request: log.request,       // Needed for hardware icons
-      partner: log.partner,       // Needed for Info Bar
-      ip: log.ip,                 // Needed for Info Bar
-      duration: log.duration,     // Needed for Info Bar
-      totalGGA: log.totalGGA,     // Needed for Info Bar
-      msg: log.msg                // Needed for Info Bar
+      request: log.request,       
+      partner: log.partner,       
+      ip: log.ip,                 
+      duration: log.duration,     
+      totalGGA: log.totalGGA,     
+      msg: log.msg,
+      // NEW FIELDS FOR THE SUMMARY:
+      avgAge: log.avgAge,
+      maxAge: log.maxAge,
+      ggaStats: log.ggaStats
     }));
 
-    // 5. Send the clean data to your frontend map
     res.status(200).json(cleanMapData);
 
   } catch (error) {
