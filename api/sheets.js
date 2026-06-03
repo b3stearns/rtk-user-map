@@ -15,10 +15,10 @@ module.exports = async (req, res) => {
 
     const params = {
       appId,
-      lat: 41.8781,
-      lng: -87.6298,
-      radius: 500,
-      amount: 50,
+      lat: 44.5,        // Centered on South Dakota
+      lng: -96.8,       // Better for your region
+      radius: 600,      // Larger coverage
+      amount: 200,      // Max per call
       time: Date.now()
     };
 
@@ -32,15 +32,19 @@ module.exports = async (req, res) => {
 
     const json = await apiResponse.json();
 
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json({
-      success: true,
-      count: json.data ? json.data.length : 0,
-      data: json.data || []
-    });
+    const stations = (json.data || []).map(s => ({
+      username: s.name || s.miner_sn || 'Unknown',
+      miner_sn: s.miner_sn,
+      latitude: parseFloat(s.lat),
+      longitude: parseFloat(s.lng),
+      status: s.status || 'online',
+      ...s
+    })).filter(s => s.latitude && s.longitude);
+
+    res.json({ data: stations, count: stations.length });
 
   } catch (err) {
-    console.error("API Error:", err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
