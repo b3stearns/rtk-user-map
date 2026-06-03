@@ -17,6 +17,7 @@ module.exports = async (req, res) => {
 
     const params = {
       appId,
+      username: "",           // Leave empty for all users, or put specific username
       page: 1,
       pageSize: 100,
       time: now
@@ -33,16 +34,16 @@ module.exports = async (req, res) => {
     const json = await response.json();
 
     if (json.code !== 0) {
-      console.error("RTK Logs API Error:", json);
+      console.error("API Error Response:", json);
       return res.status(500).json({ error: json.msg || "API Error", details: json });
     }
 
     const positions = (json.data?.list || json.data || []).map(log => {
       let lat = null, lng = null;
-      const ggaStr = log.gga || log.message || log.NtripGGA || "";
+      const gga = log.gga || log.message || log.NtripGGA || "";
 
-      if (ggaStr.includes("GGA")) {
-        const parts = ggaStr.split(",");
+      if (gga && gga.includes("GGA")) {
+        const parts = gga.split(",");
         if (parts.length > 5) {
           const latRaw = parseFloat(parts[2]);
           const lngRaw = parseFloat(parts[4]);
@@ -58,18 +59,14 @@ module.exports = async (req, res) => {
       return {
         username: log.username || "Unknown",
         miner_sn: log.miner_sn,
-        latitude: lat || parseFloat(log.lat || log.latitude),
-        longitude: lng || parseFloat(log.lng || log.longitude),
+        latitude: lat || parseFloat(log.lat || 0),
+        longitude: lng || parseFloat(log.lng || 0),
         status: log.status,
-        timestamp: log.signInTime || log.loginTime || log.time
+        timestamp: log.signInTime || log.time
       };
     }).filter(p => p.latitude && !isNaN(p.latitude) && p.longitude && !isNaN(p.longitude));
 
-    res.json({ 
-      data: positions, 
-      count: positions.length,
-      total: json.data?.total || 0 
-    });
+    res.json({ data: positions, count: positions.length });
 
   } catch (err) {
     console.error("Server Error:", err);
