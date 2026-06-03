@@ -8,8 +8,12 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     #map { height: 100vh; width: 100%; }
-    body { margin:0; }
-    .filters { position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:1000; background:white; padding:6px 12px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); display:flex; gap:8px; }
+    body { margin:0; font-family: Arial, sans-serif; }
+    .filters {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; background: white; padding: 8px 14px; border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25); display: flex; gap: 10px;
+    }
   </style>
 </head>
 <body>
@@ -25,53 +29,6 @@
   <div id="map"></div>
 
 <script>
-// === BASE STATIONS from your PDF ===
-const baseStations = [
-  {id:"A0B7651EBF05", name:"Marquardt", city:"Montrose", lat:43.640893, lng:-97.229591},
-  {id:"C05D898DDAE5", name:"Mitchell Tech", city:"Mitchell", lat:43.68897, lng:-98.000467},
-  {id:"38182BF97125", name:"Tuschen", city:"Salem", lat:43.654434, lng:-97.429256},
-  {id:"5C013B974519", name:"Claussen", city:"Howard", lat:44.065561, lng:-97.6006},
-  {id:"C05D898CA7FD", name:"MN", city:"", lat:47.200919, lng:-96.217129},
-  {id:"24DCC3E2A729", name:"Plainview Colony", city:"Aberdeen", lat:45.582661, lng:-99.009618},
-  {id:"5C013B96FB65", name:"Haak", city:"Trent", lat:43.857376, lng:-96.578474},
-  {id:"A0B7651FC8C1", name:"Hurley", city:"Canton", lat:43.288162, lng:-96.700797},
-  {id:"A0B7651F0045", name:"Abrahamson", city:"Fulton", lat:43.776585, lng:-97.89423},
-  {id:"AC1518EFD575", name:"Strom", city:"Kimball", lat:43.877161, lng:-98.966006},
-  {id:"C05D89AE4C99", name:"Dykstra", city:"Chancellor", lat:43.445431, lng:-96.969014},
-  {id:"AC1518F00CA5", name:"Hall", city:"ReeHeights", lat:44.51925, lng:-99.200847},
-  {id:"A0B7651E3231", name:"Smit", city:"Chancellor", lat:43.35944, lng:-97.033168},
-  {id:"C05D898D7039", name:"Knips", city:"Sturgis", lat:44.386065, lng:-103.658751},
-  {id:"A0B7651D9AD5", name:"Lakner", city:"Wessington", lat:44.510189, lng:-98.699386},
-  {id:"A0B7651E44ED", name:"vzw", city:"", lat:44.236195, lng:-96.587749},
-  {id:"A0B7651F4AB1", name:"Diedrich", city:"Flandreau", lat:44.216034, lng:-96.624732},
-  {id:"A0B7651EFC6D", name:"abrahamson", city:"Lake Thompson", lat:44.206926, lng:-97.492925},
-  {id:"A0B7651E5569", name:"Wollmann", city:"Madison", lat:44.016185, lng:-97.109361},
-  {id:"24DCC3E2068D", name:"Stearns", city:"Madison", lat:44.022505, lng:-97.087042},
-  {id:"24DCC3E29A91", name:"605 N", city:"Sioux Falls", lat:43.608711, lng:-96.719998},
-  {id:"C82E1891CE49", name:"Geigle", city:"Pierre", lat:44.411344, lng:-100.26422},
-  {id:"24DCC3E20BC9", name:"Rymerson", city:"Toronto", lat:44.580949, lng:-96.688754},
-  {id:"24DCC3E29DF1", name:"Daly", city:"Fort Thompson", lat:44.078739, lng:-99.454851},
-  {id:"24DCC3E29BDD", name:"Stearns", city:"Huron", lat:44.318177, lng:-98.219428},
-  {id:"24DCC3E2A8C1", name:"Lebahn", city:"Dell Rapids", lat:43.826611, lng:-96.72563},
-  {id:"24DCC3E29C81", name:"Pam", city:"Alcester", lat:42.932756, lng:-96.677742},
-  {id:"24DCC3E2A7B1", name:"MKW", city:"Brandon", lat:43.582344, lng:-96.594023},
-  {id:"24DCC3E14631", name:"Blaine", city:"Hartford", lat:43.614942, lng:-96.943917},
-  {id:"24DCC3E29BFD", name:"Brown", city:"Colton", lat:43.834571, lng:-96.844792},
-  {id:"24DCC3E2A8FD", name:"605 Dirt", city:"Worthing", lat:43.329748, lng:-96.804023},
-  {id:"30C922A65A9D", name:"Baumberger", city:"Madison", lat:43.971786, lng:-96.9917},
-  {id:"30C922A652C1", name:"Eickelschulte", city:"Baltic", lat:43.695566, lng:-96.745936},
-  {id:"30C922A665C5", name:"Bohner", city:"Tea", lat:43.440283, lng:-96.844825},
-  {id:"30C922A64DC5", name:"605 Real Estate", city:"Sioux Falls", lat:43.499546, lng:-96.768736},
-  {id:"A842E3B1C36D", name:"Stearns", city:"Sioux Falls", lat:43.479829, lng:-96.736969},
-  {id:"C82E1891CBA5", name:"Worth", city:"Gettysburg", lat:45.05709, lng:-100.13069},
-  {id:"73611", name:"73611", city:"Crofton", lat:42.7202342, lng:-97.4074012},
-  {id:"E39F1", name:"E39F1", city:"Sioux City", lat:42.5200478, lng:-96.3899494},
-  {id:"CA2D9", name:"CA2D9", city:"Platte", lat:43.4564447, lng:-98.6599934},
-  {id:"378D1", name:"378D1", city:"Kimball", lat:43.7449413, lng:-99.0199086},
-  {id:"C91F5", name:"C91F5", city:"Sinai", lat:44.249989, lng:-97.0086247}
-  // ... add the rest from your PDF if needed (full list ~70)
-];
-
 let map, logMarkers = [], baseMarkers = [], lines = [], allData = [];
 
 function getLogIcon(p) {
@@ -108,9 +65,28 @@ function createLogPopup(p) {
 }
 
 function drawRedLine(logLat, logLng, stationId) {
-  const base = baseStations.find(b => b.id === stationId);
-  if (!base) return null;
-  return L.polyline([[logLat, logLng], [base.lat, base.lng]], {color: 'red', weight: 2}).addTo(map);
+  // This will be populated after bases load
+  return null; // lines handled after bases are loaded
+}
+
+async function loadBaseStations() {
+  try {
+    const res = await fetch('/api/bases');
+    const json = await res.json();
+    (json.data || []).forEach(b => {
+      const marker = L.circleMarker([b.latitude, b.longitude], {
+        color: '#0066ff',
+        fillColor: '#0066ff',
+        fillOpacity: 0.9,
+        radius: 8,          // larger
+        weight: 2
+      }).bindPopup(`<b>${b.name || b.station || 'Base Station'}</b>`);
+      marker.addTo(map);
+      baseMarkers.push(marker);
+    });
+  } catch (e) {
+    console.error('Failed to load base stations', e);
+  }
 }
 
 async function fetchData(hours = 24) {
@@ -118,42 +94,25 @@ async function fetchData(hours = 24) {
   const json = await res.json();
   allData = json.data || [];
 
-  // clear old
   logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
   lines.forEach(l => map.removeLayer(l)); lines = [];
 
-  // base stations (once)
-  if (baseMarkers.length === 0) {
-    baseStations.forEach(b => {
-      const marker = L.marker([b.lat, b.lng], {
-        icon: L.divIcon({html:'🟢', iconSize:[20,20], className:'base-icon'})
-      }).bindPopup(`<b>${b.name}</b>`);
-      marker.addTo(map);
-      baseMarkers.push(marker);
-    });
-  }
-
-  // logs + lines
   allData.forEach(p => {
     const m = L.marker([p.latitude, p.longitude], {icon: getLogIcon(p)}).bindPopup(createLogPopup(p));
     m.addTo(map);
     logMarkers.push(m);
-
-    if (p.station) {
-      const line = drawRedLine(p.latitude, p.longitude, p.station);
-      if (line) lines.push(line);
-    }
   });
 }
 
-window.onload = () => {
+window.onload = async () => {
   map = L.map('map').setView([43.6, -97.5], 7);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
   document.getElementById('timeFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
-  // hardware/user filters can be added client-side later if needed
 
-  fetchData(24);
+  await loadBaseStations();   // blue larger base stations
+  await fetchData(24);
+
   setInterval(() => fetchData(parseInt(document.getElementById('timeFilter').value)), 300000);
 };
 </script>
