@@ -3,357 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RTK User Map</title>
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <title>TruNav RTK User Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="output.css">
     <style>
         #map { height: 100vh; width: 100%; }
-        .highlight-green { color: green; font-weight: bold; }
-        .highlight-orange { color: orange; font-weight: bold; }
-        .highlight-red { color: red; font-weight: bold; }
-        .controls {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            display: flex;
-            gap: 10px;
-        }
-        .controls select {
-            padding: 5px;
-            font-size: 14px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-        #userSummaryPanel {
-            position: absolute;
-            top: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5;
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            display: none;
-            font-family: Arial, sans-serif;
-            min-width: 320px;
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 13px;
-        }
-        .summary-header {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-            text-align: center;
-        }
-        .info-bar {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
-            z-index: 5;
-            display: none;
-            max-width: 90%;
-            width: auto;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-        .info-bar.active {
-            display: inline-block;
-        }
-        .info-bar-content {
-            position: relative;
-            padding-right: 30px;
-        }
-        .info-bar-close {
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #555;
-        }
-        .info-bar-close:hover {
-            color: #000;
-        }
-        .bold-data {
-            font-weight: bold;
-        }
-        .logo-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            padding: 5px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
-            z-index: 5;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        .logo-bar img {
-            height: 40px;
-        }
-        .glow-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        .glow-wrapper::after {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border-radius: 50%;
-            box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
-            animation: glow 1.5s ease-in-out infinite;
-            z-index: -1;
-        }
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; }
-            50% { box-shadow: 0 0 7px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00; }
-            100% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; }
-        }
+        .leaflet-popup-content { max-height: 300px; overflow-y: auto; }
     </style>
 </head>
-<body>
-    <div id="map"></div>
-    <div class="controls">
-        <select id="timeframeFilter">
-            <option value="12h">Last 12 Hours</option>
-            <option value="1d" selected>Last 1 Day</option>
-            <option value="2d">Last 2 Days</option>
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last 30 Days</option>
-            <option value="thisyear">This Year</option>
-        </select>
-        <select id="hardwareFilter">
-            <option value="all">All Hardware</option>
-            <option value="FJD">FJD</option>
-            <option value="John Deere">John Deere</option>
-            <option value="CNH">CNH</option>
-            <option value="iOS">iOS</option>
-            <option value="Outback">Outback</option>
-            <option value="Trimble">Trimble</option>
-            <option value="TopCon">TopCon</option>
-            <option value="DJI">DJI</option>
-            <option value="Android">Android</option>
-            <option value="Raven">Raven</option>
-            <option value="default">Other</option>
-        </select>
-        <select id="usernameFilter">
-            <option value="all">All Users</option>
-        </select>
-    </div>
-    
-    <div id="userSummaryPanel"></div>
-
-    <div class="info-bar" id="infoBar">
-        <div class="info-bar-content" id="infoBarContent"></div>
-        <span class="info-bar-close" onclick="closeInfoBar()">✖</span>
-    </div>
-    <div class="logo-bar">
-        <img src="/truenav-logo.png" alt="TrueNav Logo">
-    </div>
-    <script>
-        let activeLine = null;
-        let activeMarker = null;
-        const infoBar = document.getElementById("infoBar");
-        const infoBarContent = document.getElementById("infoBarContent");
+<body class="bg-gray-900 text-white">
+    <div class="flex flex-col h-screen">
+        <header class="bg-black p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="truenav-logo.png" alt="TruNav" class="h-10">
+                <h1 class="text-2xl font-bold">GEODNET RTK User Map</h1>
+            </div>
+            <div class="flex gap-4">
+                <input id="usernameFilter" type="text" placeholder="Filter by username..." 
+                       class="bg-gray-800 text-white px-4 py-2 rounded">
+                <button onclick="fetchData()" 
+                        class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded">
+                    Refresh Map
+                </button>
+            </div>
+        </header>
         
-        function closeInfoBar() {
-            infoBar.classList.remove("active");
-            activeMarker = null;
-            if (activeLine) {
-                activeLine.setMap(null);
-                activeLine = null;
+        <div id="map" class="flex-1"></div>
+    </div>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script>
+        // Simple vanilla JS fallback + fetch from new API
+        let map;
+        let clientMarkers = [];
+
+        async function fetchData() {
+            try {
+                const res = await fetch('/api/sheets');
+                const data = await res.json();
+                
+                // Clear old markers
+                clientMarkers.forEach(m => map.removeLayer(m));
+                clientMarkers = [];
+
+                data.data.forEach(station => {
+                    const marker = L.marker([station.latitude, station.longitude], {
+                        icon: L.icon({
+                            iconUrl: 'default.png',
+                            iconSize: [32, 32]
+                        })
+                    }).bindPopup(`
+                        <b>${station.username || station.name}</b><br>
+                        Miner: ${station.miner_sn}<br>
+                        Status: ${station.status || 'Online'}
+                    `);
+                    marker.addTo(map);
+                    clientMarkers.push(marker);
+                });
+
+                console.log(`Loaded ${data.data.length} stations`);
+            } catch (e) {
+                console.error("Failed to load map data", e);
             }
         }
 
-        async function initMap() {
-            const { Map } = await google.maps.importLibrary("maps");
-            const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
-            const map = new Map(document.getElementById("map"), {
-                center: { lat: 0, lng: 0 },
-                zoom: 2,
-                mapId: "3fb7b56b54e97cfecb8a4769",
-            });
-            let baseStations = [];
-            let userMarkers = [];
-            let usernames = new Set();
-            const iconMap = {
-                "NTRIP GNSSInternetRadio": { icon: "/FJDDevice.png", name: "FJD" },
-                "Cloudbase": { icon: "/JohnDeereDevice.png", name: "John Deere" },
-                "CNHiNTRIP": { icon: "/CNHIndustrialDevice.png", name: "CNH" },
-                "NtripClientiOS": { icon: "/iOSDevice.png", name: "iOS" },
-                "HGPS": { icon: "/OutbackDevice.png", name: "Outback" },
-                "Trimble": { icon: "/TrimbleDevice.png", name: "Trimble" },
-                "TopCon": { icon: "/TopConDevice.png", name: "TopCon" },
-                "LefebureAndroid": { icon: "/TrimbleDevice.png", name: "Trimble" },
-                "DJI": { icon: "/DJIDevice.png", name: "DJI" },
-                "Android": { icon: "/AndroidDevice.png", name: "Android" },
-                "TPA Client": { icon: "/CNHIndustrialDevice.png", name: "CNH" },
-                "TnlAgClient": { icon: "/TrimbleDevice.png", name: "Trimble" },
-                "SWMAPS_IOS": { icon: "/iOSDevice.png", name: "iOS" },
-                "GCS900": { icon: "/TrimbleGCS900Device.png", name: "Trimble Const" },
-                "RV CLIENT": { icon: "/RavenDevice.png", name: "Raven" },
-                "Checker": { icon: "/default.png", name: "default" }
-            };
-            const defaultIcon = { icon: "/default.png", name: "default" };
+        // Initialize map
+        window.onload = () => {
+            map = L.map('map').setView([43.5, -96.7], 7);
             
-            function isWithinLast12Hours(timestampStr) {
-                try {
-                    const normalizedTime = timestampStr.replace(/\//g, '-');
-                    const signInTime = new Date(normalizedTime + " UTC");
-                    const now = new Date();
-                    return (now - signInTime) / (1000 * 60 * 60) <= 12;
-                } catch (e) {
-                    return false;
-                }
-            }
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
 
-            map.addListener("click", () => {
-                closeInfoBar();
-            });
+            // Load base stations (static)
+            // Add your base station markers here if needed
 
-            // Fetch Base Stations
-            try {
-                const sheet2Response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/1E6u3Eyx_GHFpIbWGmEc6b00KoiWD0DsSSJwHZx686EA/values/Sheet2!A1:Z?key=AIzaSyCmDQKUXiUOiCQ_qhtUwQpxaaVtWQBIAj8");
-                if (!sheet2Response.ok) throw new Error("Sheet2 Fetch failed");
-                const sheet2Data = await sheet2Response.json();
-                const rows = sheet2Data.values;
-                const headers = rows[0].map(h => h.toLowerCase());
-                const latIndex = headers.indexOf("latitude");
-                const lonIndex = headers.indexOf("longitude");
-                const nameIndex = headers.indexOf("name");
-                const stationIndex = headers.indexOf("station");
-                const siteNameIndex = headers.indexOf("site name");
-                const cityIndex = headers.indexOf("city");
-                
-                rows.slice(1).forEach(row => {
-                    const lat = parseFloat(row[latIndex]);
-                    const lon = parseFloat(row[lonIndex]);
-                    const name = nameIndex !== -1 ? row[nameIndex] : "Base Station";
-                    const station = row[stationIndex];
-                    const siteName = siteNameIndex !== -1 ? row[siteNameIndex] : "N/A";
-                    const city = cityIndex !== -1 ? row[cityIndex] : "N/A";
-                    
-                    if (!isNaN(lat) && !isNaN(lon)) {
-                        const pin = new PinElement({ background: "blue", borderColor: "white", glyphColor: "white", scale: 1.0 });
-                        const marker = new AdvancedMarkerElement({
-                            position: { lat, lng: lon }, map: map, title: name, content: pin.element, zIndex: 1
-                        });
-                        baseStations.push({ station, lat, lon, row, headers, siteName, city });
-                        marker.addListener("click", () => {
-                            if (activeMarker === marker) { closeInfoBar(); return; }
-                            const shortStation = station ? station.slice(-4) : "N/A";
-                            infoBarContent.innerHTML = `<b>Station (Last 4):</b> ${shortStation}<br><b>Site Name:</b> ${siteName}<br><b>City:</b> ${city}`;
-                            infoBar.classList.add("active");
-                            activeMarker = marker;
-                            if (activeLine) activeLine.setMap(null);
-                        });
-                    }
-                });
-            } catch (error) {
-                console.error("Error in Sheet2 fetch:", error);
-            }
-            
-            // Fetch User Data from Vercel Backend
-            try {
-                const response = await fetch("/api/rovers");
-                if (!response.ok) throw new Error("API Fetch failed");
-                const logs = await response.json();
-                
-                console.log("✅ API loaded", logs.length, "logs");
-
-                const usernameFilter = document.getElementById("usernameFilter");
-                logs.forEach(log => {
-                    if (log.username && !usernames.has(log.username)) {
-                        usernames.add(log.username);
-                        const option = document.createElement("option");
-                        option.value = log.username;
-                        option.text = log.username;
-                        usernameFilter.appendChild(option);
-                    }
-                });
-
-                logs.forEach((log) => {
-                    if (log.lat !== undefined && log.lng !== undefined) {
-                        const latLon = { lat: log.lat, lng: log.lng };
-                        
-                        let iconUrl = defaultIcon.icon;
-                        let hardwareType = defaultIcon.name;
-                        for (const [key, { icon, name }] of Object.entries(iconMap)) {
-                            if (log.request && log.request.includes(key)) {
-                                iconUrl = icon;
-                                hardwareType = name;
-                                break;
-                            }
-                        }
-                        
-                        const markerDiv = document.createElement("div");
-                        if (isWithinLast12Hours(log.loginTime)) markerDiv.className = "glow-wrapper";
-                        const markerImg = document.createElement("img");
-                        markerImg.src = iconUrl;
-                        markerImg.style.width = "40px";
-                        markerImg.style.height = "40px";
-                        markerDiv.appendChild(markerImg);
-                        
-                        const marker = new AdvancedMarkerElement({
-                            position: latLon, map: null, title: log.username || "User Marker", zIndex: 2, content: markerDiv
-                        });
-
-                        userMarkers.push({ 
-                            marker, 
-                            latLon, 
-                            userStation: log.station, 
-                            signInTime: log.loginTime, 
-                            hardwareType, 
-                            username: log.username,
-                            rawLog: log
-                        });
-
-                        marker.addListener("click", () => {
-                            if (activeMarker === marker) { closeInfoBar(); return; }
-                            const shortStation = log.station ? log.station.slice(-4) : "N/A";
-                            const contentItems = [];
-                            const baseStation = baseStations.find(bs => bs.station === log.station);
-                            
-                            if (baseStation) {
-                                const distanceMiles = calculateDistance(latLon.lat, latLon.lng, baseStation.lat, baseStation.lon);
-                                const colorClass = distanceMiles < 25 ? "highlight-green" : distanceMiles <= 35 ? "highlight-orange" : "highlight-red";
-                                contentItems.push(`<b>Distance to Station:</b> <span class="${colorClass}">${distanceMiles.toFixed(2)} miles</span>`);
-                            } else {
-                                contentItems.push(`<b>Distance to Station:</b> Not found`);
-                            }
-                            
-                            contentItems.push(`<b>username:</b> <span class="bold-data">${log.username || ''}</span>`);
-                            if (log.duration) contentItems.push(`<b>session time:</b> <span class="bold-data">${secondsToHms(log.duration)}</span>`);
-                            contentItems.push(`<b>Sign in time (CST):</b> ${gpsToCst(log.loginTime)}`);
-                            if (log.status === 0 || log.msg === "Success") contentItems.push(`<b>message:</b> <span class="highlight-green">Success</span>`);
-                            contentItems.push(`<b>station:</b> ${shortStation}`);
-                            if (log.partner) contentItems.push(`<b>partner:</b> ${log.partner}`);
-                            if (log.totalGGA) contentItems.push(`<b>no. of gga:</b> ${log.totalGGA}`);
-                            if (log.ip) contentItems.push(`<b>ip:</b> ${log.ip}`);
-                            if (log.request) contentItems.push(`<b>request:</b> ${log.request}`);
-                            
-                            infoBarContent.innerHTML = contentItems.join('<br>');
-                           
+            fetchData();
+            setInterval(fetchData, 300000); // Refresh every 5 min
+        };
+    </script>
+</body>
 </html>
