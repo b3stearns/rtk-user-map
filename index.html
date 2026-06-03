@@ -6,82 +6,82 @@
     <title>TruNav RTK User Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="output.css">
     <style>
         #map { height: 100vh; width: 100%; }
-        .leaflet-popup-content { max-height: 300px; overflow-y: auto; }
+        body { margin: 0; font-family: Arial, sans-serif; }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <div class="flex flex-col h-screen">
-        <header class="bg-black p-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="truenav-logo.png" alt="TruNav" class="h-10">
-                <h1 class="text-2xl font-bold">GEODNET RTK User Map</h1>
-            </div>
-            <div class="flex gap-4">
-                <input id="usernameFilter" type="text" placeholder="Filter by username..." 
-                       class="bg-gray-800 text-white px-4 py-2 rounded">
-                <button onclick="fetchData()" 
-                        class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded">
-                    Refresh Map
-                </button>
-            </div>
+        <header style="background:#111; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+            <h1>GEODNET RTK User Map</h1>
+            <button onclick="fetchData()" style="padding:8px 16px; background:#0066cc; color:white; border:none; border-radius:4px;">
+                Refresh Map
+            </button>
         </header>
         
-        <div id="map" class="flex-1"></div>
+        <div id="map" style="flex:1;"></div>
     </div>
 
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script>
-        // Simple vanilla JS fallback + fetch from new API
         let map;
         let clientMarkers = [];
 
         async function fetchData() {
             try {
+                console.log("Fetching from /api/sheets...");
                 const res = await fetch('/api/sheets');
-                const data = await res.json();
                 
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const result = await res.json();
+                console.log("API Response:", result);
+
                 // Clear old markers
                 clientMarkers.forEach(m => map.removeLayer(m));
                 clientMarkers = [];
 
-                data.data.forEach(station => {
-                    const marker = L.marker([station.latitude, station.longitude], {
-                        icon: L.icon({
-                            iconUrl: 'default.png',
-                            iconSize: [32, 32]
-                        })
-                    }).bindPopup(`
-                        <b>${station.username || station.name}</b><br>
-                        Miner: ${station.miner_sn}<br>
+                const stations = result.data || [];
+
+                stations.forEach(station => {
+                    const lat = parseFloat(station.lat || station.latitude);
+                    const lng = parseFloat(station.lng || station.longitude);
+
+                    if (isNaN(lat) || isNaN(lng)) {
+                        console.warn("Skipping station with invalid coords:", station);
+                        return;
+                    }
+
+                    const marker = L.marker([lat, lng]).bindPopup(`
+                        <b>${station.name || station.username || 'Unknown'}</b><br>
+                        SN: ${station.miner_sn || 'N/A'}<br>
                         Status: ${station.status || 'Online'}
                     `);
+                    
                     marker.addTo(map);
                     clientMarkers.push(marker);
                 });
 
-                console.log(`Loaded ${data.data.length} stations`);
-            } catch (e) {
-                console.error("Failed to load map data", e);
+                console.log(`Added ${clientMarkers.length} markers`);
+
+            } catch (err) {
+                console.error("Failed to load map data:", err);
+                alert("Error loading map data: " + err.message);
             }
         }
 
         // Initialize map
-        window.onload = () => {
-            map = L.map('map').setView([43.5, -96.7], 7);
+        window.onload = function() {
+            map = L.map('map').setView([43.0, -96.5], 6);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
+                attribution: '&copy; OpenStreetMap'
             }).addTo(map);
 
-            // Load base stations (static)
-            // Add your base station markers here if needed
-
             fetchData();
-            setInterval(fetchData, 300000); // Refresh every 5 min
+            setInterval(fetchData, 300000); // every 5 min
         };
     </script>
 </body>
