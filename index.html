@@ -38,22 +38,23 @@
     }
 
     function createPopup(p) {
+  const shortStation = p.station ? p.station.slice(-4) : 'N/A';
   return `
-    <b>Distance to Station:</b> N/A<br>
+    <b>Distance to Station:</b> ${p.distance || 'N/A'}<br>
     <b>username:</b> ${p.username}<br>
-    <b>session time(s):</b> N/A<br>
+    <b>session time(s):</b> ${p.session || p['session time(s)'] || 'N/A'}<br>
     <b>Sign in time (CST):</b> ${p.loginTime ? new Date(p.loginTime).toLocaleString() : 'N/A'}<br>
-    <b>status:</b> <span style="color:green">${p.status}</span><br>
-    <b>rtk fix rate(%):</b> N/A<br>
-    <b>station:</b> ${p.station}<br>
-    <b>partner:</b> ${p.partner}<br>
-    <b>no. of gga:</b> N/A<br>
+    <b>status:</b> <span style="color:green">${p.status || p.msg}</span><br>
+    <b>rtk fix rate(%):</b> ${p.rtkfix || p['rtk fix rate(%)'] || 'N/A'}<br>
+    <b>station:</b> ${shortStation}<br>
+    <b>partner:</b> ${p.partner || 'N/A'}<br>
+    <b>no. of gga:</b> ${p.noOfGga || p['no. of gga'] || 'N/A'}<br>
     <b>latest nmea:</b> ${p.GGA || 'N/A'}<br>
     <b>ip:</b> ${p.ip || 'N/A'}<br>
-    <b>message:</b> ${p.message}
+    <b>message:</b> ${p.message || p.msg || 'Success'}<br>
+    <b>spp / dgps / rtkfix / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${p.rtkfix || 0} / ${p.float || 0}
   `;
 }
-
     async function fetchData(hours = 24) {
       const res = await fetch(`/api/sheets?hours=${hours}`);
       const json = await res.json();
