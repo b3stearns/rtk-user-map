@@ -34,20 +34,10 @@ let baseMap = new Map();
 let lastDataCount = 0;
 
 function getLogIcon(p) {
-  const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
-  let color = '#3388ff'; // default blue
-
-  if (m.includes('jd') || m.includes('john') || m.includes('deere')) color = '#4CAF50';      // green
-  else if (m.includes('trimble')) color = '#2196F3';                                        // blue
-  else if (m.includes('case') || m.includes('cnh')) color = '#FF9800';                      // orange
-  else if (m.includes('topcon')) color = '#9C27B0';                                         // purple
-  else if (m.includes('outback')) color = '#795548';                                        // brown
-  else if (m.includes('dji')) color = '#E91E63';                                            // pink
-  else if (m.includes('fjd')) color = '#00BCD4';                                            // cyan
-
+  // All log markers = gray
   return L.divIcon({
     className: 'custom-marker',
-    html: `<div style="background:${color};width:28px;height:28px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
+    html: `<div style="background:#9E9E9E;width:28px;height:28px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
     iconSize: [28, 28],
     iconAnchor: [14, 14],
     popupAnchor: [0, -14]
@@ -98,7 +88,16 @@ function drawLines() {
   lines.forEach(l => map.removeLayer(l)); lines = [];
   allData.forEach(p => {
     if (!p.station) return;
-    const base = baseMap.get(p.station);
+
+    let base = baseMap.get(p.station);
+    if (!base) {
+      for (let [key, val] of baseMap) {
+        if (key.includes(p.station) || p.station.includes(key)) {
+          base = val;
+          break;
+        }
+      }
+    }
     if (base) {
       const line = L.polyline([[p.latitude, p.longitude], [base.lat, base.lng]], {
         color: '#e53935', weight: 2.5, opacity: 0.75
