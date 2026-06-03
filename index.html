@@ -35,7 +35,6 @@ let baseMap = new Map();
 function getLogIcon(p) {
   const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
   let iconFile = 'default.png';
-  let size = [32, 32];
 
   if (m.includes('jd') || m.includes('john') || m.includes('deere')) {
     iconFile = 'JohnDeereDevice.png';
@@ -53,9 +52,11 @@ function getLogIcon(p) {
     iconFile = 'FJDDevice.png';
   }
 
-  return L.icon({
-    iconUrl: iconFile,
-    iconSize: size,
+  // Use divIcon with background image for better reliability
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<img src="${iconFile}" style="width:32px;height:32px;object-fit:contain;" onerror="this.src='default.png'">`,
+    iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -28]
   });
@@ -134,7 +135,6 @@ async function fetchData(hours = 24) {
     logMarkers.push(m);
   });
 
-  // Draw lines after both bases and logs are ready
   if (baseMap.size > 0) drawLines();
 }
 
