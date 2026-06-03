@@ -34,10 +34,31 @@ let baseMap = new Map();
 
 function getLogIcon(p) {
   const m = (p.mountpoint || p.station || '').toLowerCase();
-  if (m.includes('jd') || m.includes('john')) return L.divIcon({html:'🟢', iconSize:[22,22]});
-  if (m.includes('trimble')) return L.divIcon({html:'🔵', iconSize:[22,22]});
-  if (m.includes('case')) return L.divIcon({html:'🟠', iconSize:[22,22]});
-  return L.divIcon({html:'📍', iconSize:[18,18]});
+  let iconFile = 'default.png';
+  let size = [32, 32];
+
+  if (m.includes('jd') || m.includes('john') || m.includes('deere')) {
+    iconFile = 'JohnDeereDevice.png';
+  } else if (m.includes('trimble')) {
+    iconFile = 'TrimbleGCS900Device.png';
+  } else if (m.includes('case') || m.includes('cnh') || m.includes('new holland')) {
+    iconFile = 'CNHIndustrialDevice.png';
+  } else if (m.includes('topcon')) {
+    iconFile = 'TopconDevice.png';
+  } else if (m.includes('outback')) {
+    iconFile = 'OutbackDevice.png';
+  } else if (m.includes('dji')) {
+    iconFile = 'DJIDevice.png';
+  } else if (m.includes('fjd')) {
+    iconFile = 'FJDDevice.png';
+  }
+
+  return L.icon({
+    iconUrl: iconFile,
+    iconSize: size,
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -28]
+  });
 }
 
 function createLogPopup(p) {
@@ -71,9 +92,15 @@ async function loadBaseStations() {
   (json.data || []).forEach(b => {
     const id = b.station || b.name;
     baseMap.set(id, { lat: b.latitude, lng: b.longitude, name: b.name });
+
     const marker = L.circleMarker([b.latitude, b.longitude], {
-      color: '#0066ff', fillColor: '#0066ff', fillOpacity: 0.9, radius: 8, weight: 2
+      color: '#1a73e8',
+      fillColor: '#4285f4',
+      fillOpacity: 0.95,
+      radius: 9,
+      weight: 3
     }).bindPopup(`<b>${b.name || b.station}</b>`);
+
     marker.addTo(map);
     baseMarkers.push(marker);
   });
@@ -86,7 +113,7 @@ function drawLines() {
     const base = baseMap.get(p.station);
     if (base) {
       const line = L.polyline([[p.latitude, p.longitude], [base.lat, base.lng]], {
-        color: 'red', weight: 2, opacity: 0.7
+        color: '#e53935', weight: 2.5, opacity: 0.75
       }).addTo(map);
       lines.push(line);
     }
