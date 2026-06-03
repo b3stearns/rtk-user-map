@@ -31,30 +31,22 @@
 <script>
 let map, logMarkers = [], baseMarkers = [], lines = [], allData = [];
 let baseMap = new Map();
+let lastDataCount = 0;
 
 function getLogIcon(p) {
   const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
-  let iconFile = '../default.png';
+  let iconFile = 'default.png';
 
-  if (m.includes('jd') || m.includes('john') || m.includes('deere')) {
-    iconFile = '../JohnDeereDevice.png';
-  } else if (m.includes('trimble')) {
-    iconFile = '../TrimbleGCS900Device.png';
-  } else if (m.includes('case') || m.includes('cnh')) {
-    iconFile = '../CNHIndustrialDevice.png';
-  } else if (m.includes('topcon')) {
-    iconFile = '../TopconDevice.png';
-  } else if (m.includes('outback')) {
-    iconFile = '../OutbackDevice.png';
-  } else if (m.includes('dji')) {
-    iconFile = '../DJIDevice.png';
-  } else if (m.includes('fjd')) {
-    iconFile = '../FJDDevice.png';
-  }
+  if (m.includes('jd') || m.includes('john') || m.includes('deere')) iconFile = 'JohnDeereDevice.png';
+  else if (m.includes('trimble')) iconFile = 'TrimbleGCS900Device.png';
+  else if (m.includes('case') || m.includes('cnh')) iconFile = 'CNHIndustrialDevice.png';
+  else if (m.includes('topcon')) iconFile = 'TopconDevice.png';
+  else if (m.includes('outback')) iconFile = 'OutbackDevice.png';
+  else if (m.includes('dji')) iconFile = 'DJIDevice.png';
+  else if (m.includes('fjd')) iconFile = 'FJDDevice.png';
 
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `<img src="${iconFile}" style="width:32px;height:32px;object-fit:contain;" onerror="this.src='../default.png'">`,
+  return L.icon({
+    iconUrl: iconFile,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -28]
@@ -94,13 +86,8 @@ async function loadBaseStations() {
     baseMap.set(id, { lat: b.latitude, lng: b.longitude, name: b.name });
 
     const marker = L.circleMarker([b.latitude, b.longitude], {
-      color: '#1a73e8',
-      fillColor: '#4285f4',
-      fillOpacity: 0.95,
-      radius: 9,
-      weight: 3
+      color: '#1a73e8', fillColor: '#4285f4', fillOpacity: 0.95, radius: 9, weight: 3
     }).bindPopup(`<b>${b.name || b.station}</b>`);
-
     marker.addTo(map);
     baseMarkers.push(marker);
   });
@@ -125,6 +112,10 @@ async function fetchData(hours = 24) {
   const json = await res.json();
   allData = json.data || [];
 
+  // Only redraw if data actually changed
+  if (allData.length === lastDataCount) return;
+  lastDataCount = allData.length;
+
   logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
   lines.forEach(l => map.removeLayer(l)); lines = [];
 
@@ -146,9 +137,10 @@ window.onload = async () => {
   await loadBaseStations();
   await fetchData(24);
 
+  // Refresh every 10 minutes instead of 5 (less aggressive)
   setInterval(async () => {
     await fetchData(parseInt(document.getElementById('timeFilter').value));
-  }, 300000);
+  }, 600000);
 };
 </script>
 </body>
