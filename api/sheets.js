@@ -13,11 +13,16 @@ module.exports = async (req, res) => {
     const appId = "truenav";
     const appKey = "549a2429d314ff17";
 
+    const now = Date.now();
+    const startTime = now - (24 * 60 * 60 * 1000); // Last 24 hours
+
     const params = {
       appId,
       page: 1,
       pageSize: 100,
-      time: Date.now()
+      startTime: startTime,
+      endTime: now,
+      time: now
     };
 
     const sign = generateGeodnetSignature(params, appKey);
@@ -31,15 +36,16 @@ module.exports = async (req, res) => {
     const json = await response.json();
 
     if (json.code !== 0) {
+      console.error("API Error:", json);
       return res.status(500).json({ error: json.msg || "API Error" });
     }
 
-    // Parse GGA for user positions
-    const positions = (json.data || []).map(log => {
+    // Parse positions from logs
+    const positions = (json.data?.list || []).map(log => {
       let lat = null, lng = null;
-      const gga = log.gga || log.NtripGGA || log.message || "";
+      const gga = log.gga || log.message || "";
 
-      if (gga && gga.includes("$GPGGA") || gga.includes("$GNGGA")) {
+      if (gga.includes("GGA")) {
         const parts = gga.split(",");
         if (parts.length > 5) {
           const latRaw = parseFloat(parts[2]);
@@ -54,20 +60,19 @@ module.exports = async (req, res) => {
       }
 
       return {
-        username: log.username || log.user,
+        username: log.username,
         miner_sn: log.miner_sn,
-        latitude: lat || parseFloat(log.lat),
-        longitude: lng || parseFloat(log.lng),
+        latitude: lat || parseFloat(log.latitude || log.lat),
+        longitude: lng || parseFloat(log.longitude || log.lng),
         status: log.status,
-        timestamp: log.signInTime || log.time,
-        gga: gga
+        timestamp: log.loginTime || log.signInTime
       };
     }).filter(p => p.latitude && !isNaN(p.latitude) && p.longitude && !isNaN(p.longitude));
 
     res.json({ data: positions, count: positions.length });
 
   } catch (err) {
-    console.error(err);
+    console.error("Server Error:", err);
     res.status(500).json({ error: err.message });
   }
 };
