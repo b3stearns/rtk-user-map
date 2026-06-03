@@ -30,6 +30,7 @@
 
 <script>
 let map, logMarkers = [], baseMarkers = [], lines = [], allData = [];
+let baseMap = new Map();
 
 function getLogIcon(p) {
   const m = (p.mountpoint || p.station || '').toLowerCase();
@@ -64,29 +65,32 @@ function createLogPopup(p) {
   `;
 }
 
-function drawRedLine(logLat, logLng, stationId) {
-  // This will be populated after bases load
-  return null; // lines handled after bases are loaded
+async function loadBaseStations() {
+  const res = await fetch('/api/bases');
+  const json = await res.json();
+  (json.data || []).forEach(b => {
+    const id = b.station || b.name;
+    baseMap.set(id, { lat: b.latitude, lng: b.longitude, name: b.name });
+    const marker = L.circleMarker([b.latitude, b.longitude], {
+      color: '#0066ff', fillColor: '#0066ff', fillOpacity: 0.9, radius: 8, weight: 2
+    }).bindPopup(`<b>${b.name || b.station}</b>`);
+    marker.addTo(map);
+    baseMarkers.push(marker);
+  });
 }
 
-async function loadBaseStations() {
-  try {
-    const res = await fetch('/api/bases');
-    const json = await res.json();
-    (json.data || []).forEach(b => {
-      const marker = L.circleMarker([b.latitude, b.longitude], {
-        color: '#0066ff',
-        fillColor: '#0066ff',
-        fillOpacity: 0.9,
-        radius: 8,          // larger
-        weight: 2
-      }).bindPopup(`<b>${b.name || b.station || 'Base Station'}</b>`);
-      marker.addTo(map);
-      baseMarkers.push(marker);
-    });
-  } catch (e) {
-    console.error('Failed to load base stations', e);
-  }
+function drawLines() {
+  lines.forEach(l => map.removeLayer(l)); lines = [];
+  allData.forEach(p => {
+    if (!p.station) return;
+    const base = baseMap.get(p.station);
+    if (base) {
+      const line = L.polyline([[p.latitude, p.longitude], [base.lat, base.lng]], {
+        color: 'red', weight: 2, opacity: 0.7
+      }).addTo(map);
+      lines.push(line);
+    }
+  });
 }
 
 async function fetchData(hours = 24) {
@@ -102,6 +106,7 @@ async function fetchData(hours = 24) {
     m.addTo(map);
     logMarkers.push(m);
   });
+  drawLines();
 }
 
 window.onload = async () => {
@@ -110,10 +115,14 @@ window.onload = async () => {
 
   document.getElementById('timeFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
 
-  await loadBaseStations();   // blue larger base stations
+  await loadBaseStations();
   await fetchData(24);
+  drawLines();
 
-  setInterval(() => fetchData(parseInt(document.getElementById('timeFilter').value)), 300000);
+  setInterval(async () => {
+    await fetchData(parseInt(document.getElementById('timeFilter').value));
+    drawLines();
+  }, 300000);
 };
 </script>
 </body>
