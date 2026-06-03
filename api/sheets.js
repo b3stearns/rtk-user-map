@@ -12,20 +12,21 @@ module.exports = async (req, res) => {
   try {
     const appId = "truenav";
     const appKey = "549a2429d314ff17";
-
     const now = Date.now();
+    const startTime = now - (24 * 60 * 60 * 1000);
 
     const params = {
       appId,
-      username: "",           // Leave empty for all users, or put specific username
       page: 1,
       pageSize: 100,
+      startTime,
+      endTime: now,
       time: now
     };
 
     const sign = generateGeodnetSignature(params, appKey);
 
-    const response = await fetch("https://rtk.geodnet.com/api/v3/user/rtkLogs", {
+    const response = await fetch("https://rtk.geodnet.com/api/v3/user/rtklogs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...params, sign })
@@ -33,16 +34,15 @@ module.exports = async (req, res) => {
 
     const json = await response.json();
 
-    if (json.code !== 0) {
-      console.error("API Error Response:", json);
+    if (json.code !== 1000 && json.code !== 0) {
       return res.status(500).json({ error: json.msg || "API Error", details: json });
     }
 
-    const positions = (json.data?.list || json.data || []).map(log => {
+    const list = json.data?.list || json.data || [];
+    const positions = list.map(log => {
       let lat = null, lng = null;
-      const gga = log.gga || log.message || log.NtripGGA || "";
-
-      if (gga && gga.includes("GGA")) {
+      const gga = log.GGA || log.gga || log.message || "";
+      if (gga.includes("GGA")) {
         const parts = gga.split(",");
         if (parts.length > 5) {
           const latRaw = parseFloat(parts[2]);
@@ -55,21 +55,16 @@ module.exports = async (req, res) => {
           }
         }
       }
-
       return {
-        username: log.username || "Unknown",
-        miner_sn: log.miner_sn,
-        latitude: lat || parseFloat(log.lat || 0),
-        longitude: lng || parseFloat(log.lng || 0),
-        status: log.status,
-        timestamp: log.signInTime || log.time
+        username: log.username,
+        latitude: lat || parseFloat(log.latitude),
+        longitude: lng || parseFloat(log.longitude),
+        loginTime: log.loginTime || log.time
       };
-    }).filter(p => p.latitude && !isNaN(p.latitude) && p.longitude && !isNaN(p.longitude));
+    }).filter(p => p.latitude && p.longitude);
 
     res.json({ data: positions, count: positions.length });
-
   } catch (err) {
-    console.error("Server Error:", err);
     res.status(500).json({ error: err.message });
   }
 };
