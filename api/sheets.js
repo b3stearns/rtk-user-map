@@ -1,77 +1,37 @@
-const { google } = require('googleapis');
-const nmea = require('nmea-simple');
+const crypto = require("crypto");
+
+function generateGeodnetSignature(params, appKey) {
+  const sortedKeys = Object.keys(params)
+    .filter(key => key !== "sign")
+    .sort();
+
+  const concatenatedValues = sortedKeys.map(key => String(params[key])).join("");
+  const payload = concatenatedValues + appKey;
+  return crypto.createHash("md5").update(payload).digest("hex");
+}
 
 module.exports = async (req, res) => {
-  console.log('Received request to /api/sheets');
+  console.log('Received request to /api/sheets (now using Coverage API)');
+
   try {
-    // Check for GOOGLE_CREDENTIALS environment variable
-    if (!process.env.GOOGLE_CREDENTIALS) {
-      console.error('GOOGLE_CREDENTIALS environment variable is not set');
-      return res.status(500).json({ error: 'GOOGLE_CREDENTIALS environment variable is not set' });
-    }
+    const appId = "truenav";
+    const appKey = "549a2429d314ff17";
 
-    console.log('Parsing Google Sheets credentials...');
-    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
+    // Default to broad US coverage centered on Chicago
+    const params = {
+      appId: appId,
+      lat: 41.8781,
+      lng: -87.6298,
+      radius: 800,      // Large radius for good coverage
+      amount: 200,      // Max stations per call
+      time: Date.now()
+    };
 
-    console.log('Fetching data from Google Sheets...');
-    const sheets = google.sheets({ version: 'v4', auth });
-    const spreadsheetId = '1E6u3Eyx_GHFpIbWGmEc6b00KoiWD0DsSSJwHZx686EA';
-    const range = 'Sheet1!A1:S';
+    const sign = generateGeodnetSignature(params, appKey);
 
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range,
-    });
+    const finalPayload = {
+      ...params,
+      sign: sign
+    };
 
-    const rows = response.data.values;
-    if (!rows || rows.length === 0) {
-      console.log('No data found in Google Sheet');
-      return res.status(200).json([]);
-    }
-
-    console.log('Processing Google Sheet data...');
-    // Extract headers and data rows
-    const headers = rows[0];
-    const dataRows = rows.slice(1);
-
-    // Map rows to objects with parsed NMEA data
-    const mappedRows = dataRows.map(row => {
-      const rowData = {};
-      headers.forEach((header, index) => {
-        rowData[header] = row[index] || '';
-      });
-
-      // Parse the "Latest nmea" column
-      const nmeaSentence = rowData['Latest nmea'] || '';
-      let latitude = null;
-      let longitude = null;
-      if (nmeaSentence && nmeaSentence.startsWith('$GPGGA')) {
-        try {
-          const parsedNmea = nmea.parseNmeaSentence(nmeaSentence);
-          if (parsedNmea && parsedNmea.latitude && parsedNmea.longitude) {
-            latitude = parsedNmea.latitude;
-            longitude = parsedNmea.longitude;
-          }
-        } catch (error) {
-          console.error(`Failed to parse NMEA sentence: ${nmeaSentence}`, error);
-        }
-      }
-
-      return {
-        ...rowData,
-        latitude,
-        longitude,
-      };
-    });
-
-    console.log('Successfully fetched and processed data:', mappedRows);
-    res.status(200).json(mappedRows);
-  } catch (error) {
-    console.error('Error fetching data from Google Sheet:', error);
-    res.status(500).json({ error: 'Failed to fetch data', details: error.message });
-  }
-};
+    const response = await fetch('https://rtk
