@@ -38,21 +38,21 @@
     }
 
     function createPopup(p) {
-      return `
-        <b>Distance to Station:</b> N/A<br>
-        <b>username:</b> ${p.username}<br>
-        <b>session time(s):</b> N/A<br>
-        <b>Sign in time (CST):</b> ${p.loginTime ? new Date(p.loginTime).toLocaleString() : 'N/A'}<br>
-        <b>status:</b> <span style="color:green">${p.status}</span><br>
-        <b>rtk fix rate(%):</b> N/A<br>
-        <b>station:</b> ${p.station || 'N/A'}<br>
-        <b>partner:</b> ${p.partner || 'N/A'}<br>
-        <b>no. of gga:</b> ${p.noOfGga || 'N/A'}<br>
-        <b>latest nmea:</b> ${p.GGA || 'N/A'}<br>
-        <b>ip:</b> ${p.ip || 'N/A'}<br>
-        <b>message:</b> ${p.message || p.msg || 'Success'}
-      `;
-    }
+  return `
+    <b>Distance to Station:</b> N/A<br>
+    <b>username:</b> ${p.username}<br>
+    <b>session time(s):</b> N/A<br>
+    <b>Sign in time (CST):</b> ${p.loginTime ? new Date(p.loginTime).toLocaleString() : 'N/A'}<br>
+    <b>status:</b> <span style="color:green">${p.status}</span><br>
+    <b>rtk fix rate(%):</b> N/A<br>
+    <b>station:</b> ${p.station}<br>
+    <b>partner:</b> ${p.partner}<br>
+    <b>no. of gga:</b> N/A<br>
+    <b>latest nmea:</b> ${p.GGA || 'N/A'}<br>
+    <b>ip:</b> ${p.ip || 'N/A'}<br>
+    <b>message:</b> ${p.message}
+  `;
+}
 
     async function fetchData(hours = 24) {
       const res = await fetch(`/api/sheets?hours=${hours}`);
