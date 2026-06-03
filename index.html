@@ -33,7 +33,7 @@ let map, logMarkers = [], baseMarkers = [], lines = [], allData = [];
 let baseMap = new Map();
 
 function getLogIcon(p) {
-  const m = (p.mountpoint || p.station || '').toLowerCase();
+  const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
   let iconFile = 'default.png';
   let size = [32, 32];
 
@@ -41,7 +41,7 @@ function getLogIcon(p) {
     iconFile = 'JohnDeereDevice.png';
   } else if (m.includes('trimble')) {
     iconFile = 'TrimbleGCS900Device.png';
-  } else if (m.includes('case') || m.includes('cnh') || m.includes('new holland')) {
+  } else if (m.includes('case') || m.includes('cnh')) {
     iconFile = 'CNHIndustrialDevice.png';
   } else if (m.includes('topcon')) {
     iconFile = 'TopconDevice.png';
@@ -133,7 +133,9 @@ async function fetchData(hours = 24) {
     m.addTo(map);
     logMarkers.push(m);
   });
-  drawLines();
+
+  // Draw lines after both bases and logs are ready
+  if (baseMap.size > 0) drawLines();
 }
 
 window.onload = async () => {
@@ -144,11 +146,9 @@ window.onload = async () => {
 
   await loadBaseStations();
   await fetchData(24);
-  drawLines();
 
   setInterval(async () => {
     await fetchData(parseInt(document.getElementById('timeFilter').value));
-    drawLines();
   }, 300000);
 };
 </script>
