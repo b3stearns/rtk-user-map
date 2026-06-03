@@ -38,21 +38,42 @@
     }
 
     function createPopup(p) {
-  const shortStation = p.station ? p.station.slice(-4) : 'N/A';
+  const shortStation = p.station ? String(p.station).slice(-4) : 'N/A';
+  
+  // Distance: convert km → miles if number exists
+  let distMiles = 'N/A';
+  if (p.distance != null) {
+    const km = parseFloat(p.distance);
+    if (!isNaN(km)) distMiles = (km * 0.621371).toFixed(2) + ' miles';
+  }
+
+  // Sign in time → CST (Sioux Falls)
+  let signInCST = 'N/A';
+  if (p.loginTime) {
+    const d = new Date(p.loginTime);
+    signInCST = d.toLocaleString('en-US', { 
+      timeZone: 'America/Chicago',
+      month: 'numeric', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true 
+    }).replace(',', '') + ' CST';
+  }
+
+  // Fix rate % (try common field names from API)
+  const fixRate = p.rtkfix ?? p.rtkFixRate ?? p['rtk fix rate(%)'] ?? p.fixRate ?? 'N/A';
+
   return `
-    <b>Distance to Station:</b> ${p.distance || 'N/A'}<br>
+    <b>Distance to Station:</b> ${distMiles}<br>
     <b>username:</b> ${p.username}<br>
     <b>session time(s):</b> ${p.session || p['session time(s)'] || 'N/A'}<br>
-    <b>Sign in time (CST):</b> ${p.loginTime ? new Date(p.loginTime).toLocaleString() : 'N/A'}<br>
-    <b>status:</b> <span style="color:green">${p.status || p.msg}</span><br>
-    <b>rtk fix rate(%):</b> ${p.rtkfix || p['rtk fix rate(%)'] || 'N/A'}<br>
+    <b>Sign in time (CST):</b> ${signInCST}<br>
+    <b>status:</b> <span style="color:green">${p.status || p.msg || 'Success'}</span><br>
+    <b>rtk fix rate(%):</b> ${fixRate}<br>
     <b>station:</b> ${shortStation}<br>
     <b>partner:</b> ${p.partner || 'N/A'}<br>
     <b>no. of gga:</b> ${p.noOfGga || p['no. of gga'] || 'N/A'}<br>
-    <b>latest nmea:</b> ${p.GGA || 'N/A'}<br>
+    <b>latest nmea:</b> ${p.GGA || p.gga || p.message || 'N/A'}<br>
     <b>ip:</b> ${p.ip || 'N/A'}<br>
-    <b>message:</b> ${p.message || p.msg || 'Success'}<br>
-    <b>spp / dgps / rtkfix / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${p.rtkfix || 0} / ${p.float || 0}
+    <b>message:</b> ${p.message || p.msg || 'Success'}
   `;
 }
     async function fetchData(hours = 24) {
