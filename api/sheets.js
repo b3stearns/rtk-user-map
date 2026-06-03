@@ -32,17 +32,12 @@ module.exports = async (req, res) => {
     }
 
     const positions = all.map(log => ({
+      ...log,  // include every field from API
       username: log.username || "Unknown",
-      miner_sn: log.miner_sn || "N/A",
       latitude: parseFloat(log.latitude),
       longitude: parseFloat(log.longitude),
-      status: log.status || log.msg || "Online",
-      loginTime: log.loginTime,
-      ip: log.ip,
       GGA: log.GGA || log.gga || log.message || "",
-      station: log.station || log.mountpoint || "N/A",
-      partner: log.partner || "N/A",
-      message: log.message || log.msg || "Success"
+      station: log.station || log.mountpoint || ""
     })).filter(p => p.latitude && p.longitude);
 
     res.json({ data: positions, count: positions.length });
