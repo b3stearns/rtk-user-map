@@ -15,16 +15,14 @@ module.exports = async (req, res) => {
 
     const params = {
       appId,
-      lat: 44.5,      // South Dakota center
-      lng: -96.8,
-      radius: 700,    // Covers ND, SD, MN, IA, NE
-      amount: 200,
+      page: 1,
+      pageSize: 100,
       time: Date.now()
     };
 
     const sign = generateGeodnetSignature(params, appKey);
 
-    const response = await fetch("https://rtk.geodnet.com/api/v3/coverage/list", {
+    const response = await fetch("https://rtk.geodnet.com/api/v3/user/rtkLogs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...params, sign })
@@ -32,16 +30,41 @@ module.exports = async (req, res) => {
 
     const json = await response.json();
 
-    const stations = (json.data || []).map(s => ({
-      username: s.name || s.miner_sn || 'Unknown',
-      miner_sn: s.miner_sn,
-      latitude: parseFloat(s.lat),
-      longitude: parseFloat(s.lng),
-      status: s.status || 'online',
-      ...s
-    })).filter(s => s.latitude && s.longitude);
+    if (json.code !== 0) {
+      return res.status(500).json({ error: json.msg || "API Error" });
+    }
 
-    res.json({ data: stations, count: stations.length });
+    // Parse GGA for user positions
+    const positions = (json.data || []).map(log => {
+      let lat = null, lng = null;
+      const gga = log.gga || log.NtripGGA || log.message || "";
+
+      if (gga && gga.includes("$GPGGA") || gga.includes("$GNGGA")) {
+        const parts = gga.split(",");
+        if (parts.length > 5) {
+          const latRaw = parseFloat(parts[2]);
+          const lngRaw = parseFloat(parts[4]);
+          if (!isNaN(latRaw) && !isNaN(lngRaw)) {
+            lat = Math.floor(latRaw / 100) + (latRaw % 100) / 60;
+            lng = Math.floor(lngRaw / 100) + (lngRaw % 100) / 60;
+            if (parts[3] === "S") lat = -lat;
+            if (parts[5] === "W") lng = -lng;
+          }
+        }
+      }
+
+      return {
+        username: log.username || log.user,
+        miner_sn: log.miner_sn,
+        latitude: lat || parseFloat(log.lat),
+        longitude: lng || parseFloat(log.lng),
+        status: log.status,
+        timestamp: log.signInTime || log.time,
+        gga: gga
+      };
+    }).filter(p => p.latitude && !isNaN(p.latitude) && p.longitude && !isNaN(p.longitude));
+
+    res.json({ data: positions, count: positions.length });
 
   } catch (err) {
     console.error(err);
