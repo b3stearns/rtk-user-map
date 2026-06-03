@@ -6,42 +6,107 @@
   <title>TruNav RTK User Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <style>#map { height: 100vh; width: 100%; } body { margin:0; }</style>
+  <style>
+    #map { height: 100vh; width: 100%; }
+    body { margin:0; font-family: Arial, sans-serif; }
+    .filters { position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:1000; background:white; padding:6px 12px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); display:flex; gap:8px; }
+    .leaflet-popup-content { font-size:13px; line-height:1.4; }
+    .leaflet-popup-content b { color:#0066cc; }
+  </style>
 </head>
 <body>
+  <div class="filters">
+    <select id="timeFilter">
+      <option value="12">Last 12 Hours</option>
+      <option value="24" selected>Last 24 Hours</option>
+      <option value="168">Last 7 Days</option>
+    </select>
+    <select id="hardwareFilter"><option value="">All Hardware</option></select>
+    <select id="userFilter"><option value="">All Users</option></select>
+  </div>
   <div id="map"></div>
+
   <script>
-    let map, markers = [];
+    let map, allMarkers = [], allData = [];
+
+    function getIcon(username, mountpoint) {
+      const m = (mountpoint || '').toLowerCase();
+      if (m.includes('jd') || m.includes('john')) return L.divIcon({className:'jd-icon', html:'🟢', iconSize:[24,24]});
+      if (m.includes('trimble')) return L.divIcon({className:'trimble-icon', html:'🔵', iconSize:[24,24]});
+      if (m.includes('case')) return L.divIcon({className:'case-icon', html:'🟠', iconSize:[24,24]});
+      return L.divIcon({className:'default-icon', html:'📍', iconSize:[20,20]});
+    }
+
+    function createPopup(p) {
+      return `
+        <b>Distance to Station:</b> N/A<br>
+        <b>username:</b> ${p.username}<br>
+        <b>session time(s):</b> N/A<br>
+        <b>Sign in time (CST):</b> ${p.loginTime ? new Date(p.loginTime).toLocaleString() : 'N/A'}<br>
+        <b>status:</b> <span style="color:green">${p.status}</span><br>
+        <b>rtk fix rate(%):</b> N/A<br>
+        <b>station:</b> ${p.station || 'N/A'}<br>
+        <b>partner:</b> ${p.partner || 'N/A'}<br>
+        <b>no. of gga:</b> ${p.noOfGga || 'N/A'}<br>
+        <b>latest nmea:</b> ${p.GGA || 'N/A'}<br>
+        <b>ip:</b> ${p.ip || 'N/A'}<br>
+        <b>message:</b> ${p.message || p.msg || 'Success'}
+      `;
+    }
 
     async function fetchData(hours = 24) {
       const res = await fetch(`/api/sheets?hours=${hours}`);
       const json = await res.json();
-      markers.forEach(m => map.removeLayer(m)); markers = [];
+      allData = json.data || [];
 
-      (json.data || []).forEach(p => {
-        const m = L.marker([p.latitude, p.longitude]).bindPopup(`
-          <b>${p.username}</b><br>
-          SN: ${p.miner_sn}<br>
-          Status: ${p.status}<br>
-          Time: ${p.loginTime ? new Date(p.loginTime).toLocaleString() : 'N/A'}<br>
-          IP: ${p.ip || 'N/A'}
-        `);
-        m.addTo(map); markers.push(m);
+      allMarkers.forEach(m => map.removeLayer(m));
+      allMarkers = [];
+
+      // populate filters (once)
+      if (document.getElementById('userFilter').options.length === 1) {
+        const users = [...new Set(allData.map(d => d.username))];
+        const hw = [...new Set(allData.map(d => d.mountpoint || d.station).filter(Boolean))];
+        users.forEach(u => document.getElementById('userFilter').add(new Option(u, u)));
+        hw.forEach(h => document.getElementById('hardwareFilter').add(new Option(h, h)));
+      }
+
+      renderMarkers(allData);
+    }
+
+    function renderMarkers(data) {
+      allMarkers.forEach(m => map.removeLayer(m));
+      allMarkers = [];
+
+      const hwFilter = document.getElementById('hardwareFilter').value;
+      const userFilter = document.getElementById('userFilter').value;
+
+      data.forEach(p => {
+        if (hwFilter && (p.mountpoint || p.station) !== hwFilter) return;
+        if (userFilter && p.username !== userFilter) return;
+
+        const icon = getIcon(p.username, p.mountpoint || p.station);
+        const m = L.marker([p.latitude, p.longitude], {icon}).bindPopup(createPopup(p));
+        m.addTo(map);
+        allMarkers.push(m);
       });
     }
 
     window.onload = () => {
-      map = L.map('map').setView([43.55, -96.7], 9);
+      map = L.map('map').setView([43.6, -96.8], 7);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-      const sel = document.createElement('select');
-      sel.style.cssText = 'position:absolute;top:10px;right:10px;z-index:1000';
-      sel.innerHTML = `<option value="24">Last 24h</option><option value="168">Last 7 days</option><option value="720">Last 30 days</option>`;
-      sel.onchange = () => fetchData(parseInt(sel.value));
-      document.body.appendChild(sel);
+      ['timeFilter','hardwareFilter','userFilter'].forEach(id => {
+        document.getElementById(id).onchange = () => {
+          if (id === 'timeFilter') {
+            fetchData(parseInt(document.getElementById('timeFilter').value));
+          } else {
+            renderMarkers(allData);
+          }
+        };
+      });
 
       fetchData(24);
-      setInterval(() => fetchData(parseInt(sel.value)), 300000);
+      setInterval(() => fetchData(parseInt(document.getElementById('timeFilter').value)), 300000);
     };
   </script>
 </body>
