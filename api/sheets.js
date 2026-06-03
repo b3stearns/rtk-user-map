@@ -13,35 +13,57 @@ module.exports = async (req, res) => {
     const appId = "truenav";
     const appKey = "549a2429d314ff17";
 
+    // Try user rtk logs endpoint
     const params = {
       appId,
-      lat: 44.5,        // Centered on South Dakota
-      lng: -96.8,       // Better for your region
-      radius: 600,      // Larger coverage
-      amount: 200,      // Max per call
       time: Date.now()
     };
 
     const sign = generateGeodnetSignature(params, appKey);
 
-    const apiResponse = await fetch("https://rtk.geodnet.com/api/v3/coverage/list", {
+    const response = await fetch("https://rtk.geodnet.com/api/v3/user/rtkLogs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...params, sign })
     });
 
-    const json = await apiResponse.json();
+    const json = await response.json();
 
-    const stations = (json.data || []).map(s => ({
-      username: s.name || s.miner_sn || 'Unknown',
-      miner_sn: s.miner_sn,
-      latitude: parseFloat(s.lat),
-      longitude: parseFloat(s.lng),
-      status: s.status || 'online',
-      ...s
-    })).filter(s => s.latitude && s.longitude);
+    if (json.code !== 0) {
+      return res.status(500).json({ error: json.msg || "API Error" });
+    }
 
-    res.json({ data: stations, count: stations.length });
+    // Transform logs with GGA positions
+    const positions = (json.data || []).map(log => {
+      // Parse GGA if available
+      let lat = null, lng = null;
+      if (log.gga || log.NtripGGA) {
+        const ggaStr = log.gga || log.NtripGGA;
+        // Basic GGA parsing
+        const parts = ggaStr.split(",");
+        if (parts.length > 5) {
+          lat = parseFloat(parts[2])/100;
+          lng = parseFloat(parts[4])/100;
+          // Convert DMS to decimal
+          lat = Math.floor(lat) + (lat % 1)*100/60;
+          lng = Math.floor(lng) + (lng % 1)*100/60;
+          if (parts[3] === "S") lat = -lat;
+          if (parts[5] === "W") lng = -lng;
+        }
+      }
+
+      return {
+        username: log.username,
+        miner_sn: log.miner_sn,
+        latitude: lat || parseFloat(log.lat),
+        longitude: lng || parseFloat(log.lng),
+        status: log.status,
+        timestamp: log.timestamp,
+        ...log
+      };
+    }).filter(p => p.latitude && p.longitude);
+
+    res.json({ data: positions, count: positions.length });
 
   } catch (err) {
     console.error(err);
