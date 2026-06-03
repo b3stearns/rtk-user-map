@@ -14,14 +14,11 @@ module.exports = async (req, res) => {
     const appKey = "549a2429d314ff17";
 
     const now = Date.now();
-    const startTime = now - (24 * 60 * 60 * 1000); // Last 24 hours
 
     const params = {
       appId,
       page: 1,
       pageSize: 100,
-      startTime: startTime,
-      endTime: now,
       time: now
     };
 
@@ -36,17 +33,16 @@ module.exports = async (req, res) => {
     const json = await response.json();
 
     if (json.code !== 0) {
-      console.error("API Error:", json);
-      return res.status(500).json({ error: json.msg || "API Error" });
+      console.error("RTK Logs API Error:", json);
+      return res.status(500).json({ error: json.msg || "API Error", details: json });
     }
 
-    // Parse positions from logs
-    const positions = (json.data?.list || []).map(log => {
+    const positions = (json.data?.list || json.data || []).map(log => {
       let lat = null, lng = null;
-      const gga = log.gga || log.message || "";
+      const ggaStr = log.gga || log.message || log.NtripGGA || "";
 
-      if (gga.includes("GGA")) {
-        const parts = gga.split(",");
+      if (ggaStr.includes("GGA")) {
+        const parts = ggaStr.split(",");
         if (parts.length > 5) {
           const latRaw = parseFloat(parts[2]);
           const lngRaw = parseFloat(parts[4]);
@@ -60,16 +56,20 @@ module.exports = async (req, res) => {
       }
 
       return {
-        username: log.username,
+        username: log.username || "Unknown",
         miner_sn: log.miner_sn,
-        latitude: lat || parseFloat(log.latitude || log.lat),
-        longitude: lng || parseFloat(log.longitude || log.lng),
+        latitude: lat || parseFloat(log.lat || log.latitude),
+        longitude: lng || parseFloat(log.lng || log.longitude),
         status: log.status,
-        timestamp: log.loginTime || log.signInTime
+        timestamp: log.signInTime || log.loginTime || log.time
       };
     }).filter(p => p.latitude && !isNaN(p.latitude) && p.longitude && !isNaN(p.longitude));
 
-    res.json({ data: positions, count: positions.length });
+    res.json({ 
+      data: positions, 
+      count: positions.length,
+      total: json.data?.total || 0 
+    });
 
   } catch (err) {
     console.error("Server Error:", err);
