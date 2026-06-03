@@ -11,29 +11,46 @@ module.exports = async (req, res) => {
     const appId = "truenav";
     const appKey = "549a2429d314ff17";
     const now = Date.now();
-    const hours = parseInt(req.query.hours) || 24;
+    const hours = Math.min(parseInt(req.query.hours) || 24, 168);
     const startTime = now - (hours * 60 * 60 * 1000);
 
-    const params = { appId, page: 1, pageSize: 200, startTime, endTime: now, time: now };
-    const sign = generateGeodnetSignature(params, appKey);
+    let all = [];
+    let page = 1;
+    const pageSize = 100;
 
-    const r = await fetch("https://rtk.geodnet.com/api/v3/user/rtklogs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...params, sign })
-    });
-    const json = await r.json();
+    while (page <= 10) {  // safety cap
+      const params = { appId, page, pageSize, startTime, endTime: now, time: now };
+      const sign = generateGeodnetSignature(params, appKey);
 
-    const list = json.data?.list || json.data || [];
-    const positions = list.map(log => {
+      const r = await fetch("https://rtk.geodnet.com/api/v3/user/rtklogs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...params, sign })
+      });
+      const json = await r.json();
+
+      if (json.code !== 1000 && json.code !== 0) break;
+
+      const list = json.data?.list || json.data || [];
+      if (list.length === 0) break;
+
+      all = all.concat(list);
+      if (list.length < pageSize) break;
+      page++;
+    }
+
+    const positions = all.map(log => {
       let lat = null, lng = null;
-      const gga = log.GGA || log.gga || "";
+      const gga = log.GGA || log.gga || log.message || "";
       if (gga.includes("GGA")) {
         const p = gga.split(",");
         if (p.length > 5) {
-          lat = Math.floor(parseFloat(p[2])/100) + (parseFloat(p[2])%100)/60;
-          lng = Math.floor(parseFloat(p[4])/100) + (parseFloat(p[4])%100)/60;
-          if (p[3]==="S") lat=-lat; if (p[5]==="W") lng=-lng;
+          const latRaw = parseFloat(p[2]), lngRaw = parseFloat(p[4]);
+          if (!isNaN(latRaw) && !isNaN(lngRaw)) {
+            lat = Math.floor(latRaw/100) + (latRaw%100)/60;
+            lng = Math.floor(lngRaw/100) + (lngRaw%100)/60;
+            if (p[3]==="S") lat=-lat; if (p[5]==="W") lng=-lng;
+          }
         }
       }
       return {
