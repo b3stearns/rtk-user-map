@@ -12,7 +12,16 @@ module.exports = async (req, res) => {
     const appKey = "549a2429d314ff17";
     const now = Date.now();
 
-    const params = { appId, lat: 43.6, lng: -97.5, radius: 2000, amount: 500, time: now };
+    // Centered on South Dakota to cover your screenshot area
+    const params = {
+      appId,
+      lat: 44.0,      // Central South Dakota
+      lng: -97.0,
+      radius: 400,    // ~400 km radius covers the visible area well
+      amount: 300,
+      time: now
+    };
+
     const sign = generateGeodnetSignature(params, appKey);
 
     const r = await fetch("https://rtk.geodnet.com/api/v3/coverage/list", {
@@ -20,6 +29,7 @@ module.exports = async (req, res) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...params, sign })
     });
+
     const json = await r.json();
 
     const bases = (json.data || []).map(b => ({
