@@ -169,7 +169,11 @@ function updateSummary(data) {
   const users = new Set(data.map(d => d.username).filter(Boolean));
   document.getElementById('sumUsers').textContent = users.size;
 
-  const fixRates = data.map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate)).filter(n => !isNaN(n));
+  // Only average logs that actually have a valid fix rate (> 0)
+  const fixRates = data
+    .map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate || d.rtkFixRate))
+    .filter(n => !isNaN(n) && n > 0);
+
   const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
   document.getElementById('sumFix').textContent = avgFix + '%';
 
@@ -177,7 +181,6 @@ function updateSummary(data) {
   const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
   document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
 
-  // Fixed: duration is in seconds → proper hours
   const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
   const totalSeconds = durations.reduce((a, b) => a + b, 0);
   const totalHours = (totalSeconds / 3600).toFixed(1);
