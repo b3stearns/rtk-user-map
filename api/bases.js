@@ -14,10 +14,10 @@ module.exports = async (req, res) => {
 
     const params = {
       appId,
-      lat: 44.0,
-      lng: -97.0,
-      radius: 450,
-      amount: 300,     // back to 300 (stable)
+      lat: 43.6,
+      lng: -97.5,
+      radius: 300,
+      amount: 200,
       time: now
     };
 
@@ -35,12 +35,12 @@ module.exports = async (req, res) => {
       name: b.name,
       station: b.name,
       latitude: parseFloat(b.lat),
-      longitude: parseFloat(b.lng),
-      status: b.status
+      longitude: parseFloat(b.lng)
     }));
 
     res.json({ data: bases });
   } catch (e) {
+    console.error(e);
     res.status(500).json({ error: e.message });
   }
 };
