@@ -14,10 +14,10 @@ module.exports = async (req, res) => {
 
     const params = {
       appId,
-      lat: 43.6,
-      lng: -97.5,
-      radius: 300,
-      amount: 200,
+      lat: 44.0,
+      lng: -97.0,
+      radius: 450,
+      amount: 400,     // increased
       time: now
     };
 
