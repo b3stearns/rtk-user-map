@@ -57,6 +57,14 @@ function getLogIcon(p) {
   });
 }
 
+function formatDuration(seconds) {
+  if (!seconds || isNaN(seconds)) return 'N/A';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
 function createLogPopup(p) {
   const shortStation = p.station ? String(p.station).slice(-4) : 'N/A';
   let distMiles = 'N/A';
@@ -70,38 +78,21 @@ function createLogPopup(p) {
   }
   const fixRate = parseFloat(p.rtkfix || p['rtk fix rate(%)'] || p.fixRate) || 0;
   const fixColor = fixRate >= 90 ? 'green' : 'black';
+  const sessionTime = formatDuration(p.duration || p.sessionTime);
 
   return `
     <b>Distance to Station:</b> ${distMiles}<br>
     <b>username:</b> ${p.username || 'N/A'}<br>
     <b>partner:</b> ${p.partner || 'N/A'}<br>
     <b>Sign in time (CST):</b> ${signInCST}<br>
+    <b>Session time:</b> ${sessionTime}<br>
     <b>status:</b> <span style="color:green">${p.status || p.msg || 'N/A'}</span><br>
     <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${fixRate || 'N/A'}</span><br>
     <b>station:</b> ${shortStation}<br>
     <b>spp / dgps / fixed / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${p.rtkfix || 0} / ${p.float || 0}<br>
     <b>avg age / max age:</b> ${p.avgAge || 'N/A'} / ${p.maxAge || 'N/A'}<br>
-    <b>ip:</b> ${p.ip || 'N/A'}<br>
-    <b>latest nmea (GGA):</b> ${p.GGA || p.gga || 'N/A'}
+    <b>ip:</b> ${p.ip || 'N/A'}
   `;
-}
-
-function updateSummary(data) {
-  const users = new Set(data.map(d => d.username).filter(Boolean));
-  document.getElementById('sumUsers').textContent = users.size;
-
-  const fixRates = data.map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate)).filter(n => !isNaN(n));
-  const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
-  document.getElementById('sumFix').textContent = avgFix + '%';
-
-  const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
-  const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
-  document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
-
-  // Total session time (if duration field exists)
-  const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
-  const totalMin = durations.length ? durations.reduce((a,b)=>a+b,0) : 0;
-  document.getElementById('sumTime').textContent = totalMin ? (totalMin/60).toFixed(1) + ' hrs' : 'N/A';
 }
 
 async function loadBaseStations() {
@@ -149,7 +140,6 @@ async function fetchData(hours = 24) {
   logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
   lines.forEach(l => map.removeLayer(l)); lines = [];
 
-  // populate user filter
   const userSel = document.getElementById('userFilter');
   const currentUser = userSel.value;
   userSel.innerHTML = '<option value="">All Users</option>';
@@ -161,7 +151,6 @@ async function fetchData(hours = 24) {
   });
   userSel.value = currentUser;
 
-  // apply user filter
   let filtered = allData;
   if (currentUser) filtered = allData.filter(d => d.username === currentUser);
 
@@ -173,6 +162,23 @@ async function fetchData(hours = 24) {
 
   updateSummary(filtered);
   if (baseMap.size > 0) drawLines();
+}
+
+function updateSummary(data) {
+  const users = new Set(data.map(d => d.username).filter(Boolean));
+  document.getElementById('sumUsers').textContent = users.size;
+
+  const fixRates = data.map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate)).filter(n => !isNaN(n));
+  const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
+  document.getElementById('sumFix').textContent = avgFix + '%';
+
+  const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
+  const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
+  document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
+
+  const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
+  const totalMin = durations.length ? durations.reduce((a,b)=>a+b,0) : 0;
+  document.getElementById('sumTime').textContent = totalMin ? (totalMin/60).toFixed(1) + ' hrs' : 'N/A';
 }
 
 window.onload = async () => {
