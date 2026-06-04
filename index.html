@@ -7,25 +7,39 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    #map { height: 100vh; width: 100%; }
     body { margin:0; font-family: Arial, sans-serif; }
-    .filters {
-      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-      z-index: 1000; background: white; padding: 8px 14px; border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25); display: flex; gap: 10px;
+    #topbar {
+      display: flex; align-items: center; gap: 20px;
+      padding: 12px 20px; background: #f8f9fa; border-bottom: 1px solid #ddd;
     }
+    #filters { display: flex; gap: 12px; align-items: center; }
+    #summary {
+      background: white; border: 1px solid #ddd; border-radius: 8px;
+      padding: 10px 16px; font-size: 13px; line-height: 1.4; min-width: 260px;
+    }
+    #map { height: calc(100vh - 70px); width: 100%; }
   </style>
 </head>
 <body>
-  <div class="filters">
-    <select id="timeFilter">
-      <option value="12">Last 12 Hours</option>
-      <option value="24" selected>Last 24 Hours</option>
-      <option value="168">Last 7 Days</option>
-    </select>
-    <select id="hardwareFilter"><option value="">All Hardware</option></select>
-    <select id="userFilter"><option value="">All Users</option></select>
+  <div id="topbar">
+    <div id="filters">
+      <select id="timeFilter">
+        <option value="12">Last 12 Hours</option>
+        <option value="24" selected>Last 24 Hours</option>
+        <option value="168">Last 7 Days</option>
+      </select>
+      <select id="userFilter"><option value="">All Users</option></select>
+    </div>
+
+    <div id="summary">
+      <b>Summary</b><br>
+      Unique users: <span id="sumUsers">0</span><br>
+      Avg fix rate: <span id="sumFix">0%</span><br>
+      Avg distance: <span id="sumDist">0 miles</span><br>
+      Total session time: <span id="sumTime">N/A</span>
+    </div>
   </div>
+
   <div id="map"></div>
 
 <script>
@@ -34,7 +48,6 @@ let baseMap = new Map();
 let lastDataCount = 0;
 
 function getLogIcon(p) {
-  // All log markers = gray
   return L.divIcon({
     className: 'custom-marker',
     html: `<div style="background:#9E9E9E;width:28px;height:28px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
@@ -55,18 +68,40 @@ function createLogPopup(p) {
   if (p.loginTime) {
     signInCST = new Date(p.loginTime).toLocaleString('en-US', {timeZone:'America/Chicago'}) + ' CST';
   }
-  const fixRate = p.rtkfix ?? p['rtk fix rate(%)'] ?? p.fixRate ?? 'N/A';
+  const fixRate = parseFloat(p.rtkfix || p['rtk fix rate(%)'] || p.fixRate) || 0;
+  const fixColor = fixRate >= 90 ? 'green' : 'black';
 
   return `
     <b>Distance to Station:</b> ${distMiles}<br>
-    <b>username:</b> ${p.username}<br>
+    <b>username:</b> ${p.username || 'N/A'}<br>
+    <b>partner:</b> ${p.partner || 'N/A'}<br>
     <b>Sign in time (CST):</b> ${signInCST}<br>
-    <b>status:</b> <span style="color:green">${p.status || p.msg}</span><br>
-    <b>rtk fix rate(%):</b> ${fixRate}<br>
+    <b>status:</b> <span style="color:green">${p.status || p.msg || 'N/A'}</span><br>
+    <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${fixRate || 'N/A'}</span><br>
     <b>station:</b> ${shortStation}<br>
+    <b>spp / dgps / fixed / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${p.rtkfix || 0} / ${p.float || 0}<br>
+    <b>avg age / max age:</b> ${p.avgAge || 'N/A'} / ${p.maxAge || 'N/A'}<br>
     <b>ip:</b> ${p.ip || 'N/A'}<br>
-    <b>latest nmea:</b> ${p.GGA || 'N/A'}
+    <b>latest nmea (GGA):</b> ${p.GGA || p.gga || 'N/A'}
   `;
+}
+
+function updateSummary(data) {
+  const users = new Set(data.map(d => d.username).filter(Boolean));
+  document.getElementById('sumUsers').textContent = users.size;
+
+  const fixRates = data.map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate)).filter(n => !isNaN(n));
+  const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
+  document.getElementById('sumFix').textContent = avgFix + '%';
+
+  const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
+  const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
+  document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
+
+  // Total session time (if duration field exists)
+  const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
+  const totalMin = durations.length ? durations.reduce((a,b)=>a+b,0) : 0;
+  document.getElementById('sumTime').textContent = totalMin ? (totalMin/60).toFixed(1) + ' hrs' : 'N/A';
 }
 
 async function loadBaseStations() {
@@ -88,14 +123,10 @@ function drawLines() {
   lines.forEach(l => map.removeLayer(l)); lines = [];
   allData.forEach(p => {
     if (!p.station) return;
-
     let base = baseMap.get(p.station);
     if (!base) {
       for (let [key, val] of baseMap) {
-        if (key.includes(p.station) || p.station.includes(key)) {
-          base = val;
-          break;
-        }
+        if (key.includes(p.station) || p.station.includes(key)) { base = val; break; }
       }
     }
     if (base) {
@@ -118,12 +149,29 @@ async function fetchData(hours = 24) {
   logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
   lines.forEach(l => map.removeLayer(l)); lines = [];
 
-  allData.forEach(p => {
+  // populate user filter
+  const userSel = document.getElementById('userFilter');
+  const currentUser = userSel.value;
+  userSel.innerHTML = '<option value="">All Users</option>';
+  const uniqueUsers = [...new Set(allData.map(d => d.username).filter(Boolean))];
+  uniqueUsers.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u; opt.textContent = u;
+    userSel.appendChild(opt);
+  });
+  userSel.value = currentUser;
+
+  // apply user filter
+  let filtered = allData;
+  if (currentUser) filtered = allData.filter(d => d.username === currentUser);
+
+  filtered.forEach(p => {
     const m = L.marker([p.latitude, p.longitude], {icon: getLogIcon(p)}).bindPopup(createLogPopup(p));
     m.addTo(map);
     logMarkers.push(m);
   });
 
+  updateSummary(filtered);
   if (baseMap.size > 0) drawLines();
 }
 
@@ -132,6 +180,7 @@ window.onload = async () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
   document.getElementById('timeFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
+  document.getElementById('userFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
 
   await loadBaseStations();
   await fetchData(24);
