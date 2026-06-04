@@ -36,7 +36,7 @@
       Unique users: <span id="sumUsers">0</span><br>
       Avg fix rate: <span id="sumFix">0%</span><br>
       Avg distance: <span id="sumDist">0 miles</span><br>
-      Total session time: <span id="sumTime">N/A</span>
+      Total connection time: <span id="sumTime">N/A</span>
     </div>
   </div>
 
@@ -177,9 +177,11 @@ function updateSummary(data) {
   const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
   document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
 
+  // Fixed: duration is in seconds → proper hours
   const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
-  const totalMin = durations.length ? durations.reduce((a,b)=>a+b,0) : 0;
-  document.getElementById('sumTime').textContent = totalMin ? (totalMin/60).toFixed(1) + ' hrs' : 'N/A';
+  const totalSeconds = durations.reduce((a, b) => a + b, 0);
+  const totalHours = (totalSeconds / 3600).toFixed(1);
+  document.getElementById('sumTime').textContent = totalHours + ' hrs';
 }
 
 window.onload = async () => {
