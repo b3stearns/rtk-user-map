@@ -101,8 +101,18 @@ async function loadBaseStations() {
 
   console.log("Total stations from API:", json.data?.length || 0);
 
-  // Temporarily disabled bounding box for testing
-  const filteredBases = json.data || [];
+  // Bounding box from your screenshot
+  const minLat = 42.3;
+  const maxLat = 47.2;
+  const minLng = -100.5;
+  const maxLng = -94.0;
+
+  const filteredBases = (json.data || []).filter(b =>
+    b.latitude >= minLat &&
+    b.latitude <= maxLat &&
+    b.longitude >= minLng &&
+    b.longitude <= maxLng
+  );
 
   console.log("Stations after filter:", filteredBases.length);
 
