@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
       appId,
       lat: 44.0,
       lng: -97.0,
-      radius: 450,
+      radius: 650,
       amount: 400,     // increased
       time: now
     };
