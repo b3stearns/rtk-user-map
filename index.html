@@ -110,9 +110,9 @@ async function loadBaseStations() {
   });
 }
 
-function drawLines() {
+function drawLines(dataToDraw = allData) {
   lines.forEach(l => map.removeLayer(l)); lines = [];
-  allData.forEach(p => {
+  dataToDraw.forEach(p => {
     if (!p.station) return;
     let base = baseMap.get(p.station);
     if (!base) {
@@ -134,7 +134,7 @@ async function fetchData(hours = 24) {
   const json = await res.json();
   allData = json.data || [];
 
-  if (allData.length === lastDataCount) return;
+  if (allData.length === lastDataCount && document.getElementById('userFilter').value === '') return;
   lastDataCount = allData.length;
 
   logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
@@ -142,6 +142,7 @@ async function fetchData(hours = 24) {
 
   const userSel = document.getElementById('userFilter');
   const currentUser = userSel.value;
+
   userSel.innerHTML = '<option value="">All Users</option>';
   const uniqueUsers = [...new Set(allData.map(d => d.username).filter(Boolean))];
   uniqueUsers.forEach(u => {
@@ -161,7 +162,7 @@ async function fetchData(hours = 24) {
   });
 
   updateSummary(filtered);
-  if (baseMap.size > 0) drawLines();
+  drawLines(filtered);
 }
 
 function updateSummary(data) {
