@@ -12,13 +12,12 @@ module.exports = async (req, res) => {
     const appKey = "549a2429d314ff17";
     const now = Date.now();
 
-    // Good center + radius to cover your screenshot area
     const params = {
       appId,
-      lat: 44.0,      // Central South Dakota
+      lat: 44.0,
       lng: -97.0,
-      radius: 400,    // Covers the bounding box well
-      amount: 300,
+      radius: 500,     // slightly larger radius
+      amount: 500,     // increased from 300 to 500
       time: now
     };
 
@@ -43,5 +42,7 @@ module.exports = async (req, res) => {
     res.json({ data: bases });
   } catch (e) {
     res.status(500).json({ error: e.message });
+  }
+};
   }
 };
