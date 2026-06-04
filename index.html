@@ -98,7 +98,21 @@ function createLogPopup(p) {
 async function loadBaseStations() {
   const res = await fetch('/api/bases');
   const json = await res.json();
-  (json.data || []).forEach(b => {
+
+  // Bounding box from your screenshot (approx)
+  const minLat = 42.3;
+  const maxLat = 47.2;
+  const minLng = -100.5;
+  const maxLng = -94.0;
+
+  const filteredBases = (json.data || []).filter(b =>
+    b.latitude >= minLat &&
+    b.latitude <= maxLat &&
+    b.longitude >= minLng &&
+    b.longitude <= maxLng
+  );
+
+  filteredBases.forEach(b => {
     const id = b.station || b.name;
     baseMap.set(id, { lat: b.latitude, lng: b.longitude, name: b.name });
 
