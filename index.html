@@ -132,12 +132,31 @@ let baseMap = new Map();
 let lastDataCount = 0;
 
 function getLogIcon(p) {
+  const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
+  let iconFile = 'default.png';
+
+  if (m.includes('jd') || m.includes('john') || m.includes('deere')) {
+    iconFile = 'JohnDeereDevice.png';
+  } else if (m.includes('trimble')) {
+    iconFile = 'TrimbleGCS900Device.png';
+  } else if (m.includes('case') || m.includes('cnh')) {
+    iconFile = 'CNHIndustrialDevice.png';
+  } else if (m.includes('topcon')) {
+    iconFile = 'TopconDevice.png';
+  } else if (m.includes('outback')) {
+    iconFile = 'OutbackDevice.png';
+  } else if (m.includes('dji')) {
+    iconFile = 'DJIDevice.png';
+  } else if (m.includes('fjd')) {
+    iconFile = 'FJDDevice.png';
+  }
+
   return L.divIcon({
     className: 'custom-marker',
-    html: `<div style="background:#9E9E9E;width:28px;height:28px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    popupAnchor: [0, -14]
+    html: `<img src="${iconFile}" style="width:32px;height:32px;object-fit:contain;" onerror="this.src='default.png'">`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -28]
   });
 }
 
