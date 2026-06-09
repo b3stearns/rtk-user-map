@@ -132,7 +132,6 @@ let baseMap = new Map();
 let lastDataCount = 0;
 
 function getLogIcon(p) {
-  // Only look at the "request" field for hardware info
   const request = (p.request || '').toLowerCase();
 
   let iconFile = 'default.png';
