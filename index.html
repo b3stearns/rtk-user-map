@@ -132,8 +132,13 @@ let baseMap = new Map();
 let lastDataCount = 0;
 
 function getLogIcon(p) {
-  const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
-  console.log("Hardware string detected:", m);   // ← Look for this in console
+  // Combine all possible fields, including NMEA (GGA)
+  const m = [
+    p.mountpoint || '',
+    p.station || '',
+    p.partner || '',
+    p.GGA || p.gga || ''
+  ].join(' ').toLowerCase();
 
   let iconFile = 'default.png';
 
