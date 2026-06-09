@@ -133,6 +133,8 @@ let lastDataCount = 0;
 
 function getLogIcon(p) {
   const m = (p.mountpoint || p.station || p.partner || '').toLowerCase();
+  console.log("Hardware string detected:", m);   // ← This will show in console
+
   let iconFile = 'default.png';
 
   if (m.includes('jd') || m.includes('john') || m.includes('deere')) {
