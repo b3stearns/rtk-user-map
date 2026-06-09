@@ -132,24 +132,24 @@ let baseMap = new Map();
 let lastDataCount = 0;
 
 function getLogIcon(p) {
-  // Only look at NMEA data (GGA field)
-  const nmea = (p.GGA || p.gga || p.latest_nmea || '').toLowerCase();
+  // Only look at the "request" field for hardware info
+  const request = (p.request || '').toLowerCase();
 
   let iconFile = 'default.png';
 
-  if (nmea.includes('jd') || nmea.includes('john') || nmea.includes('deere')) {
+  if (request.includes('jd') || request.includes('john') || request.includes('deere')) {
     iconFile = 'JohnDeereDevice.png';
-  } else if (nmea.includes('trimble')) {
+  } else if (request.includes('trimble')) {
     iconFile = 'TrimbleGCS900Device.png';
-  } else if (nmea.includes('case') || nmea.includes('cnh')) {
+  } else if (request.includes('case') || request.includes('cnh')) {
     iconFile = 'CNHIndustrialDevice.png';
-  } else if (nmea.includes('topcon')) {
+  } else if (request.includes('topcon')) {
     iconFile = 'TopconDevice.png';
-  } else if (nmea.includes('outback')) {
+  } else if (request.includes('outback')) {
     iconFile = 'OutbackDevice.png';
-  } else if (nmea.includes('dji')) {
+  } else if (request.includes('dji')) {
     iconFile = 'DJIDevice.png';
-  } else if (nmea.includes('fjd')) {
+  } else if (request.includes('fjd')) {
     iconFile = 'FJDDevice.png';
   }
 
