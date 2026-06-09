@@ -151,15 +151,13 @@ function getLogIcon(p) {
     iconFile = 'FJDDevice.png';
   }
 
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `<img src="${iconFile}" style="width:32px;height:32px;object-fit:contain;" onerror="this.src='default.png'">`,
+  return L.icon({
+    iconUrl: iconFile,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -28]
   });
 }
-
 function formatDuration(seconds) {
   if (!seconds || isNaN(seconds)) return 'N/A';
   const h = Math.floor(seconds / 3600);
