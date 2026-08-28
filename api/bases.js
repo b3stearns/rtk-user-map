@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { requireSession, json } = require("./_lib/auth");
 
 function generateGeodnetSignature(params, appKey) {
   const sortedKeys = Object.keys(params).filter(k => k !== "sign").sort();
@@ -7,40 +8,31 @@ function generateGeodnetSignature(params, appKey) {
 }
 
 module.exports = async (req, res) => {
+  if (!requireSession(req, res)) return;
   try {
-    const appId = "truenav";
-    const appKey = "549a2429d314ff17";
+    const appId = process.env.GEODNET_APP_ID || process.env.APP_ID;
+    const appKey = process.env.GEODNET_APP_KEY || process.env.APP_KEY;
+    if (!appId || !appKey) {
+      json(res, 500, { error: "server configuration error" });
+      return;
+    }
     const now = Date.now();
-
-    const params = {
-      appId,
-      lat: 44.0,
-      lng: -97.0,
-      radius: 650,
-      amount: 400,     // increased
-      time: now
-    };
-
+    const params = { appId, lat: 44.0, lng: -97.0, radius: 650, amount: 400, time: now };
     const sign = generateGeodnetSignature(params, appKey);
-
     const r = await fetch("https://rtk.geodnet.com/api/v3/coverage/list", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...params, sign })
     });
-
-    const json = await r.json();
-
-    const bases = (json.data || []).map(b => ({
+    const geodnet = await r.json();
+    const bases = (geodnet.data || []).map(b => ({
       name: b.name,
       station: b.name,
       latitude: parseFloat(b.lat),
       longitude: parseFloat(b.lng)
     }));
-
-    res.json({ data: bases });
+    json(res, 200, { data: bases });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: e.message });
+    json(res, 500, { error: e.message || "failed to load bases" });
   }
 };

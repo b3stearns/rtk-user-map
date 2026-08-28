@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    { "source": "/login", "destination": "/login.html" }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "missing": [{ "type": "cookie", "key": "tn_session" }],
+      "destination": "/login",
+      "permanent": false
+    },
+    {
+      "source": "/index.html",
+      "missing": [{ "type": "cookie", "key": "tn_session" }],
+      "destination": "/login",
+      "permanent": false
+    }
+  ]
+}

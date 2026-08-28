@@ -4,31 +4,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TruNav RTK User Map</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/apple-touch-icon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     body { margin:0; font-family: Arial, sans-serif; }
     #topbar {
-      display: flex; align-items: center; gap: 20px;
-      padding: 12px 20px; background: #f8f9fa; border-bottom: 1px solid #ddd;
+      display: flex; align-items: center; gap: 16px;
+      padding: 10px 20px; background: #f8f9fa; border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
     }
-    #filters { display: flex; gap: 12px; align-items: center; }
+    #logos { display: flex; align-items: center; gap: 12px; }
+    #logos img { height: 36px; width: auto; display: block; }
+    #filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    #filters select { padding: 4px 8px; font-size: 13px; }
+    .who { font-size: 13px; color: #444; }
+    button.lo {
+      padding: 5px 10px; font-size: 13px; cursor: pointer;
+      background: #fff; border: 1px solid #ccc; border-radius: 6px;
+    }
+    button.lo:hover { background: #eee; }
+    #alertBadge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff3cd; border: 1px solid #ffe08a; color: #7a5b00;
+      border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700;
+      cursor: pointer;
+    }
+    #alertBadge.warn { background: #fdecea; border-color: #f5c2c0; color: #b00020; }
     #summary {
       background: white; border: 1px solid #ddd; border-radius: 8px;
       padding: 10px 16px; font-size: 13px; line-height: 1.4; min-width: 260px;
+      margin-left: auto;
     }
-    #map { height: calc(100vh - 70px); width: 100%; }
+    #stage { position: relative; }
+    #map { height: calc(100vh - 78px); width: 100%; }
+    .panel {
+      position: absolute; z-index: 1000; background: #fff;
+      border: 1px solid #ddd; border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+      font-size: 13px; display: flex; flex-direction: column; min-width: 0;
+    }
+    .panel h3 {
+      margin: 0; padding: 8px 12px; font-size: 13px;
+      border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+    }
+    .panel .body { overflow: auto; padding: 8px; }
+    #livePanel { left: 12px; top: 12px; width: 250px; max-height: 42vh; }
+    #alertsPanel { right: 12px; top: 12px; width: 300px; max-height: 46vh; }
+    #userDetail {
+      left: 12px; bottom: 24px; width: 280px; display: none;
+    }
+    .u, .al {
+      padding: 8px; border-radius: 6px; cursor: pointer; border: 1px solid transparent;
+    }
+    .u:hover, .al:hover { background: #f4f6f8; }
+    .u.on { background: #e8f0fe; border-color: #1a73e8; }
+    .un { font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .mt { color: #666; font-size: 12px; margin-top: 2px; }
+    .pill {
+      font-size: 10px; letter-spacing: .04em; background: #e6f4ea; color: #137333;
+      border: 1px solid #b7e1c0; border-radius: 99px; padding: 1px 6px; font-weight: 700;
+    }
+    .cat {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+      color: #b00020;
+    }
+    .empty { color: #777; padding: 10px 6px; }
+    .detail-row { margin: 4px 0; }
+    .detail-row b { display: inline-block; min-width: 110px; }
   </style>
 </head>
 <body>
   <div id="topbar">
+    <div id="logos">
+      <img src="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/truenav-logo.png" alt="TrueNav">
+    </div>
     <div id="filters">
       <select id="timeFilter">
         <option value="12">Last 12 Hours</option>
         <option value="24" selected>Last 24 Hours</option>
         <option value="168">Last 7 Days</option>
+        <option value="720">Last 30 Days</option>
+        <option value="4380">Last 6 Months</option>
       </select>
       <select id="userFilter"><option value="">All Users</option></select>
+      <select id="hwFilter">
+        <option value="">All Hardware</option>
+        <option value="john">John Deere</option>
+        <option value="trimble">Trimble</option>
+        <option value="cnh">CNH / Case</option>
+        <option value="topcon">Topcon</option>
+        <option value="outback">Outback</option>
+        <option value="dji">DJI</option>
+        <option value="fjd">FJD</option>
+        <option value="other">Other</option>
+      </select>
+      <span id="alertBadge">Alerts <span id="alertCount">0</span></span>
+      <span class="who" id="who"></span>
+      <button class="lo" id="logoutBtn" type="button">Log out</button>
     </div>
     <div id="summary">
       <b>Summary</b><br>
@@ -38,10 +113,23 @@
       Total connection time: <span id="sumTime">N/A</span>
     </div>
   </div>
-  <div id="map"></div>
+  <div id="stage">
+    <div id="map"></div>
+    <aside class="panel" id="livePanel">
+      <h3>Live users <span id="liveCount">0</span></h3>
+      <div class="body" id="liveList"><div class="empty">Loading…</div></div>
+    </aside>
+    <aside class="panel" id="alertsPanel">
+      <h3>NTRIP alerts</h3>
+      <div class="body" id="alertList"><div class="empty">Loading…</div></div>
+    </aside>
+    <aside class="panel" id="userDetail">
+      <h3>Selected connection</h3>
+      <div class="body" id="userDetailBody"></div>
+    </aside>
+  </div>
 
 <script>
-// ==================== ALL YOUR STATIONS FROM PDF ====================
 const myStations = [
   {id:"A0B7651EBF05", name:"Marquardt", lat:43.640893, lng:-97.229591},
   {id:"C05D898DDAE5", name:"Mitchell Tech", lat:43.68897, lng:-98.000467},
@@ -127,12 +215,33 @@ const myStations = [
   {id:"A038D", name:"A038D", lat:46.85, lng:-96.92}
 ];
 
-let map, logMarkers = [], baseMarkers = [], lines = [], allData = [];
+let map, logMarkers = [], baseMarkers = [], lines = [], allData = [], allAlerts = [];
 let baseMap = new Map();
 let lastDataCount = 0;
+let trackLine = null;
+let alertMarkers = [];
+let selectedKey = null;
+
+function hardwareKey(p) {
+  const request = (p.userAgent || p.request || '').toLowerCase();
+  if (request.includes('jd') || request.includes('john') || request.includes('deere')) return 'john';
+  if (request.includes('trimble')) return 'trimble';
+  if (request.includes('case') || request.includes('cnh')) return 'cnh';
+  if (request.includes('topcon')) return 'topcon';
+  if (request.includes('outback')) return 'outback';
+  if (request.includes('dji')) return 'dji';
+  if (request.includes('fjd')) return 'fjd';
+  return 'other';
+}
+
+const ASSET_BASE = 'https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main';
+const PUBLIC_ICONS = new Set(['JohnDeereDevice.png','CNHIndustrialDevice.png','DJIDevice.png','FJDDevice.png','default.png','trimbleagdevice.png']);
+function assetUrl(name) {
+  return PUBLIC_ICONS.has(name) ? `${ASSET_BASE}/public/${name}` : `${ASSET_BASE}/${name}`;
+}
 
 function getLogIcon(p) {
-  const request = (p.request || '').toLowerCase();
+  const request = (p.userAgent || p.request || '').toLowerCase();
 
   let iconFile = 'default.png';
 
@@ -153,12 +262,13 @@ function getLogIcon(p) {
   }
 
   return L.icon({
-    iconUrl: `/${iconFile}`,
+    iconUrl: assetUrl(iconFile),
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -28]
   });
 }
+
 function formatDuration(seconds) {
   if (!seconds || isNaN(seconds)) return 'N/A';
   const h = Math.floor(seconds / 3600);
@@ -167,7 +277,35 @@ function formatDuration(seconds) {
   return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
+function connectionKey(p) {
+  return String(p.username || '') + '|' + String(p.mountpoint || p.mount || p.station || '');
+}
+
+function relatedLogs(p) {
+  const k = connectionKey(p);
+  return allData.filter(d => connectionKey(d) === k);
+}
+
+function sessionSeconds(p, related) {
+  const d = parseFloat(p.duration ?? p.sessionTime);
+  if (!isNaN(d) && d >= 0) return d;
+  const pts = (related && related.length ? related : [p])
+    .map(x => Number(x.loginTime))
+    .filter(t => !isNaN(t) && t > 0)
+    .sort((a, b) => a - b);
+  if (pts.length >= 2) return (pts[pts.length - 1] - pts[0]) / 1000;
+  if (pts.length === 1) return Math.max(0, (Date.now() - pts[0]) / 1000);
+  return NaN;
+}
+
+function formatSessionTime(p, related) {
+  const n = parseFloat(p.duration || p.sessionTime);
+  if (!isNaN(n) && n > 0) return formatDuration(n);
+  return formatDuration(sessionSeconds(p, related));
+}
+
 function createLogPopup(p) {
+  const related = relatedLogs(p);
   const shortStation = p.station ? String(p.station).slice(-4) : 'N/A';
   let distMiles = 'N/A';
   if (p.distance != null) {
@@ -178,9 +316,11 @@ function createLogPopup(p) {
   if (p.loginTime) {
     signInCST = new Date(p.loginTime).toLocaleString('en-US', {timeZone:'America/Chicago'}) + ' CST';
   }
-  const fixRate = parseFloat(p.rtkfix || p['rtk fix rate(%)'] || p.fixRate) || 0;
+  const fixRate = parseFloat(p.fixRate ?? p.rtkfix ?? p['rtk fix rate(%)']) || 0;
+  const rtkFixed = p.rtkFixed ?? p.rtkfix ?? 0;
+  const rtkFloat = p.rtkFloat ?? p.float ?? 0;
   const fixColor = fixRate >= 90 ? 'green' : 'black';
-  const sessionTime = formatDuration(p.duration || p.sessionTime);
+  const sessionTime = formatSessionTime(p, related);
 
   return `
     <b>Distance to Station:</b> ${distMiles}<br>
@@ -191,10 +331,14 @@ function createLogPopup(p) {
     <b>status:</b> <span style="color:green">${p.status || p.msg || 'N/A'}</span><br>
     <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${fixRate || 'N/A'}</span><br>
     <b>station:</b> ${shortStation}<br>
-    <b>spp / dgps / fixed / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${p.rtkfix || 0} / ${p.float || 0}<br>
+    <b>spp / dgps / fixed / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${rtkFixed} / ${rtkFloat}<br>
     <b>avg age / max age:</b> ${p.avgAge || 'N/A'} / ${p.maxAge || 'N/A'}<br>
     <b>ip:</b> ${p.ip || 'N/A'}
   `;
+}
+
+function sessionTimeLabel(p, related) {
+  return formatSessionTime(p, related);
 }
 
 function loadBaseStations() {
@@ -220,7 +364,7 @@ function drawLines(dataToDraw = allData) {
         if (key.includes(p.station) || p.station.includes(key)) { base = val; break; }
       }
     }
-    if (base) {
+    if (base && p.latitude && p.longitude) {
       const line = L.polyline([[p.latitude, p.longitude], [base.lat, base.lng]], {
         color: '#e53935', weight: 2.5, opacity: 0.75
       }).addTo(map);
@@ -229,16 +373,150 @@ function drawLines(dataToDraw = allData) {
   });
 }
 
+function isLive(p) {
+  const dur = parseFloat(p.duration);
+  if (!isNaN(dur) && dur < 0) return true;
+  const t = Number(p.loginTime);
+  return !!(t && (Date.now() - t) < 30 * 60 * 1000);
+}
+
+function groupedConnections(rows) {
+  const mapConn = new Map();
+  rows.forEach(p => {
+    const k = connectionKey(p);
+    const cur = mapConn.get(k) || [];
+    cur.push(p);
+    mapConn.set(k, cur);
+  });
+  return [...mapConn.entries()].map(([k, pts]) => {
+    pts.sort((a, b) => Number(a.loginTime || 0) - Number(b.loginTime || 0));
+    const last = pts[pts.length - 1];
+    return { key: k, points: pts, last, live: pts.some(isLive) };
+  }).sort((a, b) => Number(b.last.loginTime || 0) - Number(a.last.loginTime || 0));
+}
+
+function clearTrack() {
+  if (trackLine) { map.removeLayer(trackLine); trackLine = null; }
+}
+
+function drawTrack(conn, fit) {
+  clearTrack();
+  const pts = (conn.points || []).filter(p => p.latitude && p.longitude);
+  if (pts.length < 2) {
+    if (fit && pts[0]) map.setView([pts[0].latitude, pts[0].longitude], 13);
+    return;
+  }
+  const ll = pts.map(p => [p.latitude, p.longitude]);
+  trackLine = L.polyline(ll, { color: '#1a73e8', weight: 4, opacity: 0.85 }).addTo(map);
+  if (fit) map.fitBounds(ll, { padding: [36, 36], maxZoom: 14 });
+}
+
+function showUserDetail(p, related) {
+  const el = document.getElementById('userDetail');
+  const body = document.getElementById('userDetailBody');
+  const sessionTime = sessionTimeLabel(p, related);
+  let signInCST = 'N/A';
+  if (p.loginTime) {
+    signInCST = new Date(p.loginTime).toLocaleString('en-US', {timeZone:'America/Chicago'}) + ' CST';
+  }
+  body.innerHTML = `
+    <div class="detail-row"><b>username:</b> ${p.username || 'N/A'}</div>
+    <div class="detail-row"><b>station:</b> ${p.station || p.mountpoint || 'N/A'}</div>
+    <div class="detail-row"><b>Session time:</b> ${sessionTime}</div>
+    <div class="detail-row"><b>Sign in:</b> ${signInCST}</div>
+    <div class="detail-row"><b>status:</b> ${p.status || p.msg || 'N/A'}</div>
+    <div class="detail-row"><b>fix rate:</b> ${p.fixRate ?? p.rtkfix ?? 'N/A'}</div>
+  `;
+  el.style.display = 'flex';
+}
+
+function selectConnection(key, fit) {
+  selectedKey = key;
+  const conn = groupedConnections(allData).find(c => c.key === key);
+  renderLiveList();
+  if (!conn) return;
+  drawTrack(conn, fit);
+  const last = conn.last;
+  showUserDetail(last, conn.points);
+  const marker = logMarkers.find(m => m._tnKey === key && m._tnLast);
+  if (marker) marker.openPopup();
+  else if (last && last.latitude && last.longitude) {
+    L.popup().setLatLng([last.latitude, last.longitude]).setContent(createLogPopup(last)).openOn(map);
+  }
+}
+
+function renderLiveList() {
+  const conns = groupedConnections(allData).filter(c => c.live);
+  document.getElementById('liveCount').textContent = conns.length;
+  const list = document.getElementById('liveList');
+  if (!conns.length) {
+    list.innerHTML = '<div class="empty">No live sessions in this window.</div>';
+    return;
+  }
+  list.innerHTML = conns.map(c => {
+    const on = selectedKey === c.key ? ' on' : '';
+    const last = c.last;
+    const sessionTime = sessionTimeLabel(last, c.points);
+    return `<div class="u${on}" data-k="${encodeURIComponent(c.key)}">
+      <div class="un">${last.username || 'Unknown'}${c.live ? ' <span class="pill">LIVE</span>' : ''}</div>
+      <div class="mt">${last.mountpoint || last.station || '—'} · Session time: ${sessionTime}</div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.u').forEach(el => {
+    el.onclick = () => selectConnection(decodeURIComponent(el.dataset.k), 1);
+  });
+}
+
+function renderAlerts(alerts) {
+  const n = (alerts || []).length;
+  document.getElementById('alertCount').textContent = n;
+  document.getElementById('alertBadge').classList.toggle('warn', n > 0);
+  const list = document.getElementById('alertList');
+  if (!n) {
+    list.innerHTML = '<div class="empty">No NTRIP issues in this window.</div>';
+    return;
+  }
+  list.innerHTML = alerts.map(a => `
+    <div class="al" data-id="${a.id || ''}">
+      <div class="cat">${a.categoryLabel || a.category}</div>
+      <div class="un">${a.username || 'Unknown'}</div>
+      <div class="mt">${a.timeLabel || ''} · ${a.station || a.mount || '—'}<br>${a.msg || ''}</div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.al').forEach((el, i) => {
+    el.onclick = () => {
+      const a = alerts[i];
+      if (a && a.latitude && a.longitude) map.setView([a.latitude, a.longitude], 12);
+      const match = allData.find(d => d.username === a.username && String(d.station || '') === String(a.station || ''));
+      if (match) selectConnection(connectionKey(match), 0);
+    };
+  });
+}
+
+function drawAlertMarkers(alerts) {
+  alertMarkers.forEach(m => map.removeLayer(m));
+  alertMarkers = [];
+  (alerts || []).forEach(a => {
+    if (!a.latitude || !a.longitude) return;
+    const m = L.circleMarker([a.latitude, a.longitude], {
+      color: '#c62828', fillColor: '#ff9800', fillOpacity: 0.95, radius: 7, weight: 2
+    }).bindPopup(`<b>${a.categoryLabel || a.category}</b><br>${a.username || ''}<br>${a.msg || ''}`);
+    m.addTo(map);
+    alertMarkers.push(m);
+  });
+}
+
 async function fetchData(hours = 24) {
-  const res = await fetch(`/api/sheets?hours=${hours}`);
+  const res = await fetch(`/api/sheets?hours=${hours}`, { credentials: 'same-origin' });
+  if (res.status === 401) { location.replace('/login'); return; }
   const json = await res.json();
   allData = json.data || [];
-
-  if (allData.length === lastDataCount && document.getElementById('userFilter').value === '') return;
+  allAlerts = json.alerts || [];
   lastDataCount = allData.length;
 
   logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
   lines.forEach(l => map.removeLayer(l)); lines = [];
+  clearTrack();
 
   const userSel = document.getElementById('userFilter');
   const currentUser = userSel.value;
@@ -252,17 +530,47 @@ async function fetchData(hours = 24) {
   });
   userSel.value = currentUser;
 
+  const currentHw = document.getElementById('hwFilter').value;
   let filtered = allData;
-  if (currentUser) filtered = allData.filter(d => d.username === currentUser);
+  if (currentUser) filtered = filtered.filter(d => d.username === currentUser);
+  if (currentHw) filtered = filtered.filter(d => hardwareKey(d) === currentHw);
 
   filtered.forEach(p => {
+    if (!p.latitude || !p.longitude) return;
     const m = L.marker([p.latitude, p.longitude], {icon: getLogIcon(p)}).bindPopup(createLogPopup(p));
+    m._tnKey = connectionKey(p);
+    m.on('click', () => {
+      selectedKey = connectionKey(p);
+      const related = relatedLogs(p);
+      showUserDetail(p, related);
+      drawTrack({ points: related }, 0);
+      renderLiveList();
+    });
     m.addTo(map);
     logMarkers.push(m);
   });
 
+  const byKey = new Map();
+  filtered.forEach(p => {
+    const k = connectionKey(p);
+    const prev = byKey.get(k);
+    if (!prev || Number(p.loginTime || 0) >= Number(prev.loginTime || 0)) byKey.set(k, p);
+  });
+  logMarkers.forEach(m => {
+    const last = byKey.get(m._tnKey);
+    m._tnLast = !!(last && last.latitude === m.getLatLng().lat && last.longitude === m.getLatLng().lng);
+  });
+
   updateSummary(filtered);
   drawLines(filtered);
+  renderLiveList();
+  renderAlerts(allAlerts);
+  drawAlertMarkers(allAlerts);
+
+  if (selectedKey) {
+    const still = groupedConnections(allData).find(c => c.key === selectedKey);
+    if (still) drawTrack(still, 0);
+  }
 }
 
 function updateSummary(data) {
@@ -270,7 +578,7 @@ function updateSummary(data) {
   document.getElementById('sumUsers').textContent = users.size;
 
   const fixRates = data
-    .map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate || d.rtkFixRate))
+    .map(d => parseFloat(d.fixRate ?? d.rtkfix ?? d['rtk fix rate(%)'] ?? d.rtkFixRate))
     .filter(n => !isNaN(n) && n > 0);
   const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
   document.getElementById('sumFix').textContent = avgFix + '%';
@@ -286,11 +594,26 @@ function updateSummary(data) {
 }
 
 window.onload = async () => {
+  const me = await fetch('/api/me', { credentials: 'same-origin' });
+  if (me.status === 401) { location.replace('/login'); return; }
+  const meJson = await me.json();
+  if (meJson.user && meJson.user.name) {
+    document.getElementById('who').textContent = meJson.user.name;
+  }
+
   map = L.map('map').setView([43.6, -97.5], 7);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
   document.getElementById('timeFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
   document.getElementById('userFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
+  document.getElementById('hwFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
+  document.getElementById('logoutBtn').onclick = async () => {
+    await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+    location.replace('/login');
+  };
+  document.getElementById('alertBadge').onclick = () => {
+    document.getElementById('alertsPanel').scrollIntoView({ block: 'nearest' });
+  };
 
   loadBaseStations();
   await fetchData(24);
