@@ -6,7 +6,8 @@ function loadEnvFiles() {
   const candidates = [
     path.join(process.cwd(), ".env"),
     path.join(__dirname, "..", "..", ".env"),
-    path.join(__dirname, "..", ".env")
+    path.join(__dirname, "..", ".env"),
+    path.join(__dirname, "geodnet.env")
   ];
   for (const file of candidates) {
     try {

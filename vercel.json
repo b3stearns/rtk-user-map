@@ -18,6 +18,9 @@
       "missing": [{ "type": "cookie", "key": "tn_session" }],
       "destination": "/login",
       "permanent": false
-    }
+    },
+    { "source": "/.env", "destination": "/login", "permanent": false },
+    { "source": "/.env.local", "destination": "/login", "permanent": false },
+    { "source": "/api/_lib/:path*", "destination": "/login", "permanent": false }
   ]
 }

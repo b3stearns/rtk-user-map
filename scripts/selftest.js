@@ -110,6 +110,7 @@ test("auth.js loads missing env from .env file", () => {
   const src = fs.readFileSync(require("path").join(__dirname, "..", "api/_lib/auth.js"), "utf8");
   assert.ok(src.includes("loadEnvFiles"));
   assert.ok(src.includes(".env"));
+  assert.ok(src.includes("geodnet.env"));
 });
 
 test("session HMAC roundtrip", () => {
