@@ -1,103 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrueNav Live — Dealer login</title>
-  <link rel="icon" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/favicon.ico">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TrueNav Live</title>
+  <link rel="icon" href="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=100w">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; }
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f4f6f8;
-      color: #1a1a1a;
-    }
-    .box {
-      width: min(400px, calc(100% - 32px));
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 28px 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.06);
-    }
-    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .brand img { height: 36px; width: auto; }
-    .brand b { font-size: 16px; }
-    .sub { color: #666; font-size: 13px; margin: 0 0 20px; }
-    label { display: block; font-size: 12px; color: #555; margin: 0 0 6px; }
-    input {
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 10px 12px;
-      font: inherit;
-      margin-bottom: 14px;
-    }
-    button {
-      width: 100%;
-      background: #1a73e8;
-      color: #fff;
-      border: 0;
-      border-radius: 6px;
-      padding: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    button:hover { background: #1557b0; }
-    #err {
-      display: none;
-      color: #b00020;
-      font-size: 13px;
-      margin: 0 0 12px;
-      background: #fdecea;
-      border: 1px solid #f5c2c0;
-      border-radius: 6px;
-      padding: 8px 10px;
-    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}
+    body{display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#182230,transparent 60%),#07090c}
+    .box{width:min(400px,calc(100% - 32px));background:#0c1117;border:1px solid rgba(214,226,240,.09);border-radius:14px;padding:32px 28px;box-shadow:0 20px 60px #0008}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .brand img{width:34px;height:34px;border-radius:6px}
+    .brand b{letter-spacing:.08em;text-transform:uppercase;font-size:14px}
+    .brand b span{color:#c5a46e}
+    .sub{color:#8e9aab;font-size:13px;margin:0 0 22px}
+    label{display:block;font-size:12px;color:#8e9aab;margin:0 0 6px;letter-spacing:.04em;text-transform:uppercase}
+    input{width:100%;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:11px 12px;font:inherit;margin-bottom:14px}
+    input:focus{outline:2px solid #c5a46e;outline-offset:1px}
+    button{width:100%;background:#c5a46e;color:#07090c;border:0;border-radius:8px;padding:12px;font-weight:700;cursor:pointer;font-size:15px;margin-top:6px}
+    button:hover{filter:brightness(1.08)}
+    #err{display:none;color:#e05555;font-size:13px;margin:0 0 10px;background:#3a1515;border:1px solid #e0555544;border-radius:8px;padding:8px 10px}
+    #err:empty{display:none}
   </style>
 </head>
 <body>
-  <form class="box" id="f" autocomplete="on">
-    <div class="brand">
-      <img src="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/truenav-logo.png" alt="TrueNav">
-      <b>TrueNav Live</b>
-    </div>
-    <p class="sub">Dealer map — sign in to view RTK users</p>
-    <div id="err">Invalid username or password</div>
-    <label for="u">Username</label>
-    <input id="u" name="username" autocomplete="username" required>
-    <label for="p">Password</label>
-    <input id="p" name="password" type="password" autocomplete="current-password" required>
-    <button type="submit">Sign in</button>
-  </form>
-  <script>
-    (async () => {
-      try {
-        const me = await fetch("/api/me", { credentials: "same-origin" });
-        if (me.ok) location.replace("/");
-      } catch (e) {}
-    })();
-    document.getElementById("f").onsubmit = async (e) => {
-      e.preventDefault();
-      const err = document.getElementById("err");
-      err.style.display = "none";
-      const r = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-          username: document.getElementById("u").value,
-          password: document.getElementById("p").value
-        })
-      });
-      if (!r.ok) { err.style.display = "block"; return; }
-      location.replace("/");
-    };
-  </script>
+<form class="box" id="f" autocomplete="on">
+  <div class="brand">
+    <img src="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=1500w" alt="">
+    <b>TRUENAV <span>LIVE</span></b>
+  </div>
+  <p class="sub">dealer map · RTK users</p>
+  <div id="err" hidden></div>
+  <label for="u">Username</label>
+  <input id="u" name="username" autocomplete="username" required>
+  <label for="p">Password</label>
+  <input id="p" name="password" type="password" autocomplete="current-password" required>
+  <button type="submit">Sign in</button>
+</form>
+<script>
+document.getElementById("f").onsubmit = async e => {
+  e.preventDefault();
+  const err = document.getElementById("err");
+  err.hidden = true;
+  err.style.display = "none";
+  err.textContent = "";
+  const r = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify({
+      username: document.getElementById("u").value,
+      password: document.getElementById("p").value
+    })
+  });
+  if (!r.ok) {
+    err.textContent = "Invalid username or password";
+    err.hidden = false;
+    err.style.display = "block";
+    return;
+  }
+  location = "/";
+};
+</script>
 </body>
 </html>

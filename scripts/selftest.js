@@ -172,20 +172,76 @@ test("index.html popup still contains required fields", () => {
     "<b>ip:</b>",
     "No NTRIP issues in this window.",
     "formatSessionTime",
-    "Last 6 Months"
+    "Last 6 Months",
+    "Search users",
+    "NTRIP alerts",
+    "Live users",
+    'option value="12" selected'
   ].forEach(s => assert.ok(html.includes(s), "missing " + s));
+  assert.ok(html.includes("parseInt(document.getElementById(\"timeFilter\").value, 10) || 12"));
+  assert.ok(html.includes("/api/live?hours="));
   assert.ok(!html.includes("GeodnetLogo"));
   assert.ok(!html.includes("549a2429d314ff17"), "must not hardcode APP_KEY");
+  [
+    "Powered by BD Solutions",
+    "nearest-three",
+    "Nearest three",
+    "accuracy rings",
+    "Accuracy rings",
+    "coverage-station"
+  ].forEach(s => assert.ok(!html.includes(s), "coverage copy leaked: " + s));
+});
+
+test("login.html hides #err until failed POST", () => {
+  const fs = require("fs");
+  const html = fs.readFileSync(require("path").join(__dirname, "..", "login.html"), "utf8");
+  assert.ok(html.includes('<div id="err" hidden></div>'));
+  assert.ok(html.includes("#err{display:none") || html.includes("#err {display:none") || html.includes("#err{display:none;"));
+  assert.ok(html.includes("#err:empty{display:none}"));
+  assert.ok(html.includes("Invalid username or password"));
+  assert.ok(!/id="err"[^>]*>Invalid/.test(html));
+});
+
+test("parseHours defaults to 12", () => {
+  const { parseHours } = require("../api/_lib/geodnet");
+  assert.strictEqual(parseHours(undefined), 12);
+  assert.strictEqual(parseHours(""), 12);
+  assert.strictEqual(parseHours("12"), 12);
+  assert.strictEqual(parseHours("24"), 24);
+  assert.strictEqual(parseHours("4380"), 4380);
+  assert.strictEqual(parseHours("99999"), 4380);
+});
+
+test("live.js requires session", () => {
+  const fs = require("fs");
+  const src = fs.readFileSync(require("path").join(__dirname, "..", "api/live.js"), "utf8");
+  assert.ok(src.includes("requireSession"));
+  assert.ok(src.includes("toTracks"));
+  const live = require("../api/live");
+  const res = {
+    headers: {},
+    statusCode: 200,
+    body: "",
+    setHeader(k, v) { this.headers[k] = v; },
+    end(b) { this.body = b || ""; }
+  };
+  live({ headers: {}, query: { hours: "12" } }, res);
+  assert.strictEqual(res.statusCode, 401);
 });
 
 test("sheets.js uses env keys and requireSession", () => {
   const fs = require("fs");
-  const src = fs.readFileSync(require("path").join(__dirname, "..", "api/sheets.js"), "utf8");
-  assert.ok(src.includes("GEODNET_APP_ID"));
-  assert.ok(src.includes("GEODNET_APP_KEY"));
-  assert.ok(src.includes("requireSession"));
-  assert.ok(src.includes("sanitizeLog"));
-  assert.ok(!src.includes("549a2429d314ff17"));
+  const path = require("path");
+  const sheets = fs.readFileSync(path.join(__dirname, "..", "api/sheets.js"), "utf8");
+  const geodnet = fs.readFileSync(path.join(__dirname, "..", "api/_lib/geodnet.js"), "utf8");
+  assert.ok(sheets.includes("requireSession"));
+  assert.ok(sheets.includes("classifyAlerts"));
+  assert.ok(sheets.includes("fetchRtkLogs"));
+  assert.ok(!sheets.includes("549a2429d314ff17"));
+  assert.ok(geodnet.includes("GEODNET_APP_ID"));
+  assert.ok(geodnet.includes("GEODNET_APP_KEY"));
+  assert.ok(geodnet.includes("sanitizeLog"));
+  assert.ok(!geodnet.includes("549a2429d314ff17"));
 });
 
 test("/api/sheets returns 401 without session", () => {

@@ -1,134 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TruNav RTK User Map</title>
-  <link rel="icon" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/favicon-32x32.png">
-  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/apple-touch-icon.png">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TrueNav Live</title>
+  <link rel="icon" href="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=100w">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    body { margin:0; font-family: Arial, sans-serif; }
-    #topbar {
-      display: flex; align-items: center; gap: 16px;
-      padding: 10px 20px; background: #f8f9fa; border-bottom: 1px solid #ddd;
-      flex-wrap: wrap;
-    }
-    #logos { display: flex; align-items: center; gap: 12px; }
-    #logos img { height: 36px; width: auto; display: block; }
-    #filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    #filters select { padding: 4px 8px; font-size: 13px; }
-    .who { font-size: 13px; color: #444; }
-    button.lo {
-      padding: 5px 10px; font-size: 13px; cursor: pointer;
-      background: #fff; border: 1px solid #ccc; border-radius: 6px;
-    }
-    button.lo:hover { background: #eee; }
-    #alertBadge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #fff3cd; border: 1px solid #ffe08a; color: #7a5b00;
-      border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700;
-      cursor: pointer;
-    }
-    #alertBadge.warn { background: #fdecea; border-color: #f5c2c0; color: #b00020; }
-    #summary {
-      background: white; border: 1px solid #ddd; border-radius: 8px;
-      padding: 10px 16px; font-size: 13px; line-height: 1.4; min-width: 260px;
-      margin-left: auto;
-    }
-    #stage { position: relative; }
-    #map { height: calc(100vh - 78px); width: 100%; }
-    .panel {
-      position: absolute; z-index: 1000; background: #fff;
-      border: 1px solid #ddd; border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0,0,0,.12);
-      font-size: 13px; display: flex; flex-direction: column; min-width: 0;
-    }
-    .panel h3 {
-      margin: 0; padding: 8px 12px; font-size: 13px;
-      border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
-    }
-    .panel .body { overflow: auto; padding: 8px; }
-    #livePanel { left: 12px; top: 12px; width: 250px; max-height: 42vh; }
-    #alertsPanel { right: 12px; top: 12px; width: 300px; max-height: 46vh; }
-    #userDetail {
-      left: 12px; bottom: 24px; width: 280px; display: none;
-    }
-    .u, .al {
-      padding: 8px; border-radius: 6px; cursor: pointer; border: 1px solid transparent;
-    }
-    .u:hover, .al:hover { background: #f4f6f8; }
-    .u.on { background: #e8f0fe; border-color: #1a73e8; }
-    .un { font-weight: 700; display: flex; align-items: center; gap: 6px; }
-    .mt { color: #666; font-size: 12px; margin-top: 2px; }
-    .pill {
-      font-size: 10px; letter-spacing: .04em; background: #e6f4ea; color: #137333;
-      border: 1px solid #b7e1c0; border-radius: 99px; padding: 1px 6px; font-weight: 700;
-    }
-    .cat {
-      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
-      color: #b00020;
-    }
-    .empty { color: #777; padding: 10px 6px; }
-    .detail-row { margin: 4px 0; }
-    .detail-row b { display: inline-block; min-width: 110px; }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}
+    #app{display:grid;grid-template-rows:auto 1fr;grid-template-columns:300px 1fr;height:100%}
+    header{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:52px;padding:8px 16px;background:rgba(7,9,12,.92);border-bottom:1px solid rgba(214,226,240,.09);z-index:500}
+    .brand{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+    .brand img{width:28px;height:28px;border-radius:5px}
+    .brand span{color:#c5a46e}
+    .meta{color:#8e9aab;font-size:12px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    .meta b{color:#c5a46e;font-weight:600}
+    .sp{flex:1}
+    button.lo{background:transparent;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+    button.lo:hover{border-color:#c5a46e;color:#c5a46e}
+    #timeFilter{background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px}
+    .sum{display:flex;gap:14px;flex-wrap:wrap;margin-left:8px}
+    .sum div{display:flex;flex-direction:column;line-height:1.15}
+    .sum b{color:#c5a46e;font-size:14px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    .sum span{color:#8e9aab;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+    #side{background:#0c1117;border-right:1px solid rgba(214,226,240,.09);display:flex;flex-direction:column;min-height:0}
+    .uh{margin:0;padding:12px 12px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
+    #alerts{border-top:1px solid rgba(214,226,240,.09);flex:0 0 auto;max-height:34%;display:flex;flex-direction:column;min-height:0}
+    #alerts h2{margin:0;padding:10px 12px 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
+    #alertCount{background:#3a1515;color:#e05555;border:1px solid #e0555544;border-radius:99px;padding:1px 7px;font-size:11px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    #alertCount.ok{background:#1a3d2a;color:#8fd4ae;border-color:#3dcc7a55}
+    #alertList{overflow:auto;padding:0 8px 10px;flex:1}
+    .al{padding:8px 10px;border-radius:8px;border:1px solid rgba(224,85,85,.25);background:#1a1010;margin-bottom:6px;cursor:pointer}
+    .al:hover{border-color:#e05555}
+    .cat{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#e05555;font-weight:700}
+    #q{margin:12px;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:9px 10px;font:inherit}
+    #list{overflow:auto;flex:1;padding:0 8px 12px}
+    .u{padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+    .u:hover{background:#121922}
+    .u.on{background:#182230;border-color:rgba(197,164,110,.45)}
+    .un{font-weight:650;font-size:14px;display:flex;align-items:center;gap:8px}
+    .mt{color:#8e9aab;font-size:12px;margin-top:2px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    .pill{font-size:10px;letter-spacing:.08em;background:#1a3d2a;color:#8fd4ae;border:1px solid #3dcc7a55;border-radius:99px;padding:2px 7px;font-weight:700}
+    #detail{display:none;border-top:1px solid rgba(214,226,240,.09);padding:10px 12px;font-size:13px;background:#0a0e13}
+    #detail .k{color:#8e9aab;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+    #detail b{color:#c5a46e}
+    #map{height:100%;background:#07090c}
+    .leaflet-control-layers{background:#0c1117;color:#edf2f7;border:1px solid rgba(214,226,240,.16);border-radius:8px}
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0c1117;color:#edf2f7;border:1px solid rgba(197,164,110,.35)}
+    .leaflet-popup-content{font-family:Instrument Sans,sans-serif;font-size:13px;margin:10px 12px;line-height:1.45}
+    .leaflet-popup-content b{color:#c5a46e}
+    .empty{color:#6b7787;padding:12px 10px;font-size:13px}
+    @media(max-width:720px){#app{grid-template-columns:1fr;grid-template-rows:auto 42vh 1fr}#side{border-right:0;border-bottom:1px solid rgba(214,226,240,.09)}}
   </style>
 </head>
 <body>
-  <div id="topbar">
-    <div id="logos">
-      <img src="https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main/truenav-logo.png" alt="TrueNav">
+<div id="app">
+  <header>
+    <div class="brand">
+      <img src="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=1500w" alt="">
+      <div>TRUE<span>NAV</span> LIVE</div>
     </div>
-    <div id="filters">
-      <select id="timeFilter">
-        <option value="12">Last 12 Hours</option>
-        <option value="24" selected>Last 24 Hours</option>
-        <option value="168">Last 7 Days</option>
-        <option value="720">Last 30 Days</option>
-        <option value="4380">Last 6 Months</option>
-      </select>
-      <select id="userFilter"><option value="">All Users</option></select>
-      <select id="hwFilter">
-        <option value="">All Hardware</option>
-        <option value="john">John Deere</option>
-        <option value="trimble">Trimble</option>
-        <option value="cnh">CNH / Case</option>
-        <option value="topcon">Topcon</option>
-        <option value="outback">Outback</option>
-        <option value="dji">DJI</option>
-        <option value="fjd">FJD</option>
-        <option value="other">Other</option>
-      </select>
-      <span id="alertBadge">Alerts <span id="alertCount">0</span></span>
-      <span class="who" id="who"></span>
-      <button class="lo" id="logoutBtn" type="button">Log out</button>
+    <div class="meta">refreshed <span id="ref">—</span></div>
+    <div class="meta"><b id="nlive">0</b> live</div>
+    <select id="timeFilter" title="Summary window">
+      <option value="12" selected>Last 12 Hours</option>
+      <option value="24">Last 24 Hours</option>
+      <option value="168">Last 7 Days</option>
+      <option value="720">Last 30 Days</option>
+      <option value="4380">Last 6 Months</option>
+    </select>
+    <div id="summary" class="sum">
+      <div><b id="sumUsers">—</b><span>Unique users</span></div>
+      <div><b id="sumFix">—</b><span>Avg fix rate</span></div>
+      <div><b id="sumDist">—</b><span>Avg distance</span></div>
+      <div><b id="sumTime">—</b><span>Total connection time</span></div>
     </div>
-    <div id="summary">
-      <b>Summary</b><br>
-      Unique users: <span id="sumUsers">0</span><br>
-      Avg fix rate: <span id="sumFix">0%</span><br>
-      Avg distance: <span id="sumDist">0 miles</span><br>
-      Total connection time: <span id="sumTime">N/A</span>
+    <div class="sp"></div>
+    <button class="lo" id="out" type="button">Log out</button>
+  </header>
+  <aside id="side">
+    <h2 class="uh">Live users</h2>
+    <input id="q" placeholder="Search users…" autocomplete="off">
+    <div id="list"></div>
+    <div id="alerts">
+      <h2>NTRIP alerts <span id="alertCount">0</span></h2>
+      <div id="alertList"><div class="empty">Loading…</div></div>
     </div>
-  </div>
-  <div id="stage">
-    <div id="map"></div>
-    <aside class="panel" id="livePanel">
-      <h3>Live users <span id="liveCount">0</span></h3>
-      <div class="body" id="liveList"><div class="empty">Loading…</div></div>
-    </aside>
-    <aside class="panel" id="alertsPanel">
-      <h3>NTRIP alerts</h3>
-      <div class="body" id="alertList"><div class="empty">Loading…</div></div>
-    </aside>
-    <aside class="panel" id="userDetail">
-      <h3>Selected connection</h3>
-      <div class="body" id="userDetailBody"></div>
-    </aside>
-  </div>
-
+    <div id="detail"></div>
+  </aside>
+  <div id="map"></div>
+</div>
 <script>
 const myStations = [
   {id:"A0B7651EBF05", name:"Marquardt", lat:43.640893, lng:-97.229591},
@@ -167,461 +131,248 @@ const myStations = [
   {id:"30C922A665C5", name:"Bohner", lat:43.440283, lng:-96.844825},
   {id:"30C922A64DC5", name:"605 Real Estate", lat:43.499546, lng:-96.768736},
   {id:"A842E3B1C36D", name:"Stearns", lat:43.479829, lng:-96.736969},
-  {id:"C82E1891CBA5", name:"Worth", lat:45.05709, lng:-100.13069},
-  {id:"73611", name:"73611", lat:42.7202342, lng:-97.4074012},
-  {id:"E39F1", name:"E39F1", lat:42.5200478, lng:-96.3899494},
-  {id:"CA2D9", name:"CA2D9", lat:43.4564447, lng:-98.6599934},
-  {id:"378D1", name:"378D1", lat:43.7449413, lng:-99.0199086},
-  {id:"C91F5", name:"C91F5", lat:44.249989, lng:-97.0086247},
-  {id:"C8821", name:"C8821", lat:44.3186761, lng:-96.7700123},
-  {id:"DA941", name:"DA941", lat:44.8044803, lng:-96.7500129},
-  {id:"224AD", name:"224AD", lat:45.4014614, lng:-98.4999922},
-  {id:"702C0", name:"702C0", lat:45.4607704, lng:-98.4286549},
-  {id:"0B669", name:"0B669", lat:45.47, lng:-102.2},
-  {id:"23269", name:"23269", lat:44.510349, lng:-101.52863},
-  {id:"70C5D", name:"70C5D", lat:45.84, lng:-101.64},
-  {id:"83421", name:"83421", lat:46.4138504, lng:-101.5651902},
-  {id:"65B2D", name:"65B2D", lat:46.7595067, lng:-100.8005269},
-  {id:"E4F11", name:"E4F11", lat:46.790841, lng:-100.83029},
-  {id:"773DD", name:"773DD", lat:46.7999925, lng:-100.7696681},
-  {id:"0EEF9", name:"0EEF9", lat:46.8900026, lng:-98.6293639},
-  {id:"6A41C", name:"6A41C", lat:46.8803018, lng:-102.7705648},
-  {id:"C7651", name:"C7651", lat:47.1900233, lng:-101.0873219},
-  {id:"A2335", name:"A2335", lat:46.5725281, lng:-97.1900099},
-  {id:"A038D", name:"A038D", lat:46.8500233, lng:-96.9199724},
-  {id:"008DD", name:"008DD", lat:46.8699897, lng:-96.869751},
-  {id:"9FF65", name:"9FF65", lat:46.8720187, lng:-96.6998028},
-  {id:"00801", name:"00801", lat:47.9199956, lng:-97.0597872},
-  {id:"09BEE", name:"09BEE", lat:47.7446224, lng:-96.9700293},
-  {id:"C803D", name:"C803D", lat:45.8051113, lng:-97.0900341},
-  {id:"182E5", name:"182E5", lat:48.199371, lng:-103.622595},
-  {id:"96BED", name:"96BED", lat:47.0999762, lng:-103.2865793},
-  {id:"FCECD", name:"FCECD", lat:43.4, lng:-101.17},
-  {id:"80B6D", name:"80B6D", lat:44.5000132, lng:-103.9409515},
-  {id:"18E49", name:"18E49", lat:44.4802479, lng:-103.8618381},
-  {id:"CA035", name:"CA035", lat:44.8, lng:-102.56},
-  {id:"E4531", name:"E4531", lat:43.080266, lng:-96.790116},
-  {id:"19935", name:"19935", lat:46.2499955, lng:-100.2327633},
-  {id:"23269", name:"23269", lat:44.510349, lng:-101.52863},
-  {id:"CA035", name:"CA035", lat:48.8, lng:-102.56},
-  {id:"19D65", name:"19D65", lat:44.9299982, lng:-96.3090867},
-  {id:"969A9", name:"969A9", lat:45.0604159, lng:-96.083763},
-  {id:"29CAD", name:"29CAD", lat:48.219555, lng:-101.299961},
-  {id:"A0629", name:"A0629", lat:47.8796857, lng:-100.2501372},
-  {id:"14D9D", name:"14D9D", lat:47.919531, lng:-100.370086},
-  {id:"C475D", name:"C475D", lat:42.63, lng:-97.41},
-  {id:"C3A85", name:"C3A85", lat:43.1699841, lng:-95.9409024},
-  {id:"DAFD9", name:"DAFD9", lat:43.7900537, lng:-96.1300252},
-  {id:"A038D", name:"A038D", lat:46.85, lng:-96.92}
+  {id:"C82E1891CBA5", name:"Worth", lat:45.05709, lng:-100.13069}
 ];
 
-let map, logMarkers = [], baseMarkers = [], lines = [], allData = [], allAlerts = [];
-let baseMap = new Map();
-let lastDataCount = 0;
-let trackLine = null;
-let alertMarkers = [];
-let selectedKey = null;
+(async () => {
+  const me = await fetch("/api/me", { credentials: "same-origin" });
+  if (me.status === 401) { location = "/login"; return; }
 
-function hardwareKey(p) {
-  const request = (p.userAgent || p.request || '').toLowerCase();
-  if (request.includes('jd') || request.includes('john') || request.includes('deere')) return 'john';
-  if (request.includes('trimble')) return 'trimble';
-  if (request.includes('case') || request.includes('cnh')) return 'cnh';
-  if (request.includes('topcon')) return 'topcon';
-  if (request.includes('outback')) return 'outback';
-  if (request.includes('dji')) return 'dji';
-  if (request.includes('fjd')) return 'fjd';
-  return 'other';
-}
+  let tracks = [], allData = [], allAlerts = [], sel = null, lineG = null, mkG = null;
 
-const ASSET_BASE = 'https://cdn.jsdelivr.net/gh/b3stearns/rtk-user-map@main';
-const PUBLIC_ICONS = new Set(['JohnDeereDevice.png','CNHIndustrialDevice.png','DJIDevice.png','FJDDevice.png','default.png','trimbleagdevice.png']);
-function assetUrl(name) {
-  return PUBLIC_ICONS.has(name) ? `${ASSET_BASE}/public/${name}` : `${ASSET_BASE}/${name}`;
-}
+  const map = L.map("map", { zoomControl: true }).setView([43.7, -97.5], 7);
+  const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Tiles © Esri" });
+  const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" });
+  sat.addTo(map);
 
-function getLogIcon(p) {
-  const request = (p.userAgent || p.request || '').toLowerCase();
-
-  let iconFile = 'default.png';
-
-  if (request.includes('jd') || request.includes('john') || request.includes('deere')) {
-    iconFile = 'JohnDeereDevice.png';
-  } else if (request.includes('trimble')) {
-    iconFile = 'TrimbleGCS900Device.png';
-  } else if (request.includes('case') || request.includes('cnh')) {
-    iconFile = 'CNHIndustrialDevice.png';
-  } else if (request.includes('topcon')) {
-    iconFile = 'TopconDevice.png';
-  } else if (request.includes('outback')) {
-    iconFile = 'OutbackDevice.png';
-  } else if (request.includes('dji')) {
-    iconFile = 'DJIDevice.png';
-  } else if (request.includes('fjd')) {
-    iconFile = 'FJDDevice.png';
-  }
-
-  return L.icon({
-    iconUrl: assetUrl(iconFile),
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -28]
-  });
-}
-
-function formatDuration(seconds) {
-  if (!seconds || isNaN(seconds)) return 'N/A';
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-
-function connectionKey(p) {
-  return String(p.username || '') + '|' + String(p.mountpoint || p.mount || p.station || '');
-}
-
-function relatedLogs(p) {
-  const k = connectionKey(p);
-  return allData.filter(d => connectionKey(d) === k);
-}
-
-function sessionSeconds(p, related) {
-  const d = parseFloat(p.duration ?? p.sessionTime);
-  if (!isNaN(d) && d >= 0) return d;
-  const pts = (related && related.length ? related : [p])
-    .map(x => Number(x.loginTime))
-    .filter(t => !isNaN(t) && t > 0)
-    .sort((a, b) => a - b);
-  if (pts.length >= 2) return (pts[pts.length - 1] - pts[0]) / 1000;
-  if (pts.length === 1) return Math.max(0, (Date.now() - pts[0]) / 1000);
-  return NaN;
-}
-
-function formatSessionTime(p, related) {
-  const n = parseFloat(p.duration || p.sessionTime);
-  if (!isNaN(n) && n > 0) return formatDuration(n);
-  return formatDuration(sessionSeconds(p, related));
-}
-
-function createLogPopup(p) {
-  const related = relatedLogs(p);
-  const shortStation = p.station ? String(p.station).slice(-4) : 'N/A';
-  let distMiles = 'N/A';
-  if (p.distance != null) {
-    const km = parseFloat(p.distance);
-    if (!isNaN(km)) distMiles = (km * 0.621371).toFixed(2) + ' miles';
-  }
-  let signInCST = 'N/A';
-  if (p.loginTime) {
-    signInCST = new Date(p.loginTime).toLocaleString('en-US', {timeZone:'America/Chicago'}) + ' CST';
-  }
-  const fixRate = parseFloat(p.fixRate ?? p.rtkfix ?? p['rtk fix rate(%)']) || 0;
-  const rtkFixed = p.rtkFixed ?? p.rtkfix ?? 0;
-  const rtkFloat = p.rtkFloat ?? p.float ?? 0;
-  const fixColor = fixRate >= 90 ? 'green' : 'black';
-  const sessionTime = formatSessionTime(p, related);
-
-  return `
-    <b>Distance to Station:</b> ${distMiles}<br>
-    <b>username:</b> ${p.username || 'N/A'}<br>
-    <b>partner:</b> ${p.partner || 'N/A'}<br>
-    <b>Sign in time (CST):</b> ${signInCST}<br>
-    <b>Session time:</b> ${sessionTime}<br>
-    <b>status:</b> <span style="color:green">${p.status || p.msg || 'N/A'}</span><br>
-    <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${fixRate || 'N/A'}</span><br>
-    <b>station:</b> ${shortStation}<br>
-    <b>spp / dgps / fixed / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${rtkFixed} / ${rtkFloat}<br>
-    <b>avg age / max age:</b> ${p.avgAge || 'N/A'} / ${p.maxAge || 'N/A'}<br>
-    <b>ip:</b> ${p.ip || 'N/A'}
-  `;
-}
-
-function sessionTimeLabel(p, related) {
-  return formatSessionTime(p, related);
-}
-
-function loadBaseStations() {
+  const stationsLayer = L.layerGroup();
   myStations.forEach(b => {
-    const id = b.id || b.name;
-    baseMap.set(id, { lat: b.lat, lng: b.lng, name: b.name });
-
-    const marker = L.circleMarker([b.lat, b.lng], {
-      color: '#1a73e8', fillColor: '#34a853', fillOpacity: 0.9, radius: 8, weight: 2
-    }).bindPopup(`<b>${b.name}</b>`);
-    marker.addTo(map);
-    baseMarkers.push(marker);
+    L.circleMarker([b.lat, b.lng], {
+      color: "#1a73e8", fillColor: "#34a853", fillOpacity: 0.9, radius: 6, weight: 2
+    }).bindPopup("<b>" + esc(b.name) + "</b>").addTo(stationsLayer);
   });
-}
+  stationsLayer.addTo(map);
+  L.control.layers({ Satellite: sat, Street: osm }, { Stations: stationsLayer }, { position: "topright" }).addTo(map);
 
-function drawLines(dataToDraw = allData) {
-  lines.forEach(l => map.removeLayer(l)); lines = [];
-  dataToDraw.forEach(p => {
-    if (!p.station) return;
-    let base = baseMap.get(p.station);
-    if (!base) {
-      for (let [key, val] of baseMap) {
-        if (key.includes(p.station) || p.station.includes(key)) { base = val; break; }
-      }
+  const list = document.getElementById("list");
+  const q = document.getElementById("q");
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
+  }
+  function key(t) { return t.username + "|" + (t.mount || ""); }
+
+  function formatDuration(seconds) {
+    if (!seconds || isNaN(seconds) || seconds < 0) return "N/A";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function sessionSeconds(tr) {
+    const d = parseFloat(tr.duration);
+    if (!isNaN(d) && d > 0) return d;
+    const logs = (allData || []).filter(x => x.username === tr.username && (!tr.mount || x.mountpoint === tr.mount || x.station === tr.mount));
+    let best = 0;
+    for (const x of logs) {
+      const n = parseFloat(x.duration);
+      if (!isNaN(n) && n > best) best = n;
     }
-    if (base && p.latitude && p.longitude) {
-      const line = L.polyline([[p.latitude, p.longitude], [base.lat, base.lng]], {
-        color: '#e53935', weight: 2.5, opacity: 0.75
-      }).addTo(map);
-      lines.push(line);
+    if (best > 0) return best;
+    const pts = tr.points || [];
+    if (pts.length >= 2) return Math.max(0, (pts[pts.length - 1].t - pts[0].t) / 1000);
+    return NaN;
+  }
+
+  function formatSessionTime(tr) {
+    return formatDuration(sessionSeconds(tr));
+  }
+
+  function col(qv, i, n, any) {
+    if (any) return qv === 4 ? "#3dcc7a" : qv === 5 ? "#e6c04a" : "#e05555";
+    const t = n <= 1 ? 1 : i / (n - 1);
+    return "rgb(" + Math.round(30 + t * 40) + "," + Math.round(90 + t * 150) + "," + Math.round(50 + t * 40) + ")";
+  }
+
+  function createLogPopup(p, tr) {
+    const sessionTime = formatSessionTime(tr || { duration: p.duration, points: [], username: p.username, mount: p.mountpoint || p.station });
+    const shortStation = p.station ? String(p.station).slice(-4) : (p.mountpoint || "N/A");
+    let distMiles = "N/A";
+    if (p.distance != null) {
+      const km = parseFloat(p.distance);
+      if (!isNaN(km)) distMiles = (km * 0.621371).toFixed(2) + " miles";
     }
-  });
-}
-
-function isLive(p) {
-  const dur = parseFloat(p.duration);
-  if (!isNaN(dur) && dur < 0) return true;
-  const t = Number(p.loginTime);
-  return !!(t && (Date.now() - t) < 30 * 60 * 1000);
-}
-
-function groupedConnections(rows) {
-  const mapConn = new Map();
-  rows.forEach(p => {
-    const k = connectionKey(p);
-    const cur = mapConn.get(k) || [];
-    cur.push(p);
-    mapConn.set(k, cur);
-  });
-  return [...mapConn.entries()].map(([k, pts]) => {
-    pts.sort((a, b) => Number(a.loginTime || 0) - Number(b.loginTime || 0));
-    const last = pts[pts.length - 1];
-    return { key: k, points: pts, last, live: pts.some(isLive) };
-  }).sort((a, b) => Number(b.last.loginTime || 0) - Number(a.last.loginTime || 0));
-}
-
-function clearTrack() {
-  if (trackLine) { map.removeLayer(trackLine); trackLine = null; }
-}
-
-function drawTrack(conn, fit) {
-  clearTrack();
-  const pts = (conn.points || []).filter(p => p.latitude && p.longitude);
-  if (pts.length < 2) {
-    if (fit && pts[0]) map.setView([pts[0].latitude, pts[0].longitude], 13);
-    return;
+    let signInCST = "N/A";
+    if (p.loginTime) signInCST = new Date(p.loginTime).toLocaleString("en-US", { timeZone: "America/Chicago" }) + " CST";
+    const fixRate = parseFloat(p.fixRate ?? p.rtkfix ?? p["rtk fix rate(%)"]) || 0;
+    const rtkFixed = p.rtkFixed ?? p.rtkfix ?? 0;
+    const rtkFloat = p.rtkFloat ?? p.float ?? 0;
+    const fixColor = fixRate >= 90 ? "#3dcc7a" : "#edf2f7";
+    return `
+      <b>Distance to Station:</b> ${esc(distMiles)}<br>
+      <b>username:</b> ${esc(p.username || "N/A")}<br>
+      <b>partner:</b> ${esc(p.partner || "N/A")}<br>
+      <b>Sign in time (CST):</b> ${esc(signInCST)}<br>
+      <b>Session time:</b> ${esc(sessionTime)}<br>
+      <b>status:</b> ${esc(p.status ?? p.msg ?? "N/A")}<br>
+      <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${esc(fixRate || "N/A")}</span><br>
+      <b>station:</b> ${esc(shortStation)}<br>
+      <b>spp / dgps / fixed / float:</b> ${esc(p.spp || 0)} / ${esc(p.dgps || 0)} / ${esc(rtkFixed)} / ${esc(rtkFloat)}<br>
+      <b>avg age / max age:</b> ${esc(p.avgAge || "N/A")} / ${esc(p.maxAge || "N/A")}<br>
+      <b>ip:</b> ${esc(p.ip || "N/A")}
+    `;
   }
-  const ll = pts.map(p => [p.latitude, p.longitude]);
-  trackLine = L.polyline(ll, { color: '#1a73e8', weight: 4, opacity: 0.85 }).addTo(map);
-  if (fit) map.fitBounds(ll, { padding: [36, 36], maxZoom: 14 });
-}
 
-function showUserDetail(p, related) {
-  const el = document.getElementById('userDetail');
-  const body = document.getElementById('userDetailBody');
-  const sessionTime = sessionTimeLabel(p, related);
-  let signInCST = 'N/A';
-  if (p.loginTime) {
-    signInCST = new Date(p.loginTime).toLocaleString('en-US', {timeZone:'America/Chicago'}) + ' CST';
+  function drawLine(tr, fit) {
+    if (lineG) { map.removeLayer(lineG); lineG = null; }
+    const pts = tr.points || [];
+    if (pts.length < 2) {
+      if (fit && pts[0]) map.setView([pts[0].lat, pts[0].lng], 16);
+      return;
+    }
+    lineG = L.layerGroup().addTo(map);
+    const any = pts.some(p => p.q != null);
+    let i = 1;
+    while (i < pts.length) {
+      const c = col(pts[i].q, i, pts.length - 1, any);
+      let j = i + 1;
+      while (j < pts.length && col(pts[j].q, j, pts.length - 1, any) === c) j++;
+      L.polyline(pts.slice(i - 1, j).map(p => [p.lat, p.lng]), { color: c, weight: 4, opacity: 0.92 }).addTo(lineG);
+      i = j;
+    }
+    if (fit) map.fitBounds(pts.map(p => [p.lat, p.lng]), { padding: [36, 36], maxZoom: 16 });
   }
-  body.innerHTML = `
-    <div class="detail-row"><b>username:</b> ${p.username || 'N/A'}</div>
-    <div class="detail-row"><b>station:</b> ${p.station || p.mountpoint || 'N/A'}</div>
-    <div class="detail-row"><b>Session time:</b> ${sessionTime}</div>
-    <div class="detail-row"><b>Sign in:</b> ${signInCST}</div>
-    <div class="detail-row"><b>status:</b> ${p.status || p.msg || 'N/A'}</div>
-    <div class="detail-row"><b>fix rate:</b> ${p.fixRate ?? p.rtkfix ?? 'N/A'}</div>
-  `;
-  el.style.display = 'flex';
-}
 
-function selectConnection(key, fit) {
-  selectedKey = key;
-  const conn = groupedConnections(allData).find(c => c.key === key);
-  renderLiveList();
-  if (!conn) return;
-  drawTrack(conn, fit);
-  const last = conn.last;
-  showUserDetail(last, conn.points);
-  const marker = logMarkers.find(m => m._tnKey === key && m._tnLast);
-  if (marker) marker.openPopup();
-  else if (last && last.latitude && last.longitude) {
-    L.popup().setLatLng([last.latitude, last.longitude]).setContent(createLogPopup(last)).openOn(map);
+  function showDetail(tr) {
+    const el = document.getElementById("detail");
+    const last = tr.last || {};
+    const sessionTime = formatSessionTime(tr);
+    el.style.display = "block";
+    el.innerHTML = `<div class="k">Selected connection</div>
+      <div><b>username:</b> ${esc(tr.username)}</div>
+      <div><b>station:</b> ${esc(tr.mount || last.station || "—")}</div>
+      <div><b>Session time:</b> ${esc(sessionTime)}</div>
+      <div><b>status:</b> ${esc(last.status ?? last.msg ?? "N/A")}</div>`;
   }
-}
 
-function renderLiveList() {
-  const conns = groupedConnections(allData).filter(c => c.live);
-  document.getElementById('liveCount').textContent = conns.length;
-  const list = document.getElementById('liveList');
-  if (!conns.length) {
-    list.innerHTML = '<div class="empty">No live sessions in this window.</div>';
-    return;
+  function markers() {
+    if (mkG) map.removeLayer(mkG);
+    mkG = L.layerGroup().addTo(map);
+    for (const t of tracks) {
+      const p = t.points[t.points.length - 1];
+      if (!p) continue;
+      const on = sel && key(t) === sel;
+      const fill = t.live ? "#c5a46e" : "#8e9aab";
+      const last = t.last || {};
+      const m = L.circleMarker([p.lat, p.lng], {
+        radius: on ? 11 : 7, color: on ? "#fff" : fill, weight: on ? 3 : 2, fillColor: fill, fillOpacity: 0.95
+      });
+      m.bindPopup(createLogPopup(Object.assign({ latitude: p.lat, longitude: p.lng, loginTime: p.t }, last), t));
+      m.on("click", () => select(key(t), 1));
+      m.addTo(mkG);
+      if (on) m.openPopup();
+    }
   }
-  list.innerHTML = conns.map(c => {
-    const on = selectedKey === c.key ? ' on' : '';
-    const last = c.last;
-    const sessionTime = sessionTimeLabel(last, c.points);
-    return `<div class="u${on}" data-k="${encodeURIComponent(c.key)}">
-      <div class="un">${last.username || 'Unknown'}${c.live ? ' <span class="pill">LIVE</span>' : ''}</div>
-      <div class="mt">${last.mountpoint || last.station || '—'} · Session time: ${sessionTime}</div>
-    </div>`;
-  }).join('');
-  list.querySelectorAll('.u').forEach(el => {
-    el.onclick = () => selectConnection(decodeURIComponent(el.dataset.k), 1);
-  });
-}
 
-function renderAlerts(alerts) {
-  const n = (alerts || []).length;
-  document.getElementById('alertCount').textContent = n;
-  document.getElementById('alertBadge').classList.toggle('warn', n > 0);
-  const list = document.getElementById('alertList');
-  if (!n) {
-    list.innerHTML = '<div class="empty">No NTRIP issues in this window.</div>';
-    return;
+  function renderList() {
+    const f = q.value.trim().toLowerCase();
+    const rows = tracks.filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f));
+    list.innerHTML = rows.length ? rows.map(t => {
+      const on = sel === key(t) ? " on" : "";
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
+    }).join("") : '<div class="empty">No RTK users in this window</div>';
+    list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
   }
-  list.innerHTML = alerts.map(a => `
-    <div class="al" data-id="${a.id || ''}">
-      <div class="cat">${a.categoryLabel || a.category}</div>
-      <div class="un">${a.username || 'Unknown'}</div>
-      <div class="mt">${a.timeLabel || ''} · ${a.station || a.mount || '—'}<br>${a.msg || ''}</div>
-    </div>
-  `).join('');
-  list.querySelectorAll('.al').forEach((el, i) => {
-    el.onclick = () => {
-      const a = alerts[i];
-      if (a && a.latitude && a.longitude) map.setView([a.latitude, a.longitude], 12);
-      const match = allData.find(d => d.username === a.username && String(d.station || '') === String(a.station || ''));
-      if (match) selectConnection(connectionKey(match), 0);
-    };
-  });
-}
 
-function drawAlertMarkers(alerts) {
-  alertMarkers.forEach(m => map.removeLayer(m));
-  alertMarkers = [];
-  (alerts || []).forEach(a => {
-    if (!a.latitude || !a.longitude) return;
-    const m = L.circleMarker([a.latitude, a.longitude], {
-      color: '#c62828', fillColor: '#ff9800', fillOpacity: 0.95, radius: 7, weight: 2
-    }).bindPopup(`<b>${a.categoryLabel || a.category}</b><br>${a.username || ''}<br>${a.msg || ''}`);
-    m.addTo(map);
-    alertMarkers.push(m);
-  });
-}
-
-async function fetchData(hours = 24) {
-  const res = await fetch(`/api/sheets?hours=${hours}`, { credentials: 'same-origin' });
-  if (res.status === 401) { location.replace('/login'); return; }
-  const json = await res.json();
-  allData = json.data || [];
-  allAlerts = json.alerts || [];
-  lastDataCount = allData.length;
-
-  logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
-  lines.forEach(l => map.removeLayer(l)); lines = [];
-  clearTrack();
-
-  const userSel = document.getElementById('userFilter');
-  const currentUser = userSel.value;
-
-  userSel.innerHTML = '<option value="">All Users</option>';
-  const uniqueUsers = [...new Set(allData.map(d => d.username).filter(Boolean))];
-  uniqueUsers.forEach(u => {
-    const opt = document.createElement('option');
-    opt.value = u; opt.textContent = u;
-    userSel.appendChild(opt);
-  });
-  userSel.value = currentUser;
-
-  const currentHw = document.getElementById('hwFilter').value;
-  let filtered = allData;
-  if (currentUser) filtered = filtered.filter(d => d.username === currentUser);
-  if (currentHw) filtered = filtered.filter(d => hardwareKey(d) === currentHw);
-
-  filtered.forEach(p => {
-    if (!p.latitude || !p.longitude) return;
-    const m = L.marker([p.latitude, p.longitude], {icon: getLogIcon(p)}).bindPopup(createLogPopup(p));
-    m._tnKey = connectionKey(p);
-    m.on('click', () => {
-      selectedKey = connectionKey(p);
-      const related = relatedLogs(p);
-      showUserDetail(p, related);
-      drawTrack({ points: related }, 0);
-      renderLiveList();
+  function renderAlerts(alerts) {
+    const n = (alerts || []).length;
+    const badge = document.getElementById("alertCount");
+    badge.textContent = n;
+    badge.classList.toggle("ok", n === 0);
+    const box = document.getElementById("alertList");
+    if (!n) {
+      box.innerHTML = '<div class="empty">No NTRIP issues in this window.</div>';
+      return;
+    }
+    box.innerHTML = alerts.map((a, i) => `
+      <div class="al" data-i="${i}">
+        <div class="cat">${esc(a.categoryLabel || a.category)}</div>
+        <div class="un">${esc(a.username || "Unknown")}</div>
+        <div class="mt">${esc(a.timeLabel || "")} · ${esc(a.station || a.mount || "—")}<br>${esc(a.msg || "")}</div>
+      </div>`).join("");
+    box.querySelectorAll(".al").forEach(el => {
+      el.onclick = () => {
+        const a = alerts[Number(el.dataset.i)];
+        if (!a) return;
+        const tr = tracks.find(t => t.username === a.username);
+        if (tr) select(key(tr), 1);
+        else if (a.latitude && a.longitude) map.setView([a.latitude, a.longitude], 12);
+      };
     });
-    m.addTo(map);
-    logMarkers.push(m);
-  });
-
-  const byKey = new Map();
-  filtered.forEach(p => {
-    const k = connectionKey(p);
-    const prev = byKey.get(k);
-    if (!prev || Number(p.loginTime || 0) >= Number(prev.loginTime || 0)) byKey.set(k, p);
-  });
-  logMarkers.forEach(m => {
-    const last = byKey.get(m._tnKey);
-    m._tnLast = !!(last && last.latitude === m.getLatLng().lat && last.longitude === m.getLatLng().lng);
-  });
-
-  updateSummary(filtered);
-  drawLines(filtered);
-  renderLiveList();
-  renderAlerts(allAlerts);
-  drawAlertMarkers(allAlerts);
-
-  if (selectedKey) {
-    const still = groupedConnections(allData).find(c => c.key === selectedKey);
-    if (still) drawTrack(still, 0);
-  }
-}
-
-function updateSummary(data) {
-  const users = new Set(data.map(d => d.username).filter(Boolean));
-  document.getElementById('sumUsers').textContent = users.size;
-
-  const fixRates = data
-    .map(d => parseFloat(d.fixRate ?? d.rtkfix ?? d['rtk fix rate(%)'] ?? d.rtkFixRate))
-    .filter(n => !isNaN(n) && n > 0);
-  const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
-  document.getElementById('sumFix').textContent = avgFix + '%';
-
-  const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
-  const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
-  document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
-
-  const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
-  const totalSeconds = durations.reduce((a, b) => a + b, 0);
-  const totalHours = (totalSeconds / 3600).toFixed(1);
-  document.getElementById('sumTime').textContent = totalHours + ' hrs';
-}
-
-window.onload = async () => {
-  const me = await fetch('/api/me', { credentials: 'same-origin' });
-  if (me.status === 401) { location.replace('/login'); return; }
-  const meJson = await me.json();
-  if (meJson.user && meJson.user.name) {
-    document.getElementById('who').textContent = meJson.user.name;
   }
 
-  map = L.map('map').setView([43.6, -97.5], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  function select(k, fit) {
+    sel = k;
+    const tr = tracks.find(t => key(t) === k);
+    if (!tr) return;
+    renderList();
+    markers();
+    drawLine(tr, fit);
+    showDetail(tr);
+  }
 
-  document.getElementById('timeFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
-  document.getElementById('userFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
-  document.getElementById('hwFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
-  document.getElementById('logoutBtn').onclick = async () => {
-    await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
-    location.replace('/login');
+  function updateSummary(data) {
+    const users = new Set(data.map(d => d.username).filter(Boolean));
+    document.getElementById("sumUsers").textContent = users.size;
+    const fixRates = data.map(d => parseFloat(d.fixRate ?? d.rtkfix ?? d["rtk fix rate(%)"] ?? d.rtkFixRate)).filter(n => !isNaN(n) && n > 0);
+    const avgFix = fixRates.length ? (fixRates.reduce((a, b) => a + b, 0) / fixRates.length).toFixed(1) : "0";
+    document.getElementById("sumFix").textContent = avgFix + "%";
+    const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
+    const avgDistKm = dists.length ? dists.reduce((a, b) => a + b, 0) / dists.length : 0;
+    document.getElementById("sumDist").textContent = (avgDistKm * 0.621371).toFixed(1) + " miles";
+    const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
+    const totalHours = (durations.reduce((a, b) => a + b, 0) / 3600).toFixed(1);
+    document.getElementById("sumTime").textContent = totalHours + " hrs";
+  }
+
+  async function loadWindow(fitAll) {
+    const hours = parseInt(document.getElementById("timeFilter").value, 10) || 12;
+    const r = await fetch("/api/sheets?hours=" + hours, { credentials: "same-origin" });
+    if (r.status === 401) { location = "/login"; return; }
+    const json = await r.json();
+    allData = json.data || [];
+    allAlerts = json.alerts || [];
+    const liveRes = await fetch("/api/live?hours=" + hours, { credentials: "same-origin" });
+    if (liveRes.status === 401) { location = "/login"; return; }
+    const liveJson = await liveRes.json();
+    tracks = liveJson.tracks || [];
+    document.getElementById("ref").textContent = new Date().toLocaleTimeString();
+    document.getElementById("nlive").textContent = tracks.filter(t => t.live).length;
+    updateSummary(allData);
+    renderAlerts(allAlerts);
+    renderList();
+    markers();
+    if (sel) {
+      const tr = tracks.find(t => key(t) === sel);
+      if (tr) { drawLine(tr, 0); showDetail(tr); }
+    }
+    if (fitAll && tracks.length) {
+      const b = [];
+      tracks.forEach(t => t.points.forEach(p => b.push([p.lat, p.lng])));
+      if (b.length) map.fitBounds(b, { padding: [40, 40], maxZoom: 11 });
+    }
+  }
+
+  q.oninput = renderList;
+  document.getElementById("out").onclick = async () => {
+    await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
+    location = "/login";
   };
-  document.getElementById('alertBadge').onclick = () => {
-    document.getElementById('alertsPanel').scrollIntoView({ block: 'nearest' });
-  };
-
-  loadBaseStations();
-  await fetchData(24);
-
-  setInterval(async () => {
-    await fetchData(parseInt(document.getElementById('timeFilter').value));
-  }, 600000);
-};
+  document.getElementById("timeFilter").onchange = () => loadWindow(0);
+  await loadWindow(1);
+  setInterval(() => loadWindow(0), 60000);
+})();
 </script>
 </body>
 </html>
