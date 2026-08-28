@@ -16,8 +16,43 @@ const DEALERS = {
   }
 };
 
+function firstEnv(names) {
+  for (const name of names) {
+    const v = process.env[name];
+    if (v != null && String(v).length) return String(v);
+  }
+  return "";
+}
+
 function sessionSecret() {
-  return process.env.SESSION_SECRET || "";
+  return firstEnv(["SESSION_SECRET", "AUTH_SECRET", "TN_SESSION_SECRET"]);
+}
+
+function envFlags() {
+  return {
+    secret: Boolean(sessionSecret()),
+    bradSalt: Boolean(dealerField("brad", "salt")),
+    bradHash: Boolean(dealerField("brad", "hash")),
+    bradPlain: Boolean(dealerField("brad", "plain")),
+    jonSalt: Boolean(dealerField("jon", "salt")),
+    jonHash: Boolean(dealerField("jon", "hash")),
+    jonPlain: Boolean(dealerField("jon", "plain"))
+  };
+}
+
+function dealerField(key, kind) {
+  const upper = String(key || "").toUpperCase();
+  if (kind === "salt") {
+    return firstEnv([`DEALER_${upper}_SALT`, `${upper}_SALT`, `TN_${upper}_SALT`]);
+  }
+  if (kind === "hash") {
+    return firstEnv([`DEALER_${upper}_HASH`, `${upper}_HASH`, `TN_${upper}_HASH`]);
+  }
+  return firstEnv([
+    `DEALER_${upper}_PASSWORD`,
+    `${upper}_PASSWORD`,
+    `DEALER_PASSWORD_${upper}`
+  ]);
 }
 
 function parseCookies(req) {
@@ -70,13 +105,29 @@ function verifyToken(token) {
   }
 }
 
+function cleanHex(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^["']+|["']+$/g, "")
+    .replace(/^0x/i, "")
+    .replace(/\s+/g, "");
+}
+
+function timingEqualString(a, b) {
+  const left = Buffer.from(String(a));
+  const right = Buffer.from(String(b));
+  if (!left.length || left.length !== right.length) return false;
+  return crypto.timingSafeEqual(left, right);
+}
+
 function checkPass(password, saltHex, hashHex) {
   try {
     if (!password || !saltHex || !hashHex) return false;
-    const salt = Buffer.from(String(saltHex), "hex");
-    const expected = Buffer.from(String(hashHex), "hex");
-    if (!salt.length || expected.length !== 64) return false;
-    const derived = crypto.scryptSync(String(password), salt, 64);
+    const salt = Buffer.from(cleanHex(saltHex), "hex");
+    const expected = Buffer.from(cleanHex(hashHex), "hex");
+    if (!salt.length || expected.length < 32) return false;
+    const keylen = expected.length === 64 ? 64 : expected.length;
+    const derived = crypto.scryptSync(String(password), salt, keylen);
     if (derived.length !== expected.length) return false;
     return crypto.timingSafeEqual(derived, expected);
   } catch {
@@ -89,10 +140,12 @@ function verifyDealer(username, password) {
   const dummySalt = "00".repeat(16);
   const dummyHash = "00".repeat(64);
   const dealer = DEALERS[key];
-  const salt = (dealer && process.env[dealer.saltEnv]) || dummySalt;
-  const hash = (dealer && process.env[dealer.hashEnv]) || dummyHash;
-  const ok = checkPass(password, salt, hash);
-  if (!dealer || !ok) return null;
+  const salt = (dealer && dealerField(key, "salt")) || dummySalt;
+  const hash = (dealer && dealerField(key, "hash")) || dummyHash;
+  const okHash = checkPass(password, salt, hash);
+  const plain = dealer ? dealerField(key, "plain") : "";
+  const okPlain = Boolean(plain && password && timingEqualString(password, plain));
+  if (!dealer || !(okHash || okPlain)) return null;
   return { username: key, name: dealer.name };
 }
 
@@ -157,5 +210,6 @@ module.exports = {
   unauthorized,
   json,
   signToken,
-  verifyToken
+  verifyToken,
+  envFlags
 };

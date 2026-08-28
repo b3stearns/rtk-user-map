@@ -77,6 +77,34 @@ test("checkPass rejects truncated hash without throwing", () => {
   assert.strictEqual(checkPass("x", salt, "abcd"), false);
 });
 
+test("checkPass trims quoted hex env values", () => {
+  const salt = crypto.randomBytes(16);
+  const password = "quoted-env";
+  const hash = crypto.scryptSync(password, salt, 64);
+  assert.strictEqual(
+    checkPass(password, '"' + salt.toString("hex") + '"', " " + hash.toString("hex") + "\n"),
+    true
+  );
+});
+
+test("login.js reads pre-parsed req.body", () => {
+  const fs = require("fs");
+  const src = fs.readFileSync(require("path").join(__dirname, "..", "api/login.js"), "utf8");
+  assert.ok(src.includes("req.body"));
+  assert.ok(src.includes("readBody"));
+});
+
+test("verifyDealer accepts existing DEALER_BRAD_PASSWORD env", () => {
+  const { verifyDealer } = require("../api/_lib/auth");
+  process.env.DEALER_BRAD_SALT = "";
+  process.env.DEALER_BRAD_HASH = "";
+  process.env.DEALER_BRAD_PASSWORD = "existing-dealer-pass";
+  assert.ok(verifyDealer("brad", "existing-dealer-pass"));
+  assert.strictEqual(verifyDealer("brad", "wrong"), null);
+  assert.strictEqual(verifyDealer("nope", "existing-dealer-pass"), null);
+  delete process.env.DEALER_BRAD_PASSWORD;
+});
+
 test("session HMAC roundtrip", () => {
   process.env.SESSION_SECRET = "unit-test-secret-not-for-prod";
   const token = signToken({ u: "brad", exp: Date.now() + 60000 });
