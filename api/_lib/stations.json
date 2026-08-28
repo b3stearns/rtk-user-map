@@ -1,0 +1,1442 @@
+[
+  {
+    "id": "2zu8yRBppCFP2vgY9",
+    "name": "19699",
+    "mount": "****19699",
+    "lat": 44.4,
+    "lng": -102.12,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "eay3sdoT5dkd54cEd",
+    "name": "19D65",
+    "mount": "****19D65",
+    "lat": 44.93,
+    "lng": -96.31,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "iYHu9hyFxmNYvk6wq",
+    "name": "224AD",
+    "mount": "****224AD",
+    "lat": 45.4,
+    "lng": -98.5,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "gDf2opHDLEmNp5HAJ",
+    "name": "23269",
+    "mount": "****23269",
+    "lat": 44.51,
+    "lng": -101.53,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": false
+  },
+  {
+    "id": "nykBWktEkg8R5jp9N",
+    "name": "378D1",
+    "mount": "****378D1",
+    "lat": 43.74,
+    "lng": -99.02,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "MLHavxZip8PiFvjoA",
+    "name": "37C95",
+    "mount": "****37C95",
+    "lat": 44.62,
+    "lng": -96.03,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "BPiqfhiMmXchrPPK9",
+    "name": "37FE9",
+    "mount": "****37FE9",
+    "lat": 43.43,
+    "lng": -103.16,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "weCdrJQNxWi4GPwb8",
+    "name": "C3A85",
+    "mount": "****C3A85",
+    "lat": 43.17,
+    "lng": -95.94,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "qH8qq2MLZJzxAFS7Q",
+    "name": "C3E55",
+    "mount": "****C3E55",
+    "lat": 44.18,
+    "lng": -95.39,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "pC6CQMuCQMvPqRHQv",
+    "name": "C4199",
+    "mount": "****C4199",
+    "lat": 42.4,
+    "lng": -102.96,
+    "status": "stable",
+    "state": "Nebraska",
+    "registered": true
+  },
+  {
+    "id": "5FsLqSKhfctvCrRZX",
+    "name": "C4329",
+    "mount": "****C4329",
+    "lat": 46.03,
+    "lng": -104.09,
+    "status": "stable",
+    "state": "Montana",
+    "registered": true
+  },
+  {
+    "id": "dzhu84y8LreWZL52c",
+    "name": "C43AD",
+    "mount": "****C43AD",
+    "lat": 43.09,
+    "lng": -97.93,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "7cWDEkoGYdGEqTAyB",
+    "name": "C44C9",
+    "mount": "****C44C9",
+    "lat": 45.06,
+    "lng": -100.9,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "gNQ8a9BNobgRarkj7",
+    "name": "C475D",
+    "mount": "****C475D",
+    "lat": 42.63,
+    "lng": -97.41,
+    "status": "stable",
+    "state": "Nebraska",
+    "registered": true
+  },
+  {
+    "id": "G2yZp8vEx6t3kii9A",
+    "name": "C4B89",
+    "mount": "****C4B89",
+    "lat": 43.18,
+    "lng": -99.58,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "ARvgaq9JYCX8sougB",
+    "name": "C5335",
+    "mount": "****C5335",
+    "lat": 43.44,
+    "lng": -96.73,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "n8yqGmpiJHpG3kcJe",
+    "name": "C6595",
+    "mount": "****C6595",
+    "lat": 44.58,
+    "lng": -95.72,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "bE5PLAePKCLNRmT7x",
+    "name": "C7B55",
+    "mount": "****C7B55",
+    "lat": 44.06,
+    "lng": -98.12,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "QsckyCgTH39oKcsrX",
+    "name": "C803D",
+    "mount": "****C803D",
+    "lat": 45.8,
+    "lng": -97.09,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "8pB8zdYc7D5tbvWfe",
+    "name": "C811D",
+    "mount": "****C811D",
+    "lat": 44.66,
+    "lng": -103.58,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "fNZWewxhis9zR7tbG",
+    "name": "C837D",
+    "mount": "****C837D",
+    "lat": 43.38,
+    "lng": -96.79,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "hQKSacu3SypHNEd2s",
+    "name": "C8821",
+    "mount": "****C8821",
+    "lat": 44.32,
+    "lng": -96.77,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": false
+  },
+  {
+    "id": "Tq67hoGzPc4JHaD94",
+    "name": "C90E5",
+    "mount": "****C90E5",
+    "lat": 43.16,
+    "lng": -100.75,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "2gXcjkmv5HFtQ2TjC",
+    "name": "C91F5",
+    "mount": "****C91F5",
+    "lat": 44.25,
+    "lng": -97.01,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "exnMqKF85QweGoSZT",
+    "name": "C9B75",
+    "mount": "****C9B75",
+    "lat": 43.09,
+    "lng": -97.93,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "f3gTcfHbZZAEZAX9o",
+    "name": "CA035",
+    "mount": "****CA035",
+    "lat": 44.8,
+    "lng": -102.56,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "k5Y9pSoMzfXTpuoQR",
+    "name": "CA829",
+    "mount": "****CA829",
+    "lat": 44.69,
+    "lng": -103.51,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "bSuZHuJZYSmdEuxKM",
+    "name": "CB9A9",
+    "mount": "****CB9A9",
+    "lat": 44.08,
+    "lng": -96.62,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "rQQRdpiw9y4HSJSb2",
+    "name": "CB9CD",
+    "mount": "****CB9CD",
+    "lat": 45.19,
+    "lng": -95.88,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "c6JxbFekvhzzZ5bM3",
+    "name": "CBC99",
+    "mount": "****CBC99",
+    "lat": 43.63,
+    "lng": -95.59,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "LrbBE2R6hKWaPHnQ9",
+    "name": "C9371",
+    "mount": "****C9371",
+    "lat": 42.32,
+    "lng": -95.25,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "abPeAMnoCHLNMS6sq",
+    "name": "EE7F9",
+    "mount": "****EE7F9",
+    "lat": 43.55,
+    "lng": -96.64,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "wiKP4g69r8hgP4CoR",
+    "name": "14631",
+    "mount": "****14631",
+    "lat": 43.61,
+    "lng": -96.95,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "b9WGPpdEsTMWutidw",
+    "name": "2068D",
+    "mount": "****2068D",
+    "lat": 44.02,
+    "lng": -97.09,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "rMGHBEgd3GAWZpfXB",
+    "name": "20BC9",
+    "mount": "****20BC9",
+    "lat": 44.58,
+    "lng": -96.69,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "MPcyuWbWBsg8Zv5mw",
+    "name": "29A91",
+    "mount": "****29A91",
+    "lat": 43.6,
+    "lng": -96.72,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "C2dJeT9SGbWLd9jeX",
+    "name": "29BDD",
+    "mount": "****29BDD",
+    "lat": 44.31,
+    "lng": -98.22,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "PecrZTaiYTgDXCrsD",
+    "name": "29BFD",
+    "mount": "****29BFD",
+    "lat": 43.83,
+    "lng": -96.85,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "NwbWnFTtJAQqprpQv",
+    "name": "29C81",
+    "mount": "****29C81",
+    "lat": 42.93,
+    "lng": -96.68,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "fQpSKSmTrxzy5Qccm",
+    "name": "29DF1",
+    "mount": "****29DF1",
+    "lat": 44.07,
+    "lng": -99.46,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "kvdchjAHPnpKmLGA9",
+    "name": "2A729",
+    "mount": "****2A729",
+    "lat": 45.58,
+    "lng": -99.01,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "d88ckgjwXMPgbpTAy",
+    "name": "2A7B1",
+    "mount": "****2A7B1",
+    "lat": 43.58,
+    "lng": -96.6,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "eTqofLEwgNmXpn9Jr",
+    "name": "2A8C1",
+    "mount": "****2A8C1",
+    "lat": 43.82,
+    "lng": -96.73,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "tohv6TGaKbf8iwXvg",
+    "name": "2A8FD",
+    "mount": "****2A8FD",
+    "lat": 43.33,
+    "lng": -96.8,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "NNooEFWPQRv2R9QyP",
+    "name": "CA2D9",
+    "mount": "****CA2D9",
+    "lat": 43.45,
+    "lng": -98.66,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "Fhi7P5FWtzYwRhXPf",
+    "name": "CA395",
+    "mount": "****CA395",
+    "lat": 41.87,
+    "lng": -96.7,
+    "status": "stable",
+    "state": "Nebraska",
+    "registered": true
+  },
+  {
+    "id": "usZpdxJpZfyg6zxNy",
+    "name": "CA5A9",
+    "mount": "****CA5A9",
+    "lat": 45.72,
+    "lng": -95.52,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "px82fBSmEWXrAShCr",
+    "name": "64DC5",
+    "mount": "****64DC5",
+    "lat": 43.5,
+    "lng": -96.77,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "v8ybvxqFxTGafSqBH",
+    "name": "652C1",
+    "mount": "****652C1",
+    "lat": 43.69,
+    "lng": -96.75,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "PFSCcTx52TpSBF5Ex",
+    "name": "65A9D",
+    "mount": "****65A9D",
+    "lat": 43.97,
+    "lng": -97,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "zqs3cqPaujXbnopKC",
+    "name": "665C5",
+    "mount": "****665C5",
+    "lat": 43.44,
+    "lng": -96.85,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "4H3pFgTbxDy4FLCGx",
+    "name": "EE539",
+    "mount": "****EE539",
+    "lat": 43.36,
+    "lng": -95.88,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "Typ3tPTTxJ7Q28hdX",
+    "name": "969A9",
+    "mount": "****969A9",
+    "lat": 45.06,
+    "lng": -96.08,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "7YG4tDbgNJjBoYZS5",
+    "name": "97125",
+    "mount": "****97125",
+    "lat": 43.66,
+    "lng": -97.43,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "EMaeiDCwTgGf9KtWs",
+    "name": "6E792",
+    "mount": "****6E792",
+    "lat": 46.12,
+    "lng": -95.71,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "rN9qoJgBCdJNP2H4a",
+    "name": "6E80E",
+    "mount": "****6E80E",
+    "lat": 43.5,
+    "lng": -96.77,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "FuhxbPKu2kXG7Fqjm",
+    "name": "702C0",
+    "mount": "****702C0",
+    "lat": 45.46,
+    "lng": -98.43,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "EpXe8xhJLcz424m9d",
+    "name": "6FB65",
+    "mount": "****6FB65",
+    "lat": 43.85,
+    "lng": -96.58,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "6wyGHGzQpguQEjWaJ",
+    "name": "70C5D",
+    "mount": "****70C5D",
+    "lat": 45.84,
+    "lng": -101.64,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "gdc3cQHvvFSqTJCf5",
+    "name": "73611",
+    "mount": "****73611",
+    "lat": 42.72,
+    "lng": -97.41,
+    "status": "stable",
+    "state": "Nebraska",
+    "registered": true
+  },
+  {
+    "id": "uHijATT689tBwrgDA",
+    "name": "74519",
+    "mount": "****74519",
+    "lat": 44.06,
+    "lng": -97.61,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "Jnzhsw5EWuQtfrL8h",
+    "name": "BFA45",
+    "mount": "****BFA45",
+    "lat": 44.59,
+    "lng": -99.38,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "enMXZsxqBrA3JdspM",
+    "name": "C3D04",
+    "mount": "****C3D04",
+    "lat": 45.13,
+    "lng": -95.52,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "qnZQuqC3tRfFCvtxH",
+    "name": "20BDA",
+    "mount": "****20BDA",
+    "lat": 46.12,
+    "lng": -95.71,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": false
+  },
+  {
+    "id": "6wDMZQ2XsEkN6NNKK",
+    "name": "0B5C5",
+    "mount": "****0B5C5",
+    "lat": 43.13,
+    "lng": -95.16,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "LgWboJ9awFR53iNKC",
+    "name": "0B669",
+    "mount": "****0B669",
+    "lat": 45.47,
+    "lng": -102.2,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "EE52dXZwu9ces79jS",
+    "name": "0BBB1",
+    "mount": "****0BBB1",
+    "lat": 46.35,
+    "lng": -95.68,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "z3YH9JGfkCJ5hRMPh",
+    "name": "D9AD5",
+    "mount": "****D9AD5",
+    "lat": 44.51,
+    "lng": -98.7,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "gspQNoKwCfYTdtBoF",
+    "name": "E3231",
+    "mount": "****E3231",
+    "lat": 43.35,
+    "lng": -97.04,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "bXhMihgKBQSG9Y4Pk",
+    "name": "E39F1",
+    "mount": "****E39F1",
+    "lat": 42.52,
+    "lng": -96.39,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "tJ9Gqu5BFN6eLN4uY",
+    "name": "E44ED",
+    "mount": "****E44ED",
+    "lat": 44.23,
+    "lng": -96.59,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "jBsWPrhn32X9FL8Cg",
+    "name": "E5569",
+    "mount": "****E5569",
+    "lat": 44.01,
+    "lng": -97.11,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "98JiqMNNQdiYYnEWX",
+    "name": "EBF05",
+    "mount": "****EBF05",
+    "lat": 43.64,
+    "lng": -97.23,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "AMvuSrchsKFnPQHHj",
+    "name": "EF2D9",
+    "mount": "****EF2D9",
+    "lat": 44.11,
+    "lng": -96.89,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "55t4whp8A3cQsXcrE",
+    "name": "EFC6D",
+    "mount": "****EFC6D",
+    "lat": 44.2,
+    "lng": -97.5,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "zoEYTmEpRhNufC5ep",
+    "name": "F0045",
+    "mount": "****F0045",
+    "lat": 43.77,
+    "lng": -97.9,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "ZfLkXgcXFR9K3tACZ",
+    "name": "F4AB1",
+    "mount": "****F4AB1",
+    "lat": 43.85,
+    "lng": -96.58,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "k44HfYGkgbeGQEqkF",
+    "name": "FC8C1",
+    "mount": "****FC8C1",
+    "lat": 43.28,
+    "lng": -96.71,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "Hpbu3AMr29EZuvvML",
+    "name": "FCECD",
+    "mount": "****FCECD",
+    "lat": 43.4,
+    "lng": -101.17,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "fqSgr3yZcuXGZtS7g",
+    "name": "FCFB1",
+    "mount": "****FCFB1",
+    "lat": 43.28,
+    "lng": -96.71,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "2iiH6ArsoH7ra58vN",
+    "name": "86FC5",
+    "mount": "****86FC5",
+    "lat": 45.57,
+    "lng": -97.22,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "hsEiLwusbxRAgt8gW",
+    "name": "1C36D",
+    "mount": "****1C36D",
+    "lat": 43.47,
+    "lng": -96.74,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "qYSF5ep3LiuxzmAsa",
+    "name": "1C9C5",
+    "mount": "****1C9C5",
+    "lat": 44.3,
+    "lng": -96.8,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "bp9vXKB352fsTgDgh",
+    "name": "E2AB9",
+    "mount": "****E2AB9",
+    "lat": 43.75,
+    "lng": -96.9,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "xg7LwCKPd2ZHsNZXW",
+    "name": "E6575",
+    "mount": "****E6575",
+    "lat": 43.8,
+    "lng": -96.81,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "7Rwj2TeaPNvohMsdt",
+    "name": "E9E09",
+    "mount": "****E9E09",
+    "lat": 43.9,
+    "lng": -97,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "MQSuidQmC9vNHv6Qt",
+    "name": "FD575",
+    "mount": "****FD575",
+    "lat": 43.87,
+    "lng": -98.97,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "oTM5DvJftCcqJLt9k",
+    "name": "00CA5",
+    "mount": "****00CA5",
+    "lat": 44.51,
+    "lng": -99.21,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "RtAe5oZcFaCWDLNvX",
+    "name": "D7039",
+    "mount": "****D7039",
+    "lat": 44.38,
+    "lng": -103.66,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "pKebHJM2rh3H9Cx2c",
+    "name": "DA941",
+    "mount": "****DA941",
+    "lat": 44.81,
+    "lng": -96.75,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "EQAh28rhzEmZDiLwL",
+    "name": "DDAE5",
+    "mount": "****DDAE5",
+    "lat": 43.68,
+    "lng": -98.01,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "km9GH6NfJLH5JWLcJ",
+    "name": "E4531",
+    "mount": "****E4531",
+    "lat": 43.08,
+    "lng": -96.79,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "4xSCZhoAnBy6TpXuZ",
+    "name": "E4C99",
+    "mount": "****E4C99",
+    "lat": 43.44,
+    "lng": -96.97,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "DCn4ykroXtN8pWHcj",
+    "name": "18E49",
+    "mount": "****18E49",
+    "lat": 44.48,
+    "lng": -103.86,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "N3eFXptjJRwFPF2fg",
+    "name": "1CBA5",
+    "mount": "****1CBA5",
+    "lat": 45.05,
+    "lng": -100.13,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "vgZqcht8qKo9rJ6g5",
+    "name": "1CE49",
+    "mount": "****1CE49",
+    "lat": 44.41,
+    "lng": -100.27,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "pgJafHB6kTm62Ls63",
+    "name": "C1EAD",
+    "mount": "****C1EAD",
+    "lat": 44.61,
+    "lng": -101.34,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "24yahjbcbW7ANbZXA",
+    "name": "8F779",
+    "mount": "****8F779",
+    "lat": 45.88,
+    "lng": -98.23,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "56Y7GStYREBkked2o",
+    "name": "8F781",
+    "mount": "****8F781",
+    "lat": 44.26,
+    "lng": -105.55,
+    "status": "stable",
+    "state": "Wyoming",
+    "registered": true
+  },
+  {
+    "id": "eLNki4XDRxiELkQvj",
+    "name": "94305",
+    "mount": "****94305",
+    "lat": 43.74,
+    "lng": -105.49,
+    "status": "stable",
+    "state": "Wyoming",
+    "registered": true
+  },
+  {
+    "id": "DGi8t5pW7F3i2Ewq7",
+    "name": "0FD49",
+    "mount": "****0FD49",
+    "lat": 42.49,
+    "lng": -97.04,
+    "status": "stable",
+    "state": "Nebraska",
+    "registered": true
+  },
+  {
+    "id": "mYZKeoDXYDyCrsBDq",
+    "name": "F85F5",
+    "mount": "****F85F5",
+    "lat": 41.85,
+    "lng": -96.27,
+    "status": "stable",
+    "state": "Nebraska",
+    "registered": true
+  },
+  {
+    "id": "xreKrh7u4zW22QeWy",
+    "name": "773E9",
+    "mount": "****773E9",
+    "lat": 46.7,
+    "lng": -95.96,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "LS9Q85zN2RXxbkAb9",
+    "name": "9EB5D",
+    "mount": "****9EB5D",
+    "lat": 43.53,
+    "lng": -96.69,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "2qAuWecJntCfvfx3g",
+    "name": "9FF65",
+    "mount": "****9FF65",
+    "lat": 46.87,
+    "lng": -96.7,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "ERWyRsJLfTDErJSnb",
+    "name": "A06E5",
+    "mount": "****A06E5",
+    "lat": 43.52,
+    "lng": -96.76,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "W8dHEgHuotptsohpL",
+    "name": "DAFD9",
+    "mount": "****DAFD9",
+    "lat": 43.79,
+    "lng": -96.13,
+    "status": "stable",
+    "state": "Minnesota",
+    "registered": true
+  },
+  {
+    "id": "beGB2RmQhk7L7YE6K",
+    "name": "FEE09",
+    "mount": "****FEE09",
+    "lat": 44.16,
+    "lng": -97.38,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "vjqoHfbrfBKTAGgsv",
+    "name": "0C419",
+    "mount": "****0C419",
+    "lat": 42.5,
+    "lng": -96.37,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "WBAbw5ePoKpvpbSJq",
+    "name": "80B6D",
+    "mount": "****80B6D",
+    "lat": 44.5,
+    "lng": -103.94,
+    "status": "stable",
+    "state": "South Dakota",
+    "registered": true
+  },
+  {
+    "id": "5Qszitt2eXgezuQ9M",
+    "name": "15F19",
+    "mount": "****15F19",
+    "lat": 42.48,
+    "lng": -95.57,
+    "status": "stable",
+    "state": "Iowa",
+    "registered": true
+  },
+  {
+    "id": "A842E3242A71",
+    "name": "42A71",
+    "mount": "****42A71",
+    "lat": 47.92,
+    "lng": -100.37,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "34987A6E2CD5",
+    "name": "E2CD5",
+    "mount": "****E2CD5",
+    "lat": 46.91,
+    "lng": -102.8,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "244CABCE4F11",
+    "name": "E4F11",
+    "mount": "****E4F11",
+    "lat": 46.79,
+    "lng": -100.83,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "244CABCF3059",
+    "name": "F3059",
+    "mount": "****F3059",
+    "lat": 46.96,
+    "lng": -100.83,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B86A038D",
+    "name": "A038D",
+    "mount": "****A038D",
+    "lat": 46.86,
+    "lng": -96.91,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B86773DD",
+    "name": "773DD",
+    "mount": "****773DD",
+    "lat": 46.81,
+    "lng": -100.76,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B8A008DD",
+    "name": "008DD",
+    "mount": "****008DD",
+    "lat": 46.87,
+    "lng": -96.87,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B8A00801",
+    "name": "00801",
+    "mount": "****00801",
+    "lat": 47.93,
+    "lng": -97.05,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B89FFEA9",
+    "name": "FFEA9",
+    "mount": "****FFEA9",
+    "lat": 48.96,
+    "lng": -101.64,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B86A0629",
+    "name": "A0629",
+    "mount": "****A0629",
+    "lat": 47.88,
+    "lng": -100.24,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "C82E18919935",
+    "name": "19935",
+    "mount": "****19935",
+    "lat": 46.26,
+    "lng": -100.23,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "24DCC3E0EEF9",
+    "name": "0EEF9",
+    "mount": "****0EEF9",
+    "lat": 46.89,
+    "lng": -98.63,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "C82E1891993D",
+    "name": "1993D",
+    "mount": "****1993D",
+    "lat": 46.14,
+    "lng": -100.16,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "30C922A65B2D",
+    "name": "65B2D",
+    "mount": "****65B2D",
+    "lat": 46.77,
+    "lng": -100.8,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "C82E189182E5",
+    "name": "182E5",
+    "mount": "****182E5",
+    "lat": 48.21,
+    "lng": -103.62,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "24DCC3E114A9",
+    "name": "114A9",
+    "mount": "****114A9",
+    "lat": 48.88,
+    "lng": -100.44,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "24DCC3E29CAD",
+    "name": "29CAD",
+    "mount": "****29CAD",
+    "lat": 48.23,
+    "lng": -101.29,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "AC1518EE31DD",
+    "name": "E31DD",
+    "mount": "****E31DD",
+    "lat": 48.37,
+    "lng": -100,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "9CB8B4F0ECB6",
+    "name": "0ECB6",
+    "mount": "****0ECB6",
+    "lat": 47.76,
+    "lng": -96.96,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "38182BF83421",
+    "name": "83421",
+    "mount": "****83421",
+    "lat": 46.42,
+    "lng": -101.57,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "9CB8B4F0ECCE",
+    "name": "0ECCE",
+    "mount": "****0ECCE",
+    "lat": 48.93,
+    "lng": -100.32,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "9CB8B4EF6CA6",
+    "name": "F6CA6",
+    "mount": "****F6CA6",
+    "lat": 48.39,
+    "lng": -99.6,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "E465B86A2335",
+    "name": "A2335",
+    "mount": "****A2335",
+    "lat": 46.57,
+    "lng": -97.18,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "40D95A56A41C",
+    "name": "6A41C",
+    "mount": "****6A41C",
+    "lat": 46.88,
+    "lng": -102.76,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "9CB8B4F0C93C",
+    "name": "0C93C",
+    "mount": "****0C93C",
+    "lat": 46.76,
+    "lng": -96.9,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "14335C5C7651",
+    "name": "C7651",
+    "mount": "****C7651",
+    "lat": 47.19,
+    "lng": -101.09,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "40D95A8BFB2C",
+    "name": "BFB2C",
+    "mount": "****BFB2C",
+    "lat": 48.36,
+    "lng": -102.75,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "38182BF96BED",
+    "name": "96BED",
+    "mount": "****96BED",
+    "lat": 47.11,
+    "lng": -103.29,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "14335C5CAC39",
+    "name": "CAC39",
+    "mount": "****CAC39",
+    "lat": 46.61,
+    "lng": -100.35,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "14335C5C22C1",
+    "name": "C22C1",
+    "mount": "****C22C1",
+    "lat": 47.64,
+    "lng": -97.47,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "14335C5C8A1D",
+    "name": "C8A1D",
+    "mount": "****C8A1D",
+    "lat": 46.85,
+    "lng": -99.92,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "14335C5CAC4D",
+    "name": "CAC4D",
+    "mount": "****CAC4D",
+    "lat": 48.03,
+    "lng": -103.86,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  },
+  {
+    "id": "38182BF82B6D",
+    "name": "82B6D",
+    "mount": "****82B6D",
+    "lat": 46.89,
+    "lng": -99.82,
+    "status": "stable",
+    "state": "North Dakota",
+    "registered": true
+  }
+]

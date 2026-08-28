@@ -94,65 +94,63 @@
   <div id="map"></div>
 </div>
 <script>
-const myStations = [
-  {id:"A0B7651EBF05", name:"Marquardt", lat:43.640893, lng:-97.229591},
-  {id:"C05D898DDAE5", name:"Mitchell Tech", lat:43.68897, lng:-98.000467},
-  {id:"38182BF97125", name:"Tuschen", lat:43.654434, lng:-97.429256},
-  {id:"5C013B974519", name:"Claussen", lat:44.065561, lng:-97.6006},
-  {id:"C05D898CA7FD", name:"MN", lat:47.200919, lng:-96.217129},
-  {id:"24DCC3E2A729", name:"Plainview Colony", lat:45.582661, lng:-99.009618},
-  {id:"5C013B96FB65", name:"Haak", lat:43.857376, lng:-96.578474},
-  {id:"A0B7651FC8C1", name:"Hurley", lat:43.288162, lng:-96.700797},
-  {id:"A0B7651F0045", name:"Abrahamson", lat:43.776585, lng:-97.89423},
-  {id:"AC1518EFD575", name:"Strom", lat:43.877161, lng:-98.966006},
-  {id:"C05D89AE4C99", name:"Dykstra", lat:43.445431, lng:-96.969014},
-  {id:"AC1518F00CA5", name:"Hall", lat:44.51925, lng:-99.200847},
-  {id:"A0B7651E3231", name:"Smit", lat:43.35944, lng:-97.033168},
-  {id:"C05D898D7039", name:"Knips", lat:44.386065, lng:-103.658751},
-  {id:"A0B7651D9AD5", name:"Lakner", lat:44.510189, lng:-98.699386},
-  {id:"A0B7651E44ED", name:"vzw", lat:44.236195, lng:-96.587749},
-  {id:"A0B7651F4AB1", name:"Diedrich", lat:44.216034, lng:-96.624732},
-  {id:"A0B7651EFC6D", name:"abrahamson", lat:44.206926, lng:-97.492925},
-  {id:"A0B7651E5569", name:"Wollmann", lat:44.016185, lng:-97.109361},
-  {id:"24DCC3E2068D", name:"Stearns", lat:44.022505, lng:-97.087042},
-  {id:"24DCC3E29A91", name:"605 N", lat:43.608711, lng:-96.719998},
-  {id:"C82E1891CE49", name:"Geigle", lat:44.411344, lng:-100.26422},
-  {id:"24DCC3E20BC9", name:"Rymerson", lat:44.580949, lng:-96.688754},
-  {id:"24DCC3E29DF1", name:"Daly", lat:44.078739, lng:-99.454851},
-  {id:"24DCC3E29BDD", name:"Stearns", lat:44.318177, lng:-98.219428},
-  {id:"24DCC3E2A8C1", name:"Lebahn", lat:43.826611, lng:-96.72563},
-  {id:"24DCC3E29C81", name:"Pam", lat:42.932756, lng:-96.677742},
-  {id:"24DCC3E2A7B1", name:"MKW", lat:43.582344, lng:-96.594023},
-  {id:"24DCC3E14631", name:"Blaine", lat:43.614942, lng:-96.943917},
-  {id:"24DCC3E29BFD", name:"Brown", lat:43.834571, lng:-96.844792},
-  {id:"24DCC3E2A8FD", name:"605 Dirt", lat:43.329748, lng:-96.804023},
-  {id:"30C922A65A9D", name:"Baumberger", lat:43.971786, lng:-96.9917},
-  {id:"30C922A652C1", name:"Eickelschulte", lat:43.695566, lng:-96.745936},
-  {id:"30C922A665C5", name:"Bohner", lat:43.440283, lng:-96.844825},
-  {id:"30C922A64DC5", name:"605 Real Estate", lat:43.499546, lng:-96.768736},
-  {id:"A842E3B1C36D", name:"Stearns", lat:43.479829, lng:-96.736969},
-  {id:"C82E1891CBA5", name:"Worth", lat:45.05709, lng:-100.13069}
-];
-
 (async () => {
   const me = await fetch("/api/me", { credentials: "same-origin" });
   if (me.status === 401) { location = "/login"; return; }
 
   let tracks = [], allData = [], allAlerts = [], sel = null, lineG = null, mkG = null;
 
-  const map = L.map("map", { zoomControl: true }).setView([43.7, -97.5], 7);
+  const map = L.map("map", { zoomControl: true }).setView([45.5, -100], 6);
   const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Tiles © Esri" });
   const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" });
   sat.addTo(map);
 
+  const MI = 1609.344;
+  const ringSpecs = [
+    { key: "< 1 cm", miles: 35, color: "#0f766e" },
+    { key: "1–2.5 cm", miles: 51, color: "#0369a1" },
+    { key: "2.6–6.2 cm", miles: 61, color: "#0e7490" },
+    { key: "6.3–10 cm", miles: 90, color: "#44403c" }
+  ];
   const stationsLayer = L.layerGroup();
-  myStations.forEach(b => {
-    L.circleMarker([b.lat, b.lng], {
-      color: "#1a73e8", fillColor: "#34a853", fillOpacity: 0.9, radius: 6, weight: 2
-    }).bindPopup("<b>" + esc(b.name) + "</b>").addTo(stationsLayer);
-  });
+  const ringLayers = {};
+  ringSpecs.forEach(spec => { ringLayers[spec.key] = L.layerGroup(); });
   stationsLayer.addTo(map);
-  L.control.layers({ Satellite: sat, Street: osm }, { Stations: stationsLayer }, { position: "topright" }).addTo(map);
+  const overlays = { Stations: stationsLayer };
+  ringSpecs.forEach(spec => { overlays[spec.key] = ringLayers[spec.key]; });
+  L.control.layers({ Satellite: sat, Street: osm }, overlays, { position: "topright" }).addTo(map);
+
+  function plotStations(bases) {
+    stationsLayer.clearLayers();
+    ringSpecs.forEach(spec => ringLayers[spec.key].clearLayers());
+    (bases || []).forEach(b => {
+      const lat = parseFloat(b.latitude != null ? b.latitude : b.lat);
+      const lng = parseFloat(b.longitude != null ? b.longitude : b.lng);
+      if (!isFinite(lat) || !isFinite(lng)) return;
+      const stable = String(b.status || "stable") === "stable";
+      L.circleMarker([lat, lng], {
+        color: "#1a73e8",
+        fillColor: stable ? "#34a853" : "#1a73e8",
+        fillOpacity: 0.9,
+        radius: 6,
+        weight: 2
+      }).bindPopup("<b>" + esc(b.name || b.station || "Station") + "</b>" + (b.state ? "<br>" + esc(b.state) : "")).addTo(stationsLayer);
+      ringSpecs.forEach(spec => {
+        L.circle([lat, lng], {
+          radius: spec.miles * MI,
+          color: spec.color,
+          weight: 1,
+          fillColor: spec.color,
+          fillOpacity: 0.04,
+          opacity: 0.35
+        }).addTo(ringLayers[spec.key]);
+      });
+    });
+  }
+
+  fetch("/api/bases", { credentials: "same-origin" }).then(r => r.ok ? r.json() : { data: [] }).then(j => {
+    plotStations(j.data || []);
+  }).catch(() => {});
 
   const list = document.getElementById("list");
   const q = document.getElementById("q");
@@ -343,10 +341,14 @@ const myStations = [
     const json = await r.json();
     allData = json.data || [];
     allAlerts = json.alerts || [];
-    const liveRes = await fetch("/api/live?hours=" + hours, { credentials: "same-origin" });
-    if (liveRes.status === 401) { location = "/login"; return; }
-    const liveJson = await liveRes.json();
-    tracks = liveJson.tracks || [];
+    if (json.tracks) {
+      tracks = json.tracks;
+    } else {
+      const liveRes = await fetch("/api/live?hours=" + hours, { credentials: "same-origin" });
+      if (liveRes.status === 401) { location = "/login"; return; }
+      const liveJson = await liveRes.json();
+      tracks = liveJson.tracks || [];
+    }
     document.getElementById("ref").textContent = new Date().toLocaleTimeString();
     document.getElementById("nlive").textContent = tracks.filter(t => t.live).length;
     updateSummary(allData);

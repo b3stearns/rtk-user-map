@@ -248,6 +248,64 @@ test("parseHours defaults to 12", () => {
   assert.strictEqual(parseHours("99999"), 4380);
 });
 
+test("Geodnet windows paginate and chunk past 7 days", () => {
+  const {
+    windowSpans,
+    fetchHours,
+    logOverlapsWindow,
+    PAGE_SIZE,
+    MAX_SPAN_MS,
+    MAX_LOOKBACK_MS
+  } = require("../api/_lib/geodnet");
+  const fs = require("fs");
+  const src = fs.readFileSync(require("path").join(__dirname, "..", "api/_lib/geodnet.js"), "utf8");
+  assert.ok(PAGE_SIZE <= 100);
+  assert.ok(src.includes("data.list") || src.includes("data.pageSize"));
+  assert.ok(src.includes("MAX_PAGES_PER_SPAN"));
+  assert.strictEqual(fetchHours(12), 24);
+  assert.strictEqual(fetchHours(24), 24);
+  assert.strictEqual(fetchHours(720), 720);
+  const now = Date.UTC(2026, 7, 28, 14, 0, 0);
+  const spans12 = windowSpans(now, 12);
+  assert.strictEqual(spans12.length, 1);
+  assert.ok(spans12[0].endTime - spans12[0].startTime <= MAX_SPAN_MS);
+  const spans30 = windowSpans(now, 720);
+  assert.ok(spans30.length >= 5, "30d should be multiple 7-day spans");
+  assert.ok(spans30.every(s => s.endTime - s.startTime <= MAX_SPAN_MS));
+  const spans6mo = windowSpans(now, 4380);
+  assert.ok(spans6mo.length >= 20);
+  assert.ok(spans6mo.every(s => s.endTime - s.startTime <= MAX_SPAN_MS));
+  const oldest = Math.min(...spans6mo.map(s => s.startTime));
+  assert.ok(now - oldest <= MAX_LOOKBACK_MS);
+  const live = { loginTime: now - 16 * 3600 * 1000, duration: -1 };
+  assert.ok(logOverlapsWindow(live, now - 12 * 3600 * 1000, now));
+  const oldDone = { loginTime: now - 20 * 3600 * 1000, duration: 600 };
+  assert.ok(!logOverlapsWindow(oldDone, now - 12 * 3600 * 1000, now));
+  const recent = { loginTime: now - 2 * 3600 * 1000, duration: 120 };
+  assert.ok(logOverlapsWindow(recent, now - 12 * 3600 * 1000, now));
+});
+
+test("station dataset matches coverage ND+SD map", () => {
+  const fs = require("fs");
+  const path = require("path");
+  const stations = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "api/_lib/stations.json"), "utf8"));
+  assert.ok(stations.length >= 140, "expected ~144 coverage stations, got " + stations.length);
+  assert.ok(stations.some(s => s.state === "North Dakota"));
+  assert.ok(stations.some(s => s.state === "South Dakota"));
+  const lats = stations.map(s => s.lat);
+  assert.ok(Math.max(...lats) > 47, "North Dakota lats missing");
+  const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  assert.ok(html.includes("/api/bases"));
+  assert.ok(html.includes("Stations"));
+  assert.ok(html.includes("< 1 cm"));
+  assert.ok(!html.includes("const myStations"));
+  assert.ok(!html.includes("grok.me"));
+  assert.ok(!html.includes("iframe"));
+  const bases = fs.readFileSync(path.join(__dirname, "..", "api/bases.js"), "utf8");
+  assert.ok(bases.includes("stations.json"));
+  assert.ok(!bases.includes("radius: 650"));
+});
+
 test("live.js requires session", () => {
   const fs = require("fs");
   const src = fs.readFileSync(require("path").join(__dirname, "..", "api/live.js"), "utf8");
