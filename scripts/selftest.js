@@ -105,6 +105,13 @@ test("verifyDealer accepts existing DEALER_BRAD_PASSWORD env", () => {
   delete process.env.DEALER_BRAD_PASSWORD;
 });
 
+test("auth.js loads missing env from .env file", () => {
+  const fs = require("fs");
+  const src = fs.readFileSync(require("path").join(__dirname, "..", "api/_lib/auth.js"), "utf8");
+  assert.ok(src.includes("loadEnvFiles"));
+  assert.ok(src.includes(".env"));
+});
+
 test("session HMAC roundtrip", () => {
   process.env.SESSION_SECRET = "unit-test-secret-not-for-prod";
   const token = signToken({ u: "brad", exp: Date.now() + 60000 });

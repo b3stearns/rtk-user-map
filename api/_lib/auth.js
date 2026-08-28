@@ -1,4 +1,32 @@
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+
+function loadEnvFiles() {
+  const candidates = [
+    path.join(process.cwd(), ".env"),
+    path.join(__dirname, "..", "..", ".env"),
+    path.join(__dirname, "..", ".env")
+  ];
+  for (const file of candidates) {
+    try {
+      const raw = fs.readFileSync(file, "utf8");
+      raw.split(/\r?\n/).forEach(line => {
+        const t = line.trim();
+        if (!t || t.startsWith("#")) return;
+        const i = t.indexOf("=");
+        if (i < 1) return;
+        const k = t.slice(0, i).trim();
+        let v = t.slice(i + 1).trim();
+        if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+          v = v.slice(1, -1);
+        }
+        if (k && (process.env[k] == null || process.env[k] === "")) process.env[k] = v;
+      });
+    } catch (_) {}
+  }
+}
+loadEnvFiles();
 
 const COOKIE_NAME = "tn_session";
 const MAX_AGE_SEC = 60 * 60 * 24 * 7;
