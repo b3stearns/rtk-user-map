@@ -3,3 +3,4 @@ node_modules/
 misc/node_modules/
 data/
 .env
+api/_lib/geodnet.env

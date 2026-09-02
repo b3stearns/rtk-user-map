@@ -1,304 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TruNav RTK User Map</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TrueNav Live</title>
+  <link rel="icon" href="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=100w">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    body { margin:0; font-family: Arial, sans-serif; }
-    #topbar {
-      display: flex; align-items: center; gap: 20px;
-      padding: 12px 20px; background: #f8f9fa; border-bottom: 1px solid #ddd;
-    }
-    #filters { display: flex; gap: 12px; align-items: center; }
-    #summary {
-      background: white; border: 1px solid #ddd; border-radius: 8px;
-      padding: 10px 16px; font-size: 13px; line-height: 1.4; min-width: 260px;
-    }
-    #map { height: calc(100vh - 70px); width: 100%; }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}
+    #app{display:grid;grid-template-rows:auto 1fr;grid-template-columns:300px 1fr;height:100%}
+    header{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:52px;padding:8px 16px;background:rgba(7,9,12,.92);border-bottom:1px solid rgba(214,226,240,.09);z-index:500}
+    .brand{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+    .brand img{width:28px;height:28px;border-radius:5px}
+    .brand span{color:#c5a46e}
+    .meta{color:#8e9aab;font-size:12px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    .meta b{color:#c5a46e;font-weight:600}
+    .sp{flex:1}
+    button.lo{background:transparent;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+    button.lo:hover{border-color:#c5a46e;color:#c5a46e}
+    #timeFilter{background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px}
+    .sum{display:flex;gap:14px;flex-wrap:wrap;margin-left:8px}
+    .sum div{display:flex;flex-direction:column;line-height:1.15}
+    .sum b{color:#c5a46e;font-size:14px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    .sum span{color:#8e9aab;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+    #side{background:#0c1117;border-right:1px solid rgba(214,226,240,.09);display:flex;flex-direction:column;min-height:0}
+    .uh{margin:0;padding:12px 12px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
+    #alerts{border-top:1px solid rgba(214,226,240,.09);flex:0 0 auto;max-height:34%;display:flex;flex-direction:column;min-height:0}
+    #alerts h2{margin:0;padding:10px 12px 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
+    #alertCount{background:#3a1515;color:#e05555;border:1px solid #e0555544;border-radius:99px;padding:1px 7px;font-size:11px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    #alertCount.ok{background:#1a3d2a;color:#8fd4ae;border-color:#3dcc7a55}
+    #alertList{overflow:auto;padding:0 8px 10px;flex:1}
+    .al{padding:8px 10px;border-radius:8px;border:1px solid rgba(224,85,85,.25);background:#1a1010;margin-bottom:6px;cursor:pointer}
+    .al:hover{border-color:#e05555}
+    .cat{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#e05555;font-weight:700}
+    #q{margin:12px;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:9px 10px;font:inherit}
+    #list{overflow:auto;flex:1;padding:0 8px 12px}
+    .u{padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+    .u:hover{background:#121922}
+    .u.on{background:#182230;border-color:rgba(197,164,110,.45)}
+    .un{font-weight:650;font-size:14px;display:flex;align-items:center;gap:8px}
+    .mt{color:#8e9aab;font-size:12px;margin-top:2px;font-family:IBM Plex Mono,ui-monospace,monospace}
+    .pill{font-size:10px;letter-spacing:.08em;background:#1a3d2a;color:#8fd4ae;border:1px solid #3dcc7a55;border-radius:99px;padding:2px 7px;font-weight:700}
+    #detail{display:none;border-top:1px solid rgba(214,226,240,.09);padding:10px 12px;font-size:13px;background:#0a0e13}
+    #detail .k{color:#8e9aab;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+    #detail b{color:#c5a46e}
+    #map{height:100%;background:#07090c}
+    .leaflet-control-layers{background:#0c1117;color:#edf2f7;border:1px solid rgba(214,226,240,.16);border-radius:8px}
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0c1117;color:#edf2f7;border:1px solid rgba(197,164,110,.35)}
+    .leaflet-popup-content{font-family:Instrument Sans,sans-serif;font-size:13px;margin:10px 12px;line-height:1.45}
+    .leaflet-popup-content b{color:#c5a46e}
+    .empty{color:#6b7787;padding:12px 10px;font-size:13px}
+    .hw-li{width:18px;height:18px;border-radius:4px;object-fit:contain;background:#fff;border:1px solid rgba(214,226,240,.16);flex:0 0 auto}
+    .leaflet-div-icon.hw-wrap{background:transparent;border:none}
+    .hw-mk{width:34px;height:34px;border-radius:8px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.45);background:#fff}
+    .hw-mk img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+    .hw-mk.live{box-shadow:0 0 0 2px #3dcc7a,0 2px 8px rgba(0,0,0,.45)}
+    .hw-mk.sel{border-color:#c5a46e;box-shadow:0 0 0 3px rgba(197,164,110,.55),0 2px 10px rgba(0,0,0,.5)}
+    @media(max-width:720px){#app{grid-template-columns:1fr;grid-template-rows:auto 42vh 1fr}#side{border-right:0;border-bottom:1px solid rgba(214,226,240,.09)}}
   </style>
 </head>
 <body>
-  <div id="topbar">
-    <div id="filters">
-      <select id="timeFilter">
-        <option value="12">Last 12 Hours</option>
-        <option value="24" selected>Last 24 Hours</option>
-        <option value="168">Last 7 Days</option>
-      </select>
-      <select id="userFilter"><option value="">All Users</option></select>
+<div id="app">
+  <header>
+    <div class="brand">
+      <img src="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=1500w" alt="">
+      <div>TRUE<span>NAV</span> LIVE</div>
     </div>
-    <div id="summary">
-      <b>Summary</b><br>
-      Unique users: <span id="sumUsers">0</span><br>
-      Avg fix rate: <span id="sumFix">0%</span><br>
-      Avg distance: <span id="sumDist">0 miles</span><br>
-      Total connection time: <span id="sumTime">N/A</span>
+    <div class="meta">refreshed <span id="ref">—</span></div>
+    <div class="meta"><b id="nlive">0</b> live</div>
+    <select id="timeFilter" title="Summary window">
+      <option value="12" selected>Last 12 Hours</option>
+      <option value="24">Last 24 Hours</option>
+      <option value="168">Last 7 Days</option>
+      <option value="720">Last 30 Days</option>
+      <option value="4380">Last 6 Months</option>
+    </select>
+    <div id="summary" class="sum">
+      <div><b id="sumUsers">—</b><span>Unique users</span></div>
+      <div><b id="sumFix">—</b><span>Avg fix rate</span></div>
+      <div><b id="sumDist">—</b><span>Avg distance</span></div>
+      <div><b id="sumTime">—</b><span>Total connection time</span></div>
     </div>
-  </div>
+    <div class="sp"></div>
+    <button class="lo" id="out" type="button">Log out</button>
+  </header>
+  <aside id="side">
+    <h2 class="uh">Live users</h2>
+    <input id="q" placeholder="Search users…" autocomplete="off">
+    <div id="list"></div>
+    <div id="alerts">
+      <h2>NTRIP alerts <span id="alertCount">0</span></h2>
+      <div id="alertList"><div class="empty">Loading…</div></div>
+    </div>
+    <div id="detail"></div>
+  </aside>
   <div id="map"></div>
-
+</div>
 <script>
-// ==================== ALL YOUR STATIONS FROM PDF ====================
-const myStations = [
-  {id:"A0B7651EBF05", name:"Marquardt", lat:43.640893, lng:-97.229591},
-  {id:"C05D898DDAE5", name:"Mitchell Tech", lat:43.68897, lng:-98.000467},
-  {id:"38182BF97125", name:"Tuschen", lat:43.654434, lng:-97.429256},
-  {id:"5C013B974519", name:"Claussen", lat:44.065561, lng:-97.6006},
-  {id:"C05D898CA7FD", name:"MN", lat:47.200919, lng:-96.217129},
-  {id:"24DCC3E2A729", name:"Plainview Colony", lat:45.582661, lng:-99.009618},
-  {id:"5C013B96FB65", name:"Haak", lat:43.857376, lng:-96.578474},
-  {id:"A0B7651FC8C1", name:"Hurley", lat:43.288162, lng:-96.700797},
-  {id:"A0B7651F0045", name:"Abrahamson", lat:43.776585, lng:-97.89423},
-  {id:"AC1518EFD575", name:"Strom", lat:43.877161, lng:-98.966006},
-  {id:"C05D89AE4C99", name:"Dykstra", lat:43.445431, lng:-96.969014},
-  {id:"AC1518F00CA5", name:"Hall", lat:44.51925, lng:-99.200847},
-  {id:"A0B7651E3231", name:"Smit", lat:43.35944, lng:-97.033168},
-  {id:"C05D898D7039", name:"Knips", lat:44.386065, lng:-103.658751},
-  {id:"A0B7651D9AD5", name:"Lakner", lat:44.510189, lng:-98.699386},
-  {id:"A0B7651E44ED", name:"vzw", lat:44.236195, lng:-96.587749},
-  {id:"A0B7651F4AB1", name:"Diedrich", lat:44.216034, lng:-96.624732},
-  {id:"A0B7651EFC6D", name:"abrahamson", lat:44.206926, lng:-97.492925},
-  {id:"A0B7651E5569", name:"Wollmann", lat:44.016185, lng:-97.109361},
-  {id:"24DCC3E2068D", name:"Stearns", lat:44.022505, lng:-97.087042},
-  {id:"24DCC3E29A91", name:"605 N", lat:43.608711, lng:-96.719998},
-  {id:"C82E1891CE49", name:"Geigle", lat:44.411344, lng:-100.26422},
-  {id:"24DCC3E20BC9", name:"Rymerson", lat:44.580949, lng:-96.688754},
-  {id:"24DCC3E29DF1", name:"Daly", lat:44.078739, lng:-99.454851},
-  {id:"24DCC3E29BDD", name:"Stearns", lat:44.318177, lng:-98.219428},
-  {id:"24DCC3E2A8C1", name:"Lebahn", lat:43.826611, lng:-96.72563},
-  {id:"24DCC3E29C81", name:"Pam", lat:42.932756, lng:-96.677742},
-  {id:"24DCC3E2A7B1", name:"MKW", lat:43.582344, lng:-96.594023},
-  {id:"24DCC3E14631", name:"Blaine", lat:43.614942, lng:-96.943917},
-  {id:"24DCC3E29BFD", name:"Brown", lat:43.834571, lng:-96.844792},
-  {id:"24DCC3E2A8FD", name:"605 Dirt", lat:43.329748, lng:-96.804023},
-  {id:"30C922A65A9D", name:"Baumberger", lat:43.971786, lng:-96.9917},
-  {id:"30C922A652C1", name:"Eickelschulte", lat:43.695566, lng:-96.745936},
-  {id:"30C922A665C5", name:"Bohner", lat:43.440283, lng:-96.844825},
-  {id:"30C922A64DC5", name:"605 Real Estate", lat:43.499546, lng:-96.768736},
-  {id:"A842E3B1C36D", name:"Stearns", lat:43.479829, lng:-96.736969},
-  {id:"C82E1891CBA5", name:"Worth", lat:45.05709, lng:-100.13069},
-  {id:"73611", name:"73611", lat:42.7202342, lng:-97.4074012},
-  {id:"E39F1", name:"E39F1", lat:42.5200478, lng:-96.3899494},
-  {id:"CA2D9", name:"CA2D9", lat:43.4564447, lng:-98.6599934},
-  {id:"378D1", name:"378D1", lat:43.7449413, lng:-99.0199086},
-  {id:"C91F5", name:"C91F5", lat:44.249989, lng:-97.0086247},
-  {id:"C8821", name:"C8821", lat:44.3186761, lng:-96.7700123},
-  {id:"DA941", name:"DA941", lat:44.8044803, lng:-96.7500129},
-  {id:"224AD", name:"224AD", lat:45.4014614, lng:-98.4999922},
-  {id:"702C0", name:"702C0", lat:45.4607704, lng:-98.4286549},
-  {id:"0B669", name:"0B669", lat:45.47, lng:-102.2},
-  {id:"23269", name:"23269", lat:44.510349, lng:-101.52863},
-  {id:"70C5D", name:"70C5D", lat:45.84, lng:-101.64},
-  {id:"83421", name:"83421", lat:46.4138504, lng:-101.5651902},
-  {id:"65B2D", name:"65B2D", lat:46.7595067, lng:-100.8005269},
-  {id:"E4F11", name:"E4F11", lat:46.790841, lng:-100.83029},
-  {id:"773DD", name:"773DD", lat:46.7999925, lng:-100.7696681},
-  {id:"0EEF9", name:"0EEF9", lat:46.8900026, lng:-98.6293639},
-  {id:"6A41C", name:"6A41C", lat:46.8803018, lng:-102.7705648},
-  {id:"C7651", name:"C7651", lat:47.1900233, lng:-101.0873219},
-  {id:"A2335", name:"A2335", lat:46.5725281, lng:-97.1900099},
-  {id:"A038D", name:"A038D", lat:46.8500233, lng:-96.9199724},
-  {id:"008DD", name:"008DD", lat:46.8699897, lng:-96.869751},
-  {id:"9FF65", name:"9FF65", lat:46.8720187, lng:-96.6998028},
-  {id:"00801", name:"00801", lat:47.9199956, lng:-97.0597872},
-  {id:"09BEE", name:"09BEE", lat:47.7446224, lng:-96.9700293},
-  {id:"C803D", name:"C803D", lat:45.8051113, lng:-97.0900341},
-  {id:"182E5", name:"182E5", lat:48.199371, lng:-103.622595},
-  {id:"96BED", name:"96BED", lat:47.0999762, lng:-103.2865793},
-  {id:"FCECD", name:"FCECD", lat:43.4, lng:-101.17},
-  {id:"80B6D", name:"80B6D", lat:44.5000132, lng:-103.9409515},
-  {id:"18E49", name:"18E49", lat:44.4802479, lng:-103.8618381},
-  {id:"CA035", name:"CA035", lat:44.8, lng:-102.56},
-  {id:"E4531", name:"E4531", lat:43.080266, lng:-96.790116},
-  {id:"19935", name:"19935", lat:46.2499955, lng:-100.2327633},
-  {id:"23269", name:"23269", lat:44.510349, lng:-101.52863},
-  {id:"CA035", name:"CA035", lat:48.8, lng:-102.56},
-  {id:"19D65", name:"19D65", lat:44.9299982, lng:-96.3090867},
-  {id:"969A9", name:"969A9", lat:45.0604159, lng:-96.083763},
-  {id:"29CAD", name:"29CAD", lat:48.219555, lng:-101.299961},
-  {id:"A0629", name:"A0629", lat:47.8796857, lng:-100.2501372},
-  {id:"14D9D", name:"14D9D", lat:47.919531, lng:-100.370086},
-  {id:"C475D", name:"C475D", lat:42.63, lng:-97.41},
-  {id:"C3A85", name:"C3A85", lat:43.1699841, lng:-95.9409024},
-  {id:"DAFD9", name:"DAFD9", lat:43.7900537, lng:-96.1300252},
-  {id:"A038D", name:"A038D", lat:46.85, lng:-96.92}
-];
+(async () => {
+  const me = await fetch("/api/me", { credentials: "same-origin" });
+  if (me.status === 401) { location = "/login"; return; }
 
-let map, logMarkers = [], baseMarkers = [], lines = [], allData = [];
-let baseMap = new Map();
-let lastDataCount = 0;
+  let tracks = [], allData = [], allAlerts = [], bases = [], sel = null, lineG = null, mkG = null;
+  const BRAND_ICONS = {
+    "john-deere": "/brands/john-deere.png",
+    trimble: "/brands/trimble.png",
+    fjd: "/brands/fjd.png",
+    dji: "/brands/dji.png",
+    cnh: "/brands/cnh.png",
+    topcon: "/brands/topcon.png",
+    outback: "/brands/outback.png",
+    raven: "/brands/raven.png",
+    "ag-leader": "/brands/ag-leader.svg",
+    emlid: "/brands/emlid.svg",
+    agco: "/brands/agco.svg",
+    other: "/brands/other.png"
+  };
+  function brandIcon(id) { return BRAND_ICONS[id] || BRAND_ICONS.other; }
+  function brandLabel(tr) { return tr.hardwareLabel || (tr.last && tr.last.hardwareLabel) || "Other"; }
+  function brandId(tr) { return tr.hardware || (tr.last && tr.last.hardware) || "other"; }
 
-function getLogIcon(p) {
-  const request = (p.request || '').toLowerCase();
+  const map = L.map("map", { zoomControl: true }).setView([45.5, -100], 6);
+  const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Tiles © Esri" });
+  const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" });
+  sat.addTo(map);
 
-  let iconFile = 'default.png';
+  const MI = 1609.344;
+  const ringSpecs = [
+    { key: "< 1 cm", miles: 35, color: "#0f766e" },
+    { key: "1–2.5 cm", miles: 51, color: "#0369a1" },
+    { key: "2.6–6.2 cm", miles: 61, color: "#0e7490" },
+    { key: "6.3–10 cm", miles: 90, color: "#44403c" }
+  ];
+  const stationsLayer = L.layerGroup();
+  const ringLayers = {};
+  ringSpecs.forEach(spec => { ringLayers[spec.key] = L.layerGroup(); });
+  stationsLayer.addTo(map);
+  const overlays = { Stations: stationsLayer };
+  ringSpecs.forEach(spec => { overlays[spec.key] = ringLayers[spec.key]; });
+  L.control.layers({ Satellite: sat, Street: osm }, overlays, { position: "topright" }).addTo(map);
 
-  if (request.includes('jd') || request.includes('john') || request.includes('deere')) {
-    iconFile = 'JohnDeereDevice.png';
-  } else if (request.includes('trimble')) {
-    iconFile = 'TrimbleGCS900Device.png';
-  } else if (request.includes('case') || request.includes('cnh')) {
-    iconFile = 'CNHIndustrialDevice.png';
-  } else if (request.includes('topcon')) {
-    iconFile = 'TopconDevice.png';
-  } else if (request.includes('outback')) {
-    iconFile = 'OutbackDevice.png';
-  } else if (request.includes('dji')) {
-    iconFile = 'DJIDevice.png';
-  } else if (request.includes('fjd')) {
-    iconFile = 'FJDDevice.png';
+  function plotStations(list) {
+    bases = list || [];
+    stationsLayer.clearLayers();
+    ringSpecs.forEach(spec => ringLayers[spec.key].clearLayers());
+    bases.forEach(b => {
+      const lat = parseFloat(b.latitude != null ? b.latitude : b.lat);
+      const lng = parseFloat(b.longitude != null ? b.longitude : b.lng);
+      if (!isFinite(lat) || !isFinite(lng)) return;
+      const stable = String(b.status || "stable") === "stable";
+      L.circleMarker([lat, lng], {
+        color: "#1a73e8",
+        fillColor: stable ? "#34a853" : "#1a73e8",
+        fillOpacity: 0.9,
+        radius: 6,
+        weight: 2
+      }).bindPopup("<b>" + esc(b.name || b.station || "Station") + "</b>" + (b.state ? "<br>" + esc(b.state) : "")).addTo(stationsLayer);
+      ringSpecs.forEach(spec => {
+        L.circle([lat, lng], {
+          radius: spec.miles * MI,
+          color: spec.color,
+          weight: 1,
+          fillColor: spec.color,
+          fillOpacity: 0.04,
+          opacity: 0.35
+        }).addTo(ringLayers[spec.key]);
+      });
+    });
   }
 
-  return L.icon({
-    iconUrl: `/${iconFile}`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -28]
-  });
-}
-function formatDuration(seconds) {
-  if (!seconds || isNaN(seconds)) return 'N/A';
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-
-function createLogPopup(p) {
-  const shortStation = p.station ? String(p.station).slice(-4) : 'N/A';
-  let distMiles = 'N/A';
-  if (p.distance != null) {
-    const km = parseFloat(p.distance);
-    if (!isNaN(km)) distMiles = (km * 0.621371).toFixed(2) + ' miles';
-  }
-  let signInCST = 'N/A';
-  if (p.loginTime) {
-    signInCST = new Date(p.loginTime).toLocaleString('en-US', {timeZone:'America/Chicago'}) + ' CST';
-  }
-  const fixRate = parseFloat(p.rtkfix || p['rtk fix rate(%)'] || p.fixRate) || 0;
-  const fixColor = fixRate >= 90 ? 'green' : 'black';
-  const sessionTime = formatDuration(p.duration || p.sessionTime);
-
-  return `
-    <b>Distance to Station:</b> ${distMiles}<br>
-    <b>username:</b> ${p.username || 'N/A'}<br>
-    <b>partner:</b> ${p.partner || 'N/A'}<br>
-    <b>Sign in time (CST):</b> ${signInCST}<br>
-    <b>Session time:</b> ${sessionTime}<br>
-    <b>status:</b> <span style="color:green">${p.status || p.msg || 'N/A'}</span><br>
-    <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${fixRate || 'N/A'}</span><br>
-    <b>station:</b> ${shortStation}<br>
-    <b>spp / dgps / fixed / float:</b> ${p.spp || 0} / ${p.dgps || 0} / ${p.rtkfix || 0} / ${p.float || 0}<br>
-    <b>avg age / max age:</b> ${p.avgAge || 'N/A'} / ${p.maxAge || 'N/A'}<br>
-    <b>ip:</b> ${p.ip || 'N/A'}
-  `;
-}
-
-function loadBaseStations() {
-  myStations.forEach(b => {
-    const id = b.id || b.name;
-    baseMap.set(id, { lat: b.lat, lng: b.lng, name: b.name });
-
-    const marker = L.circleMarker([b.lat, b.lng], {
-      color: '#1a73e8', fillColor: '#34a853', fillOpacity: 0.9, radius: 8, weight: 2
-    }).bindPopup(`<b>${b.name}</b>`);
-    marker.addTo(map);
-    baseMarkers.push(marker);
-  });
-}
-
-function drawLines(dataToDraw = allData) {
-  lines.forEach(l => map.removeLayer(l)); lines = [];
-  dataToDraw.forEach(p => {
-    if (!p.station) return;
-    let base = baseMap.get(p.station);
-    if (!base) {
-      for (let [key, val] of baseMap) {
-        if (key.includes(p.station) || p.station.includes(key)) { base = val; break; }
-      }
+  fetch("/api/bases", { credentials: "same-origin" }).then(r => r.ok ? r.json() : { data: [] }).then(j => {
+    plotStations(j.data || []);
+    if (sel) {
+      const tr = tracks.find(t => key(t) === sel);
+      if (tr) drawStationLine(tr, 0);
     }
-    if (base) {
-      const line = L.polyline([[p.latitude, p.longitude], [base.lat, base.lng]], {
-        color: '#e53935', weight: 2.5, opacity: 0.75
-      }).addTo(map);
-      lines.push(line);
+  }).catch(() => {});
+
+  const list = document.getElementById("list");
+  const q = document.getElementById("q");
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
+  }
+  function key(t) { return t.username + "|" + (t.mount || ""); }
+
+  function formatDuration(seconds) {
+    if (!seconds || isNaN(seconds) || seconds < 0) return "N/A";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function sessionSeconds(tr) {
+    const d = parseFloat(tr.duration);
+    if (!isNaN(d) && d > 0) return d;
+    const logs = (allData || []).filter(x => x.username === tr.username && (!tr.mount || x.mountpoint === tr.mount || x.station === tr.mount));
+    let best = 0;
+    for (const x of logs) {
+      const n = parseFloat(x.duration);
+      if (!isNaN(n) && n > best) best = n;
     }
+    if (best > 0) return best;
+    const pts = tr.points || [];
+    if (pts.length >= 2) return Math.max(0, (pts[pts.length - 1].t - pts[0].t) / 1000);
+    return NaN;
+  }
+
+  function formatSessionTime(tr) {
+    return formatDuration(sessionSeconds(tr));
+  }
+
+  function createLogPopup(p, tr) {
+    const sessionTime = formatSessionTime(tr || { duration: p.duration, points: [], username: p.username, mount: p.mountpoint || p.station });
+    const shortStation = p.station ? String(p.station).slice(-4) : (p.mountpoint || "N/A");
+    let distMiles = "N/A";
+    if (p.distance != null) {
+      const km = parseFloat(p.distance);
+      if (!isNaN(km)) distMiles = (km * 0.621371).toFixed(2) + " miles";
+    }
+    let signInCST = "N/A";
+    if (p.loginTime) signInCST = new Date(p.loginTime).toLocaleString("en-US", { timeZone: "America/Chicago" }) + " CST";
+    const fixRate = parseFloat(p.fixRate ?? p.rtkfix ?? p["rtk fix rate(%)"]) || 0;
+    const rtkFixed = p.rtkFixed ?? p.rtkfix ?? 0;
+    const rtkFloat = p.rtkFloat ?? p.float ?? 0;
+    const fixColor = fixRate >= 90 ? "#3dcc7a" : "#edf2f7";
+    return `
+      <b>Distance to Station:</b> ${esc(distMiles)}<br>
+      <b>username:</b> ${esc(p.username || "N/A")}<br>
+      <b>partner:</b> ${esc(p.partner || "N/A")}<br>
+      <b>Sign in time (CST):</b> ${esc(signInCST)}<br>
+      <b>Session time:</b> ${esc(sessionTime)}<br>
+      <b>status:</b> ${esc(p.status ?? p.msg ?? "N/A")}<br>
+      <b>rtk fix rate(%):</b> <span style="color:${fixColor}">${esc(fixRate || "N/A")}</span><br>
+      <b>station:</b> ${esc(shortStation)}<br>
+      <b>spp / dgps / fixed / float:</b> ${esc(p.spp || 0)} / ${esc(p.dgps || 0)} / ${esc(rtkFixed)} / ${esc(rtkFloat)}<br>
+      <b>avg age / max age:</b> ${esc(p.avgAge || "N/A")} / ${esc(p.maxAge || "N/A")}<br>
+      <b>hardware:</b> ${esc(p.hardwareLabel || p.hardware || (tr && brandLabel(tr)) || "Other")}<br>
+      <b>ip:</b> ${esc(p.ip || "N/A")}
+    `;
+  }
+
+  function matchStation(tr) {
+    const last = (tr && tr.last) || tr || {};
+    const ignore = /^(AUTO|NONE|N\/A)$/i;
+    const keys = [];
+    [tr && tr.station, tr && tr.mount, last.station, last.mountpoint, last.mount].forEach(v => {
+      const s = String(v || "").replace(/^\*+/, "").trim().toUpperCase();
+      if (s && !ignore.test(s) && keys.indexOf(s) < 0) keys.push(s);
+    });
+    if (!keys.length || !bases.length) return null;
+    let best = null, bestScore = 0;
+    bases.forEach(b => {
+      const tokens = [b.name, b.station, b.mount, b.id].map(v => String(v || "").replace(/^\*+/, "").trim().toUpperCase()).filter(t => t && t.length >= 3 && !ignore.test(t));
+      tokens.forEach(token => {
+        keys.forEach(k => {
+          let score = 0;
+          if (token === k) score = 10000 + token.length;
+          else if (k.endsWith(token) && token.length >= 4) score = 5000 + token.length;
+          else if (token.endsWith(k) && k.length >= 4) score = 4000 + k.length;
+          if (score > bestScore) { bestScore = score; best = b; }
+        });
+      });
+    });
+    return bestScore >= 4000 ? best : null;
+  }
+
+  function drawStationLine(tr, fit) {
+    if (lineG) { map.removeLayer(lineG); lineG = null; }
+    const pts = tr.points || [];
+    const p = pts[pts.length - 1];
+    if (!p) return;
+    const st = matchStation(tr);
+    const slat = st ? parseFloat(st.latitude != null ? st.latitude : st.lat) : NaN;
+    const slng = st ? parseFloat(st.longitude != null ? st.longitude : st.lng) : NaN;
+    if (!isFinite(slat) || !isFinite(slng)) {
+      if (fit) map.setView([p.lat, p.lng], 16);
+      return;
+    }
+    lineG = L.layerGroup().addTo(map);
+    L.polyline([[p.lat, p.lng], [slat, slng]], { color: "#3dcc7a", weight: 3, opacity: 0.95 }).addTo(lineG);
+    if (fit) map.fitBounds([[p.lat, p.lng], [slat, slng]], { padding: [48, 48], maxZoom: 16 });
+  }
+
+  function showDetail(tr) {
+    const el = document.getElementById("detail");
+    const last = tr.last || {};
+    const sessionTime = formatSessionTime(tr);
+    el.style.display = "block";
+    el.innerHTML = `<div class="k">Selected connection</div>
+      <div><b>username:</b> ${esc(tr.username)}</div>
+      <div><b>hardware:</b> ${esc(brandLabel(tr))}</div>
+      <div><b>station:</b> ${esc(tr.mount || last.station || "—")}</div>
+      <div><b>Session time:</b> ${esc(sessionTime)}</div>
+      <div><b>status:</b> ${esc(last.status ?? last.msg ?? "N/A")}</div>`;
+  }
+
+  function markers() {
+    if (mkG) map.removeLayer(mkG);
+    mkG = L.layerGroup().addTo(map);
+    for (const t of tracks) {
+      const p = t.points[t.points.length - 1];
+      if (!p) continue;
+      const on = sel && key(t) === sel;
+      const last = t.last || {};
+      const icon = L.divIcon({
+        className: "hw-wrap",
+        html: `<div class="hw-mk${t.live ? " live" : ""}${on ? " sel" : ""}"><img src="${esc(brandIcon(brandId(t)))}" alt="${esc(brandLabel(t))}" onerror="this.onerror=null;this.src='/brands/other.png'"></div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -18]
+      });
+      const m = L.marker([p.lat, p.lng], { icon: icon, zIndexOffset: on ? 1000 : (t.live ? 400 : 0) });
+      m.bindPopup(createLogPopup(Object.assign({ latitude: p.lat, longitude: p.lng, loginTime: p.t, hardware: brandId(t), hardwareLabel: brandLabel(t) }, last), t));
+      m.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        select(key(t), 1);
+      });
+      m.addTo(mkG);
+      if (on) m.openPopup();
+    }
+  }
+
+  function renderList() {
+    const f = q.value.trim().toLowerCase();
+    const rows = tracks.filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f) || brandLabel(t).toLowerCase().includes(f));
+    list.innerHTML = rows.length ? rows.map(t => {
+      const on = sel === key(t) ? " on" : "";
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="" onerror="this.onerror=null;this.src='/brands/other.png'">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} · ${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
+    }).join("") : '<div class="empty">No RTK users in this window</div>';
+    list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
+  }
+
+  function renderAlerts(alerts) {
+    const n = (alerts || []).length;
+    const badge = document.getElementById("alertCount");
+    badge.textContent = n;
+    badge.classList.toggle("ok", n === 0);
+    const box = document.getElementById("alertList");
+    if (!n) {
+      box.innerHTML = '<div class="empty">No NTRIP issues in this window.</div>';
+      return;
+    }
+    box.innerHTML = alerts.map((a, i) => `
+      <div class="al" data-i="${i}">
+        <div class="cat">${esc(a.categoryLabel || a.category)}</div>
+        <div class="un">${esc(a.username || "Unknown")}</div>
+        <div class="mt">${esc(a.timeLabel || "")} · ${esc(a.station || a.mount || "—")}<br>${esc(a.msg || "")}</div>
+      </div>`).join("");
+    box.querySelectorAll(".al").forEach(el => {
+      el.onclick = () => {
+        const a = alerts[Number(el.dataset.i)];
+        if (!a) return;
+        const tr = tracks.find(t => t.username === a.username);
+        if (tr) select(key(tr), 1);
+        else if (a.latitude && a.longitude) map.setView([a.latitude, a.longitude], 12);
+      };
+    });
+  }
+
+  function deselect() {
+    sel = null;
+    if (lineG) { map.removeLayer(lineG); lineG = null; }
+    document.getElementById("detail").style.display = "none";
+    renderList();
+    markers();
+  }
+
+  function select(k, fit) {
+    sel = k;
+    const tr = tracks.find(t => key(t) === k);
+    if (!tr) return;
+    renderList();
+    markers();
+    drawStationLine(tr, fit);
+    showDetail(tr);
+  }
+
+  function updateSummary(data) {
+    const users = new Set(data.map(d => d.username).filter(Boolean));
+    document.getElementById("sumUsers").textContent = users.size;
+    const fixRates = data.map(d => parseFloat(d.fixRate ?? d.rtkfix ?? d["rtk fix rate(%)"] ?? d.rtkFixRate)).filter(n => !isNaN(n) && n > 0);
+    const avgFix = fixRates.length ? (fixRates.reduce((a, b) => a + b, 0) / fixRates.length).toFixed(1) : "0";
+    document.getElementById("sumFix").textContent = avgFix + "%";
+    const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
+    const avgDistKm = dists.length ? dists.reduce((a, b) => a + b, 0) / dists.length : 0;
+    document.getElementById("sumDist").textContent = (avgDistKm * 0.621371).toFixed(1) + " miles";
+    const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
+    const totalHours = (durations.reduce((a, b) => a + b, 0) / 3600).toFixed(1);
+    document.getElementById("sumTime").textContent = totalHours + " hrs";
+  }
+
+  async function loadWindow(fitAll) {
+    const hours = parseInt(document.getElementById("timeFilter").value, 10) || 12;
+    const r = await fetch("/api/sheets?hours=" + hours, { credentials: "same-origin" });
+    if (r.status === 401) { location = "/login"; return; }
+    const json = await r.json();
+    allData = json.data || [];
+    allAlerts = json.alerts || [];
+    if (json.tracks) {
+      tracks = json.tracks;
+    } else {
+      const liveRes = await fetch("/api/live?hours=" + hours, { credentials: "same-origin" });
+      if (liveRes.status === 401) { location = "/login"; return; }
+      const liveJson = await liveRes.json();
+      tracks = liveJson.tracks || [];
+    }
+    document.getElementById("ref").textContent = new Date().toLocaleTimeString();
+    document.getElementById("nlive").textContent = tracks.filter(t => t.live).length;
+    updateSummary(allData);
+    renderAlerts(allAlerts);
+    renderList();
+    markers();
+    if (sel) {
+      const tr = tracks.find(t => key(t) === sel);
+      if (tr) { drawStationLine(tr, 0); showDetail(tr); }
+      else deselect();
+    }
+    if (fitAll && tracks.length) {
+      const b = [];
+      tracks.forEach(t => t.points.forEach(p => b.push([p.lat, p.lng])));
+      if (b.length) map.fitBounds(b, { padding: [40, 40], maxZoom: 11 });
+    }
+  }
+
+  q.oninput = renderList;
+  map.on("click", e => {
+    const t = e.originalEvent && e.originalEvent.target;
+    if (t && t.closest && t.closest(".hw-mk, .leaflet-popup, .leaflet-marker-icon")) return;
+    if (sel) deselect();
   });
-}
-
-async function fetchData(hours = 24) {
-  const res = await fetch(`/api/sheets?hours=${hours}`);
-  const json = await res.json();
-  allData = json.data || [];
-
-  if (allData.length === lastDataCount && document.getElementById('userFilter').value === '') return;
-  lastDataCount = allData.length;
-
-  logMarkers.forEach(m => map.removeLayer(m)); logMarkers = [];
-  lines.forEach(l => map.removeLayer(l)); lines = [];
-
-  const userSel = document.getElementById('userFilter');
-  const currentUser = userSel.value;
-
-  userSel.innerHTML = '<option value="">All Users</option>';
-  const uniqueUsers = [...new Set(allData.map(d => d.username).filter(Boolean))];
-  uniqueUsers.forEach(u => {
-    const opt = document.createElement('option');
-    opt.value = u; opt.textContent = u;
-    userSel.appendChild(opt);
-  });
-  userSel.value = currentUser;
-
-  let filtered = allData;
-  if (currentUser) filtered = allData.filter(d => d.username === currentUser);
-
-  filtered.forEach(p => {
-    const m = L.marker([p.latitude, p.longitude], {icon: getLogIcon(p)}).bindPopup(createLogPopup(p));
-    m.addTo(map);
-    logMarkers.push(m);
-  });
-
-  updateSummary(filtered);
-  drawLines(filtered);
-}
-
-function updateSummary(data) {
-  const users = new Set(data.map(d => d.username).filter(Boolean));
-  document.getElementById('sumUsers').textContent = users.size;
-
-  const fixRates = data
-    .map(d => parseFloat(d.rtkfix || d['rtk fix rate(%)'] || d.fixRate || d.rtkFixRate))
-    .filter(n => !isNaN(n) && n > 0);
-  const avgFix = fixRates.length ? (fixRates.reduce((a,b)=>a+b,0) / fixRates.length).toFixed(1) : 0;
-  document.getElementById('sumFix').textContent = avgFix + '%';
-
-  const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
-  const avgDistKm = dists.length ? dists.reduce((a,b)=>a+b,0) / dists.length : 0;
-  document.getElementById('sumDist').textContent = (avgDistKm * 0.621371).toFixed(1) + ' miles';
-
-  const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
-  const totalSeconds = durations.reduce((a, b) => a + b, 0);
-  const totalHours = (totalSeconds / 3600).toFixed(1);
-  document.getElementById('sumTime').textContent = totalHours + ' hrs';
-}
-
-window.onload = async () => {
-  map = L.map('map').setView([43.6, -97.5], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-  document.getElementById('timeFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
-  document.getElementById('userFilter').onchange = () => fetchData(parseInt(document.getElementById('timeFilter').value));
-
-  loadBaseStations();
-  await fetchData(24);
-
-  setInterval(async () => {
-    await fetchData(parseInt(document.getElementById('timeFilter').value));
-  }, 600000);
-};
+  document.getElementById("out").onclick = async () => {
+    await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
+    location = "/login";
+  };
+  document.getElementById("timeFilter").onchange = () => loadWindow(0);
+  await loadWindow(1);
+  setInterval(() => loadWindow(0), 60000);
+})();
 </script>
 </body>
 </html>

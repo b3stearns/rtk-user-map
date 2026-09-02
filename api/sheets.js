@@ -1,45 +1,24 @@
-const crypto = require("crypto");
-
-function generateGeodnetSignature(params, appKey) {
-  const sortedKeys = Object.keys(params).filter(k => k !== "sign").sort();
-  const concat = sortedKeys.map(k => String(params[k])).join("") + appKey;
-  return crypto.createHash("md5").update(concat).digest("hex");
-}
+const { requireSession, json } = require("./_lib/auth");
+const { classifyAlerts } = require("./_lib/alerts");
+const { parseHours, fetchRtkLogs, toTracks } = require("./_lib/geodnet");
 
 module.exports = async (req, res) => {
+  if (!requireSession(req, res)) return;
   try {
-    const appId = "truenav";
-    const appKey = "549a2429d314ff17";
-    const now = Date.now();
-    const hours = Math.min(parseInt(req.query.hours) || 24, 168);
-    const startTime = now - (hours * 60 * 60 * 1000);
-
-    let all = [], page = 1, pageSize = 100;
-    while (page <= 10) {
-      const params = { appId, page, pageSize, startTime, endTime: now, time: now };
-      const sign = generateGeodnetSignature(params, appKey);
-      const r = await fetch("https://rtk.geodnet.com/api/v3/user/rtklogs", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...params, sign })
-      });
-      const json = await r.json();
-      if ((json.code !== 1000 && json.code !== 0) || !json.data) break;
-      const list = json.data.list || json.data || [];
-      if (!list.length) break;
-      all = all.concat(list);
-      if (list.length < pageSize) break;
-      page++;
-    }
-
-    const positions = all.map(log => ({
-      ...log,  // include every field from API
-      username: log.username || "Unknown",
-      latitude: parseFloat(log.latitude),
-      longitude: parseFloat(log.longitude),
-      GGA: log.GGA || log.gga || log.message || "",
-      station: log.station || log.mountpoint || ""
-    })).filter(p => p.latitude && p.longitude);
-
-    res.json({ data: positions, count: positions.length });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+    const hours = parseHours(req.query.hours);
+    const sanitized = await fetchRtkLogs(hours);
+    const positions = sanitized.filter(p => p.latitude && p.longitude);
+    const alerts = classifyAlerts(sanitized);
+    const tracks = toTracks(sanitized);
+    json(res, 200, {
+      data: positions,
+      count: positions.length,
+      alerts,
+      alertCount: alerts.length,
+      tracks,
+      hours
+    });
+  } catch (e) {
+    json(res, e.statusCode || 500, { error: e.message || "failed to load logs" });
+  }
 };

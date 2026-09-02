@@ -1,0 +1,31 @@
+{
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": ".",
+  "functions": {
+    "api/sheets.js": { "maxDuration": 30 },
+    "api/live.js": { "maxDuration": 30 }
+  },
+  "rewrites": [
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/public/brands/:path*", "destination": "/brands/:path*" }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "missing": [{ "type": "cookie", "key": "tn_session" }],
+      "destination": "/login",
+      "permanent": false
+    },
+    {
+      "source": "/index.html",
+      "missing": [{ "type": "cookie", "key": "tn_session" }],
+      "destination": "/login",
+      "permanent": false
+    },
+    { "source": "/.env", "destination": "/login", "permanent": false },
+    { "source": "/.env.local", "destination": "/login", "permanent": false },
+    { "source": "/api/_lib/:path*", "destination": "/login", "permanent": false }
+  ]
+}
