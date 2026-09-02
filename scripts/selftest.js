@@ -395,12 +395,15 @@ test("brand logo files exist and dealer map uses selected-session station line",
     "john-deere.png", "trimble.png", "fjd.png", "dji.png", "cnh.png",
     "topcon.png", "outback.png", "raven.png", "other.png",
     "ag-leader.svg", "emlid.svg", "agco.svg"
-  ].forEach(f => assert.ok(fs.existsSync(path.join(brands, f)), "missing logo " + f));
+  ].forEach(f => {
+    assert.ok(fs.existsSync(path.join(brands, f)), "missing logo " + f);
+    assert.ok(fs.existsSync(path.join(__dirname, "..", "brands", f)), "missing /brands/" + f);
+  });
   const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
   assert.ok(html.includes("drawStationLine"));
   assert.ok(html.includes("function deselect"));
   assert.ok(html.includes("hw-mk"));
-  assert.ok(html.includes("/public/brands/john-deere.png"));
+  assert.ok(html.includes("/brands/john-deere.png"));
   assert.ok(html.includes("L.divIcon"));
   assert.ok(!html.includes("function drawLine"));
   assert.ok(!html.includes("fill = t.live ? \"#c5a46e\""));

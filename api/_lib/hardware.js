@@ -1,4 +1,4 @@
-const BRAND_ICON_BASE = "/public/brands";
+const BRAND_ICON_BASE = "/brands";
 
 const OTHER = {
   id: "other",

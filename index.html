@@ -106,18 +106,18 @@
 
   let tracks = [], allData = [], allAlerts = [], bases = [], sel = null, lineG = null, mkG = null;
   const BRAND_ICONS = {
-    "john-deere": "/public/brands/john-deere.png",
-    trimble: "/public/brands/trimble.png",
-    fjd: "/public/brands/fjd.png",
-    dji: "/public/brands/dji.png",
-    cnh: "/public/brands/cnh.png",
-    topcon: "/public/brands/topcon.png",
-    outback: "/public/brands/outback.png",
-    raven: "/public/brands/raven.png",
-    "ag-leader": "/public/brands/ag-leader.svg",
-    emlid: "/public/brands/emlid.svg",
-    agco: "/public/brands/agco.svg",
-    other: "/public/brands/other.png"
+    "john-deere": "/brands/john-deere.png",
+    trimble: "/brands/trimble.png",
+    fjd: "/brands/fjd.png",
+    dji: "/brands/dji.png",
+    cnh: "/brands/cnh.png",
+    topcon: "/brands/topcon.png",
+    outback: "/brands/outback.png",
+    raven: "/brands/raven.png",
+    "ag-leader": "/brands/ag-leader.svg",
+    emlid: "/brands/emlid.svg",
+    agco: "/brands/agco.svg",
+    other: "/brands/other.png"
   };
   function brandIcon(id) { return BRAND_ICONS[id] || BRAND_ICONS.other; }
   function brandLabel(tr) { return tr.hardwareLabel || (tr.last && tr.last.hardwareLabel) || "Other"; }
@@ -310,7 +310,7 @@
       const last = t.last || {};
       const icon = L.divIcon({
         className: "hw-wrap",
-        html: `<div class="hw-mk${t.live ? " live" : ""}${on ? " sel" : ""}"><img src="${esc(brandIcon(brandId(t)))}" alt="${esc(brandLabel(t))}" onerror="this.onerror=null;this.src='/public/brands/other.png'"></div>`,
+        html: `<div class="hw-mk${t.live ? " live" : ""}${on ? " sel" : ""}"><img src="${esc(brandIcon(brandId(t)))}" alt="${esc(brandLabel(t))}" onerror="this.onerror=null;this.src='/brands/other.png'"></div>`,
         iconSize: [34, 34],
         iconAnchor: [17, 17],
         popupAnchor: [0, -18]
@@ -331,7 +331,7 @@
     const rows = tracks.filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f) || brandLabel(t).toLowerCase().includes(f));
     list.innerHTML = rows.length ? rows.map(t => {
       const on = sel === key(t) ? " on" : "";
-      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="" onerror="this.onerror=null;this.src='/public/brands/other.png'">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} · ${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="" onerror="this.onerror=null;this.src='/brands/other.png'">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} · ${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
     }).join("") : '<div class="empty">No RTK users in this window</div>';
     list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
   }
