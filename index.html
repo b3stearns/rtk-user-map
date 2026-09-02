@@ -62,7 +62,7 @@
     .leaflet-control-layers{background:#0c1117;color:#edf2f7;border:1px solid rgba(214,226,240,.16);border-radius:8px}
     .leaflet-control-layers-expanded label{display:flex;align-items:center;gap:8px;min-height:36px;font-size:14px;margin:2px 0}
     .leaflet-control-layers-selector{width:18px;height:18px;flex:0 0 auto}
-    .leaflet-popup{max-width:min(320px,calc(100vw - 32px)) !important}
+    .leaflet-popup{max-width:min(280px,calc(100vw - 48px)) !important}
     .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0c1117;color:#edf2f7;border:1px solid rgba(197,164,110,.35)}
     .leaflet-popup-content{font-family:Instrument Sans,sans-serif;font-size:13px;margin:10px 12px;line-height:1.45;max-height:min(50vh,360px);overflow:auto;-webkit-overflow-scrolling:touch}
     .leaflet-popup-content b{color:#c5a46e}
@@ -86,7 +86,7 @@
       #scrim{display:none;position:fixed;inset:0;background:#0008;z-index:1400;touch-action:none}
       body.panel-open #scrim{display:block}
       body.panel-open{overflow:hidden}
-      #side{position:fixed;z-index:1500;left:0;right:0;bottom:0;top:auto;width:auto;height:min(78dvh,680px);max-height:calc(100dvh - 56px - env(safe-area-inset-top));border-right:0;border-top:1px solid rgba(214,226,240,.14);border-radius:16px 16px 0 0;transform:translateY(110%);transition:transform .22s ease;padding-bottom:max(10px,env(safe-area-inset-bottom));box-shadow:0 -12px 40px #0008}
+      #side{position:fixed;z-index:1500;left:0;right:0;bottom:0;top:auto;width:auto;height:min(62dvh,560px);max-height:calc(100dvh - 56px - env(safe-area-inset-top));border-right:0;border-top:1px solid rgba(214,226,240,.14);border-radius:16px 16px 0 0;transform:translateY(110%);transition:transform .22s ease;padding-bottom:max(10px,env(safe-area-inset-bottom));box-shadow:0 -12px 40px #0008}
       body.panel-open #side{transform:none}
       .sheet-grab{display:block;width:40px;height:5px;border-radius:99px;background:rgba(214,226,240,.28);margin:10px auto 0;flex:0 0 auto}
       .side-close{display:inline-flex;align-items:center;justify-content:center;margin:8px 8px 0 0;min-height:44px;min-width:44px}
@@ -392,7 +392,7 @@
   function markers() {
     if (mkG) map.removeLayer(mkG);
     mkG = L.layerGroup().addTo(map);
-    const popW = Math.max(220, Math.min(300, window.innerWidth - 40));
+    const popW = Math.max(200, Math.min(280, window.innerWidth - 48));
     for (const t of visibleTracks()) {
       const p = t.points[t.points.length - 1];
       if (!p) continue;
