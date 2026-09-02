@@ -323,6 +323,93 @@ test("live.js requires session", () => {
   assert.strictEqual(res.statusCode, 401);
 });
 
+test("inferBrand maps known NTRIP user-agents and never leaks Authorization", () => {
+  const { inferBrand, extractUserAgent, matchStation } = require("../api/_lib/hardware");
+  const cases = [
+    ["GET /AUTO HTTP/1.1 Host:rtk.geodnet.com User-Agent: NTRIP Cloudbase/4.1.4_JD Accept:*/* Authorization: Basic abc== Connection:close", "john-deere", "John Deere"],
+    ["User-Agent: NTRIP TPA Client/0.0.0", "topcon", "Topcon"],
+    ["User-Agent: NTRIP LefebureAndroidIntNTRIPClient/20211203 Authorization: Basic xyz", "trimble", "Trimble"],
+    ["User-Agent: NTRIP GNSSInternetRadio/1.0", "fjd", "FJD / FJDynamics"],
+    ["User-Agent: NTRIP NtripClientiOS/3.0", "other", "Other"],
+    ["User-Agent: NTRIP TnlAgClient/1.0", "trimble", "Trimble"],
+    ["User-Agent: NTRIP CNHiNTRIP/1.0", "cnh", "CNH"],
+    ["User-Agent: HGPS/2.0", "outback", "Outback"],
+    ["User-Agent: DJI GS RTK", "dji", "DJI"],
+    ["User-Agent: Raven Slingshot", "raven", "Raven"],
+    ["User-Agent: AgLeader InCommand", "ag-leader", "AgLeader"],
+    ["User-Agent: Emlid Reach", "emlid", "Emlid"],
+    ["User-Agent: AGCO AccuTerminal", "agco", "AGCO"],
+    ["", "other", "Other"]
+  ];
+  for (const [request, id, label] of cases) {
+    const brand = inferBrand({ request });
+    assert.strictEqual(brand.id, id, request + " → " + brand.id);
+    assert.strictEqual(brand.label, label);
+    assert.ok(!/authorization/i.test(JSON.stringify(brand)));
+    assert.ok(!extractUserAgent({ request }).includes("Basic"));
+  }
+  const fromUa = inferBrand({ userAgent: "NTRIP Cloudbase/4.1.4_JD" });
+  assert.strictEqual(fromUa.id, "john-deere");
+  const clean = sanitizeLog({
+    username: "MTIrtk",
+    request: "GET / Authorization: Basic secret User-Agent: NTRIP Cloudbase/4.1.4_JD",
+    password: "x"
+  });
+  assert.strictEqual(clean.request, undefined);
+  assert.strictEqual(clean.hardware, undefined);
+  const tagged = { ...clean, ...inferBrand({ request: "User-Agent: NTRIP Cloudbase/4.1.4_JD Authorization: Basic secret" }) };
+  assert.strictEqual(tagged.hardware || tagged.id, "john-deere");
+  assert.strictEqual(tagged.request, undefined);
+
+  const bases = [
+    { name: "DDAE5", mount: "****DDAE5", lat: 43.68, lng: -98.01 },
+    { name: "DA941", mount: "****DA941", lat: 44.81, lng: -96.75 }
+  ];
+  const hit = matchStation({ station: "C05D898DDAE5", mount: "AUTO" }, bases);
+  assert.ok(hit);
+  assert.strictEqual(hit.name, "DDAE5");
+  const short = matchStation({ last: { station: "C05D898DDAE5" }, mount: "AUTO" }, bases);
+  assert.strictEqual(short.name, "DDAE5");
+  const byTail = matchStation({ station: "DAE5" }, bases);
+  assert.strictEqual(byTail.name, "DDAE5");
+  assert.strictEqual(matchStation({ mount: "AUTO" }, bases), null);
+});
+
+test("toTracks copies hardware onto each session", () => {
+  const { toTracks } = require("../api/_lib/geodnet");
+  const tracks = toTracks([
+    { username: "MTIrtk", latitude: 43.68, longitude: -98.01, mountpoint: "AUTO", station: "C05D898DDAE5", loginTime: 1, hardware: "john-deere", hardwareLabel: "John Deere", nmea: "$GPGGA,,,,,,4,,,,," },
+    { username: "MTIrtk", latitude: 43.681, longitude: -98.012, mountpoint: "AUTO", station: "C05D898DDAE5", loginTime: 2, hardware: "john-deere", hardwareLabel: "John Deere", nmea: "$GPGGA,,,,,,4,,,,," }
+  ]);
+  assert.strictEqual(tracks.length, 1);
+  assert.strictEqual(tracks[0].hardware, "john-deere");
+  assert.strictEqual(tracks[0].hardwareLabel, "John Deere");
+  assert.strictEqual(tracks[0].points.length, 2);
+});
+
+test("brand logo files exist and dealer map uses selected-session station line", () => {
+  const fs = require("fs");
+  const path = require("path");
+  const brands = path.join(__dirname, "..", "public/brands");
+  [
+    "john-deere.png", "trimble.png", "fjd.png", "dji.png", "cnh.png",
+    "topcon.png", "outback.png", "raven.png", "other.png",
+    "ag-leader.svg", "emlid.svg", "agco.svg"
+  ].forEach(f => assert.ok(fs.existsSync(path.join(brands, f)), "missing logo " + f));
+  const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  assert.ok(html.includes("drawStationLine"));
+  assert.ok(html.includes("function deselect"));
+  assert.ok(html.includes("hw-mk"));
+  assert.ok(html.includes("/public/brands/john-deere.png"));
+  assert.ok(html.includes("L.divIcon"));
+  assert.ok(!html.includes("function drawLine"));
+  assert.ok(!html.includes("fill = t.live ? \"#c5a46e\""));
+  assert.ok(html.includes("[[p.lat, p.lng], [slat, slng]]"));
+  const geodnet = fs.readFileSync(path.join(__dirname, "..", "api/_lib/geodnet.js"), "utf8");
+  assert.ok(geodnet.includes("inferBrand"));
+  assert.ok(geodnet.includes("hardware: brand.id"));
+});
+
 test("sheets.js uses env keys and requireSession", () => {
   const fs = require("fs");
   const path = require("path");

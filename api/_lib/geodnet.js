@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { sanitizeLog } = require("./sanitize");
+const { inferBrand } = require("./hardware");
 
 const RTKLOGS_URL = "https://rtk.geodnet.com/api/v3/user/rtklogs";
 // Geodnet silently clamps pageSize 200+ down to 20; 100 returns a full page.
@@ -165,6 +166,7 @@ async function fetchRtkLogs(hours) {
   const raw = dedupeLogs(chunks.flat());
   const inWindow = raw.filter(log => logOverlapsWindow(log, filterStart, now));
   return inWindow.map(log => {
+    const brand = inferBrand(log);
     const clean = sanitizeLog(log);
     return {
       ...clean,
@@ -172,7 +174,9 @@ async function fetchRtkLogs(hours) {
       latitude: parseFloat(clean.latitude),
       longitude: parseFloat(clean.longitude),
       GGA: clean.GGA || clean.gga || clean.message || "",
-      station: clean.station || clean.mountpoint || ""
+      station: clean.station || clean.mountpoint || "",
+      hardware: brand.id,
+      hardwareLabel: brand.label
     };
   });
 }
@@ -204,6 +208,8 @@ function toTracks(logs) {
       mount: last.mountpoint || last.mount || last.station || "",
       live,
       duration: last.duration,
+      hardware: last.hardware || "other",
+      hardwareLabel: last.hardwareLabel || "Other",
       last,
       points: items.map(p => ({
         lat: p.latitude,

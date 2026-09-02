@@ -53,6 +53,12 @@
     .leaflet-popup-content{font-family:Instrument Sans,sans-serif;font-size:13px;margin:10px 12px;line-height:1.45}
     .leaflet-popup-content b{color:#c5a46e}
     .empty{color:#6b7787;padding:12px 10px;font-size:13px}
+    .hw-li{width:18px;height:18px;border-radius:4px;object-fit:contain;background:#fff;border:1px solid rgba(214,226,240,.16);flex:0 0 auto}
+    .leaflet-div-icon.hw-wrap{background:transparent;border:none}
+    .hw-mk{width:34px;height:34px;border-radius:8px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.45);background:#fff}
+    .hw-mk img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+    .hw-mk.live{box-shadow:0 0 0 2px #3dcc7a,0 2px 8px rgba(0,0,0,.45)}
+    .hw-mk.sel{border-color:#c5a46e;box-shadow:0 0 0 3px rgba(197,164,110,.55),0 2px 10px rgba(0,0,0,.5)}
     @media(max-width:720px){#app{grid-template-columns:1fr;grid-template-rows:auto 42vh 1fr}#side{border-right:0;border-bottom:1px solid rgba(214,226,240,.09)}}
   </style>
 </head>
@@ -98,7 +104,24 @@
   const me = await fetch("/api/me", { credentials: "same-origin" });
   if (me.status === 401) { location = "/login"; return; }
 
-  let tracks = [], allData = [], allAlerts = [], sel = null, lineG = null, mkG = null;
+  let tracks = [], allData = [], allAlerts = [], bases = [], sel = null, lineG = null, mkG = null;
+  const BRAND_ICONS = {
+    "john-deere": "/public/brands/john-deere.png",
+    trimble: "/public/brands/trimble.png",
+    fjd: "/public/brands/fjd.png",
+    dji: "/public/brands/dji.png",
+    cnh: "/public/brands/cnh.png",
+    topcon: "/public/brands/topcon.png",
+    outback: "/public/brands/outback.png",
+    raven: "/public/brands/raven.png",
+    "ag-leader": "/public/brands/ag-leader.svg",
+    emlid: "/public/brands/emlid.svg",
+    agco: "/public/brands/agco.svg",
+    other: "/public/brands/other.png"
+  };
+  function brandIcon(id) { return BRAND_ICONS[id] || BRAND_ICONS.other; }
+  function brandLabel(tr) { return tr.hardwareLabel || (tr.last && tr.last.hardwareLabel) || "Other"; }
+  function brandId(tr) { return tr.hardware || (tr.last && tr.last.hardware) || "other"; }
 
   const map = L.map("map", { zoomControl: true }).setView([45.5, -100], 6);
   const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Tiles © Esri" });
@@ -120,10 +143,11 @@
   ringSpecs.forEach(spec => { overlays[spec.key] = ringLayers[spec.key]; });
   L.control.layers({ Satellite: sat, Street: osm }, overlays, { position: "topright" }).addTo(map);
 
-  function plotStations(bases) {
+  function plotStations(list) {
+    bases = list || [];
     stationsLayer.clearLayers();
     ringSpecs.forEach(spec => ringLayers[spec.key].clearLayers());
-    (bases || []).forEach(b => {
+    bases.forEach(b => {
       const lat = parseFloat(b.latitude != null ? b.latitude : b.lat);
       const lng = parseFloat(b.longitude != null ? b.longitude : b.lng);
       if (!isFinite(lat) || !isFinite(lng)) return;
@@ -150,6 +174,10 @@
 
   fetch("/api/bases", { credentials: "same-origin" }).then(r => r.ok ? r.json() : { data: [] }).then(j => {
     plotStations(j.data || []);
+    if (sel) {
+      const tr = tracks.find(t => key(t) === sel);
+      if (tr) drawStationLine(tr, 0);
+    }
   }).catch(() => {});
 
   const list = document.getElementById("list");
@@ -187,12 +215,6 @@
     return formatDuration(sessionSeconds(tr));
   }
 
-  function col(qv, i, n, any) {
-    if (any) return qv === 4 ? "#3dcc7a" : qv === 5 ? "#e6c04a" : "#e05555";
-    const t = n <= 1 ? 1 : i / (n - 1);
-    return "rgb(" + Math.round(30 + t * 40) + "," + Math.round(90 + t * 150) + "," + Math.round(50 + t * 40) + ")";
-  }
-
   function createLogPopup(p, tr) {
     const sessionTime = formatSessionTime(tr || { duration: p.duration, points: [], username: p.username, mount: p.mountpoint || p.station });
     const shortStation = p.station ? String(p.station).slice(-4) : (p.mountpoint || "N/A");
@@ -218,28 +240,51 @@
       <b>station:</b> ${esc(shortStation)}<br>
       <b>spp / dgps / fixed / float:</b> ${esc(p.spp || 0)} / ${esc(p.dgps || 0)} / ${esc(rtkFixed)} / ${esc(rtkFloat)}<br>
       <b>avg age / max age:</b> ${esc(p.avgAge || "N/A")} / ${esc(p.maxAge || "N/A")}<br>
+      <b>hardware:</b> ${esc(p.hardwareLabel || p.hardware || (tr && brandLabel(tr)) || "Other")}<br>
       <b>ip:</b> ${esc(p.ip || "N/A")}
     `;
   }
 
-  function drawLine(tr, fit) {
+  function matchStation(tr) {
+    const last = (tr && tr.last) || tr || {};
+    const ignore = /^(AUTO|NONE|N\/A)$/i;
+    const keys = [];
+    [tr && tr.station, tr && tr.mount, last.station, last.mountpoint, last.mount].forEach(v => {
+      const s = String(v || "").replace(/^\*+/, "").trim().toUpperCase();
+      if (s && !ignore.test(s) && keys.indexOf(s) < 0) keys.push(s);
+    });
+    if (!keys.length || !bases.length) return null;
+    let best = null, bestScore = 0;
+    bases.forEach(b => {
+      const tokens = [b.name, b.station, b.mount, b.id].map(v => String(v || "").replace(/^\*+/, "").trim().toUpperCase()).filter(t => t && t.length >= 3 && !ignore.test(t));
+      tokens.forEach(token => {
+        keys.forEach(k => {
+          let score = 0;
+          if (token === k) score = 10000 + token.length;
+          else if (k.endsWith(token) && token.length >= 4) score = 5000 + token.length;
+          else if (token.endsWith(k) && k.length >= 4) score = 4000 + k.length;
+          if (score > bestScore) { bestScore = score; best = b; }
+        });
+      });
+    });
+    return bestScore >= 4000 ? best : null;
+  }
+
+  function drawStationLine(tr, fit) {
     if (lineG) { map.removeLayer(lineG); lineG = null; }
     const pts = tr.points || [];
-    if (pts.length < 2) {
-      if (fit && pts[0]) map.setView([pts[0].lat, pts[0].lng], 16);
+    const p = pts[pts.length - 1];
+    if (!p) return;
+    const st = matchStation(tr);
+    const slat = st ? parseFloat(st.latitude != null ? st.latitude : st.lat) : NaN;
+    const slng = st ? parseFloat(st.longitude != null ? st.longitude : st.lng) : NaN;
+    if (!isFinite(slat) || !isFinite(slng)) {
+      if (fit) map.setView([p.lat, p.lng], 16);
       return;
     }
     lineG = L.layerGroup().addTo(map);
-    const any = pts.some(p => p.q != null);
-    let i = 1;
-    while (i < pts.length) {
-      const c = col(pts[i].q, i, pts.length - 1, any);
-      let j = i + 1;
-      while (j < pts.length && col(pts[j].q, j, pts.length - 1, any) === c) j++;
-      L.polyline(pts.slice(i - 1, j).map(p => [p.lat, p.lng]), { color: c, weight: 4, opacity: 0.92 }).addTo(lineG);
-      i = j;
-    }
-    if (fit) map.fitBounds(pts.map(p => [p.lat, p.lng]), { padding: [36, 36], maxZoom: 16 });
+    L.polyline([[p.lat, p.lng], [slat, slng]], { color: "#3dcc7a", weight: 3, opacity: 0.95 }).addTo(lineG);
+    if (fit) map.fitBounds([[p.lat, p.lng], [slat, slng]], { padding: [48, 48], maxZoom: 16 });
   }
 
   function showDetail(tr) {
@@ -249,6 +294,7 @@
     el.style.display = "block";
     el.innerHTML = `<div class="k">Selected connection</div>
       <div><b>username:</b> ${esc(tr.username)}</div>
+      <div><b>hardware:</b> ${esc(brandLabel(tr))}</div>
       <div><b>station:</b> ${esc(tr.mount || last.station || "—")}</div>
       <div><b>Session time:</b> ${esc(sessionTime)}</div>
       <div><b>status:</b> ${esc(last.status ?? last.msg ?? "N/A")}</div>`;
@@ -261,13 +307,20 @@
       const p = t.points[t.points.length - 1];
       if (!p) continue;
       const on = sel && key(t) === sel;
-      const fill = t.live ? "#c5a46e" : "#8e9aab";
       const last = t.last || {};
-      const m = L.circleMarker([p.lat, p.lng], {
-        radius: on ? 11 : 7, color: on ? "#fff" : fill, weight: on ? 3 : 2, fillColor: fill, fillOpacity: 0.95
+      const icon = L.divIcon({
+        className: "hw-wrap",
+        html: `<div class="hw-mk${t.live ? " live" : ""}${on ? " sel" : ""}"><img src="${esc(brandIcon(brandId(t)))}" alt="${esc(brandLabel(t))}" onerror="this.onerror=null;this.src='/public/brands/other.png'"></div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -18]
       });
-      m.bindPopup(createLogPopup(Object.assign({ latitude: p.lat, longitude: p.lng, loginTime: p.t }, last), t));
-      m.on("click", () => select(key(t), 1));
+      const m = L.marker([p.lat, p.lng], { icon: icon, zIndexOffset: on ? 1000 : (t.live ? 400 : 0) });
+      m.bindPopup(createLogPopup(Object.assign({ latitude: p.lat, longitude: p.lng, loginTime: p.t, hardware: brandId(t), hardwareLabel: brandLabel(t) }, last), t));
+      m.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        select(key(t), 1);
+      });
       m.addTo(mkG);
       if (on) m.openPopup();
     }
@@ -275,10 +328,10 @@
 
   function renderList() {
     const f = q.value.trim().toLowerCase();
-    const rows = tracks.filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f));
+    const rows = tracks.filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f) || brandLabel(t).toLowerCase().includes(f));
     list.innerHTML = rows.length ? rows.map(t => {
       const on = sel === key(t) ? " on" : "";
-      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="" onerror="this.onerror=null;this.src='/public/brands/other.png'">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} · ${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
     }).join("") : '<div class="empty">No RTK users in this window</div>';
     list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
   }
@@ -310,13 +363,21 @@
     });
   }
 
+  function deselect() {
+    sel = null;
+    if (lineG) { map.removeLayer(lineG); lineG = null; }
+    document.getElementById("detail").style.display = "none";
+    renderList();
+    markers();
+  }
+
   function select(k, fit) {
     sel = k;
     const tr = tracks.find(t => key(t) === k);
     if (!tr) return;
     renderList();
     markers();
-    drawLine(tr, fit);
+    drawStationLine(tr, fit);
     showDetail(tr);
   }
 
@@ -357,7 +418,8 @@
     markers();
     if (sel) {
       const tr = tracks.find(t => key(t) === sel);
-      if (tr) { drawLine(tr, 0); showDetail(tr); }
+      if (tr) { drawStationLine(tr, 0); showDetail(tr); }
+      else deselect();
     }
     if (fitAll && tracks.length) {
       const b = [];
@@ -367,6 +429,11 @@
   }
 
   q.oninput = renderList;
+  map.on("click", e => {
+    const t = e.originalEvent && e.originalEvent.target;
+    if (t && t.closest && t.closest(".hw-mk, .leaflet-popup, .leaflet-marker-icon")) return;
+    if (sel) deselect();
+  });
   document.getElementById("out").onclick = async () => {
     await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
     location = "/login";
