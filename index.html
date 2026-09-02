@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>TrueNav Live</title>
   <link rel="icon" href="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=100w">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -10,35 +10,45 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}
-    #app{display:grid;grid-template-rows:auto 1fr;grid-template-columns:300px 1fr;height:100%}
-    header{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:52px;padding:8px 16px;background:rgba(7,9,12,.92);border-bottom:1px solid rgba(214,226,240,.09);z-index:500}
+    html{height:100%;height:100dvh;-webkit-text-size-adjust:100%;color-scheme:dark}
+    html,body{margin:0;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif;overflow:hidden}
+    body{height:100%;height:100dvh;max-height:100dvh}
+    #app{display:grid;grid-template-rows:auto 1fr;grid-template-columns:300px 1fr;height:100%;height:100dvh;min-height:0}
+    header{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:52px;padding:8px 16px;padding-top:max(8px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));background:rgba(7,9,12,.92);border-bottom:1px solid rgba(214,226,240,.09);z-index:500}
     .brand{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
     .brand img{width:28px;height:28px;border-radius:5px}
     .brand span{color:#c5a46e}
     .meta{color:#8e9aab;font-size:12px;font-family:IBM Plex Mono,ui-monospace,monospace}
     .meta b{color:#c5a46e;font-weight:600}
     .sp{flex:1}
-    button.lo{background:transparent;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
-    button.lo:hover{border-color:#c5a46e;color:#c5a46e}
-    #timeFilter{background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px}
+    button.lo,.icon-btn{background:transparent;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px;min-height:44px;min-width:44px;touch-action:manipulation}
+    button.lo:hover,.icon-btn:hover{border-color:#c5a46e;color:#c5a46e}
+    .icon-btn{display:none;align-items:center;justify-content:center;padding:0}
+    .icon-btn svg{display:block}
+    #timeFilter,#hwFilter{background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:8px 10px;font:inherit;font-size:16px;min-height:44px;width:100%}
     .sum{display:flex;gap:14px;flex-wrap:wrap;margin-left:8px}
     .sum div{display:flex;flex-direction:column;line-height:1.15}
     .sum b{color:#c5a46e;font-size:14px;font-family:IBM Plex Mono,ui-monospace,monospace}
     .sum span{color:#8e9aab;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
     #side{background:#0c1117;border-right:1px solid rgba(214,226,240,.09);display:flex;flex-direction:column;min-height:0}
+    .sheet-grab{display:none}
+    .side-head{display:flex;align-items:center;gap:8px;padding:4px 4px 0 0}
+    .side-head .uh{flex:1}
+    .side-close{display:none}
     .uh{margin:0;padding:12px 12px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
+    .filters{padding:8px 12px 0;display:flex;flex-direction:column;gap:8px}
+    .filters label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8e9aab}
     #alerts{border-top:1px solid rgba(214,226,240,.09);flex:0 0 auto;max-height:34%;display:flex;flex-direction:column;min-height:0}
     #alerts h2{margin:0;padding:10px 12px 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
     #alertCount{background:#3a1515;color:#e05555;border:1px solid #e0555544;border-radius:99px;padding:1px 7px;font-size:11px;font-family:IBM Plex Mono,ui-monospace,monospace}
     #alertCount.ok{background:#1a3d2a;color:#8fd4ae;border-color:#3dcc7a55}
-    #alertList{overflow:auto;padding:0 8px 10px;flex:1}
-    .al{padding:8px 10px;border-radius:8px;border:1px solid rgba(224,85,85,.25);background:#1a1010;margin-bottom:6px;cursor:pointer}
+    #alertList{overflow:auto;padding:0 8px 10px;flex:1;-webkit-overflow-scrolling:touch}
+    .al{padding:10px 12px;border-radius:8px;border:1px solid rgba(224,85,85,.25);background:#1a1010;margin-bottom:6px;cursor:pointer;min-height:44px}
     .al:hover{border-color:#e05555}
     .cat{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#e05555;font-weight:700}
-    #q{margin:12px;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:9px 10px;font:inherit}
-    #list{overflow:auto;flex:1;padding:0 8px 12px}
-    .u{padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+    #q{margin:8px 12px 12px;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:10px 12px;font:inherit;font-size:16px;min-height:44px}
+    #list{overflow:auto;flex:1;padding:0 8px 12px;-webkit-overflow-scrolling:touch}
+    .u{padding:12px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent;min-height:44px}
     .u:hover{background:#121922}
     .u.on{background:#182230;border-color:rgba(197,164,110,.45)}
     .un{font-weight:650;font-size:14px;display:flex;align-items:center;gap:8px}
@@ -47,48 +57,107 @@
     #detail{display:none;border-top:1px solid rgba(214,226,240,.09);padding:10px 12px;font-size:13px;background:#0a0e13}
     #detail .k{color:#8e9aab;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
     #detail b{color:#c5a46e}
-    #map{height:100%;background:#07090c}
+    #map{height:100%;min-height:0;background:#07090c}
+    #scrim{display:none}
     .leaflet-control-layers{background:#0c1117;color:#edf2f7;border:1px solid rgba(214,226,240,.16);border-radius:8px}
+    .leaflet-control-layers-expanded label{display:flex;align-items:center;gap:8px;min-height:36px;font-size:14px;margin:2px 0}
+    .leaflet-control-layers-selector{width:18px;height:18px;flex:0 0 auto}
+    .leaflet-popup{max-width:min(280px,calc(100vw - 48px)) !important}
     .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0c1117;color:#edf2f7;border:1px solid rgba(197,164,110,.35)}
-    .leaflet-popup-content{font-family:Instrument Sans,sans-serif;font-size:13px;margin:10px 12px;line-height:1.45}
+    .leaflet-popup-content{font-family:Instrument Sans,sans-serif;font-size:13px;margin:10px 12px;line-height:1.45;max-height:min(50vh,360px);overflow:auto;-webkit-overflow-scrolling:touch}
     .leaflet-popup-content b{color:#c5a46e}
+    .leaflet-container a.leaflet-popup-close-button{width:28px;height:28px;font-size:20px;line-height:28px}
     .empty{color:#6b7787;padding:12px 10px;font-size:13px}
     .hw-li{width:18px;height:18px;border-radius:4px;object-fit:contain;background:#fff;border:1px solid rgba(214,226,240,.16);flex:0 0 auto}
     .leaflet-div-icon.hw-wrap{background:transparent;border:none}
+    .hw-hit{width:44px;height:44px;display:flex;align-items:center;justify-content:center}
     .hw-mk{width:34px;height:34px;border-radius:8px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.45);background:#fff}
     .hw-mk img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
     .hw-mk.live{box-shadow:0 0 0 2px #3dcc7a,0 2px 8px rgba(0,0,0,.45)}
     .hw-mk.sel{border-color:#c5a46e;box-shadow:0 0 0 3px rgba(197,164,110,.55),0 2px 10px rgba(0,0,0,.5)}
-    @media(max-width:720px){#app{grid-template-columns:1fr;grid-template-rows:auto 42vh 1fr}#side{border-right:0;border-bottom:1px solid rgba(214,226,240,.09)}}
+    .leaflet-touch .leaflet-bar a{width:44px;height:44px;line-height:44px}
+    .side-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:4px 12px 8px}
+    .side-sum .sum{margin:0;display:contents}
+    @media(max-width:860px),(max-height:520px){
+      header{flex-wrap:nowrap;gap:8px;min-height:48px}
+      .icon-btn{display:inline-flex}
+      #app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+      #map{grid-column:1;grid-row:2;height:auto}
+      #scrim{display:none;position:fixed;inset:0;background:#0008;z-index:1400;touch-action:none}
+      body.panel-open #scrim{display:block}
+      body.panel-open{overflow:hidden}
+      #side{position:fixed;z-index:1500;left:0;right:0;bottom:0;top:auto;width:auto;height:min(62dvh,560px);max-height:calc(100dvh - 56px - env(safe-area-inset-top));border-right:0;border-top:1px solid rgba(214,226,240,.14);border-radius:16px 16px 0 0;transform:translateY(110%);transition:transform .22s ease;padding-bottom:max(10px,env(safe-area-inset-bottom));box-shadow:0 -12px 40px #0008}
+      body.panel-open #side{transform:none}
+      .sheet-grab{display:block;width:40px;height:5px;border-radius:99px;background:rgba(214,226,240,.28);margin:10px auto 0;flex:0 0 auto}
+      .side-close{display:inline-flex;align-items:center;justify-content:center;margin:8px 8px 0 0;min-height:44px;min-width:44px}
+      .leaflet-top.leaflet-right{top:4px;right:4px;margin-right:max(0px,env(safe-area-inset-right))}
+      .leaflet-bottom.leaflet-left{margin-left:max(8px,env(safe-area-inset-left));margin-bottom:max(8px,env(safe-area-inset-bottom))}
+      .leaflet-bottom.leaflet-right{margin-right:max(8px,env(safe-area-inset-right));margin-bottom:max(8px,env(safe-area-inset-bottom))}
+      .ref-meta{display:none}
+    }
+    @media(max-height:520px){
+      #side{top:0;bottom:0;right:auto;width:min(360px,88vw);height:100%;max-height:none;border-radius:0;border-top:0;border-right:1px solid rgba(214,226,240,.14);transform:translateX(-105%);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+      body.panel-open #side{transform:none}
+      .sheet-grab{display:none}
+    }
   </style>
 </head>
 <body>
+<div id="scrim" hidden></div>
 <div id="app">
   <header>
     <div class="brand">
       <img src="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=1500w" alt="">
       <div>TRUE<span>NAV</span> LIVE</div>
     </div>
-    <div class="meta">refreshed <span id="ref">—</span></div>
+    <div class="meta ref-meta">refreshed <span id="ref">—</span></div>
     <div class="meta"><b id="nlive">0</b> live</div>
-    <select id="timeFilter" title="Summary window">
-      <option value="12" selected>Last 12 Hours</option>
-      <option value="24">Last 24 Hours</option>
-      <option value="168">Last 7 Days</option>
-      <option value="720">Last 30 Days</option>
-      <option value="4380">Last 6 Months</option>
-    </select>
-    <div id="summary" class="sum">
-      <div><b id="sumUsers">—</b><span>Unique users</span></div>
-      <div><b id="sumFix">—</b><span>Avg fix rate</span></div>
-      <div><b id="sumDist">—</b><span>Avg distance</span></div>
-      <div><b id="sumTime">—</b><span>Total connection time</span></div>
-    </div>
     <div class="sp"></div>
     <button class="lo" id="out" type="button">Log out</button>
+    <button class="icon-btn" id="menuBtn" type="button" aria-label="Open users and filters" aria-controls="side" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
   </header>
   <aside id="side">
-    <h2 class="uh">Live users</h2>
+    <div class="sheet-grab" id="sheetGrab" aria-hidden="true"></div>
+    <div class="side-head">
+      <h2 class="uh">Live users</h2>
+      <button class="icon-btn side-close" id="sideClose" type="button" aria-label="Close panel">×</button>
+    </div>
+    <div class="filters">
+      <label for="timeFilter">Timeframe</label>
+      <select id="timeFilter" title="Summary window">
+        <option value="12" selected>Last 12 Hours</option>
+        <option value="24">Last 24 Hours</option>
+        <option value="168">Last 7 Days</option>
+        <option value="720">Last 30 Days</option>
+        <option value="4380">Last 6 Months</option>
+      </select>
+      <label for="hwFilter">Hardware</label>
+      <select id="hwFilter" title="Hardware">
+        <option value="" selected>All hardware</option>
+        <option value="john-deere">John Deere</option>
+        <option value="fjd">FJD / FJDynamics</option>
+        <option value="dji">DJI</option>
+        <option value="cnh">CNH</option>
+        <option value="topcon">Topcon</option>
+        <option value="outback">Outback</option>
+        <option value="raven">Raven</option>
+        <option value="ag-leader">AgLeader</option>
+        <option value="emlid">Emlid</option>
+        <option value="agco">AGCO</option>
+        <option value="trimble">Trimble</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="side-sum">
+      <div id="summary" class="sum">
+        <div><b id="sumUsers">—</b><span>Unique users</span></div>
+        <div><b id="sumFix">—</b><span>Avg fix rate</span></div>
+        <div><b id="sumDist">—</b><span>Avg distance</span></div>
+        <div><b id="sumTime">—</b><span>Total connection time</span></div>
+      </div>
+    </div>
     <input id="q" placeholder="Search users…" autocomplete="off">
     <div id="list"></div>
     <div id="alerts">
@@ -123,7 +192,22 @@
   function brandLabel(tr) { return tr.hardwareLabel || (tr.last && tr.last.hardwareLabel) || "Other"; }
   function brandId(tr) { return tr.hardware || (tr.last && tr.last.hardware) || "other"; }
 
-  const map = L.map("map", { zoomControl: true }).setView([45.5, -100], 6);
+  const compactMq = window.matchMedia("(max-width: 860px), (max-height: 520px)");
+  function isCompact() { return compactMq.matches; }
+  function openPanel() {
+    document.body.classList.add("panel-open");
+    document.getElementById("menuBtn").setAttribute("aria-expanded", "true");
+    document.getElementById("scrim").hidden = false;
+  }
+  function closePanel() {
+    document.body.classList.remove("panel-open");
+    document.getElementById("menuBtn").setAttribute("aria-expanded", "false");
+    document.getElementById("scrim").hidden = true;
+    setTimeout(() => map.invalidateSize(), 240);
+  }
+  function togglePanel() { document.body.classList.contains("panel-open") ? closePanel() : openPanel(); }
+
+  const map = L.map("map", { zoomControl: true, tapTolerance: 15 }).setView([45.5, -100], 6);
   const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Tiles © Esri" });
   const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" });
   sat.addTo(map);
@@ -182,6 +266,11 @@
 
   const list = document.getElementById("list");
   const q = document.getElementById("q");
+  const hwFilter = document.getElementById("hwFilter");
+  function visibleTracks() {
+    const hw = hwFilter.value;
+    return tracks.filter(t => !hw || brandId(t) === hw);
+  }
 
   function esc(s) {
     return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
@@ -303,20 +392,25 @@
   function markers() {
     if (mkG) map.removeLayer(mkG);
     mkG = L.layerGroup().addTo(map);
-    for (const t of tracks) {
+    const popW = Math.max(200, Math.min(280, window.innerWidth - 48));
+    for (const t of visibleTracks()) {
       const p = t.points[t.points.length - 1];
       if (!p) continue;
       const on = sel && key(t) === sel;
       const last = t.last || {};
       const icon = L.divIcon({
         className: "hw-wrap",
-        html: `<div class="hw-mk${t.live ? " live" : ""}${on ? " sel" : ""}"><img src="${esc(brandIcon(brandId(t)))}" alt="${esc(brandLabel(t))}" onerror="this.onerror=null;this.src='/brands/other.png'"></div>`,
-        iconSize: [34, 34],
-        iconAnchor: [17, 17],
-        popupAnchor: [0, -18]
+        html: `<div class="hw-hit"><div class="hw-mk${t.live ? " live" : ""}${on ? " sel" : ""}"><img src="${esc(brandIcon(brandId(t)))}" alt="${esc(brandLabel(t))}" onerror="this.onerror=null;this.src='/brands/other.png'"></div></div>`,
+        iconSize: [44, 44],
+        iconAnchor: [22, 22],
+        popupAnchor: [0, -22]
       });
       const m = L.marker([p.lat, p.lng], { icon: icon, zIndexOffset: on ? 1000 : (t.live ? 400 : 0) });
-      m.bindPopup(createLogPopup(Object.assign({ latitude: p.lat, longitude: p.lng, loginTime: p.t, hardware: brandId(t), hardwareLabel: brandLabel(t) }, last), t));
+      m.bindPopup(createLogPopup(Object.assign({ latitude: p.lat, longitude: p.lng, loginTime: p.t, hardware: brandId(t), hardwareLabel: brandLabel(t) }, last), t), {
+        maxWidth: popW,
+        autoPanPadding: [16, 72],
+        keepInView: true
+      });
       m.on("click", e => {
         L.DomEvent.stopPropagation(e);
         select(key(t), 1);
@@ -328,7 +422,7 @@
 
   function renderList() {
     const f = q.value.trim().toLowerCase();
-    const rows = tracks.filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f) || brandLabel(t).toLowerCase().includes(f));
+    const rows = visibleTracks().filter(t => !f || t.username.toLowerCase().includes(f) || (t.mount || "").toLowerCase().includes(f) || brandLabel(t).toLowerCase().includes(f));
     list.innerHTML = rows.length ? rows.map(t => {
       const on = sel === key(t) ? " on" : "";
       return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="" onerror="this.onerror=null;this.src='/brands/other.png'">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} · ${esc(t.mount || "—")} · Session time ${esc(formatSessionTime(t))} · ${t.points.length} pts</div></div>`;
@@ -357,8 +451,8 @@
         const a = alerts[Number(el.dataset.i)];
         if (!a) return;
         const tr = tracks.find(t => t.username === a.username);
-        if (tr) select(key(tr), 1);
-        else if (a.latitude && a.longitude) map.setView([a.latitude, a.longitude], 12);
+        if (tr) { select(key(tr), 1); if (isCompact()) closePanel(); }
+        else if (a.latitude && a.longitude) { map.setView([a.latitude, a.longitude], 12); if (isCompact()) closePanel(); }
       };
     });
   }
@@ -379,6 +473,7 @@
     markers();
     drawStationLine(tr, fit);
     showDetail(tr);
+    if (fit && isCompact()) closePanel();
   }
 
   function updateSummary(data) {
@@ -429,6 +524,34 @@
   }
 
   q.oninput = renderList;
+  hwFilter.onchange = () => {
+    if (sel) {
+      const tr = tracks.find(t => key(t) === sel);
+      if (tr && hwFilter.value && brandId(tr) !== hwFilter.value) deselect();
+    }
+    renderList();
+    markers();
+  };
+  document.getElementById("menuBtn").onclick = togglePanel;
+  document.getElementById("sideClose").onclick = closePanel;
+  document.getElementById("scrim").onclick = closePanel;
+  document.getElementById("scrim").addEventListener("touchstart", e => { e.preventDefault(); closePanel(); }, { passive: false });
+  (function sheetSwipe() {
+    const grab = document.getElementById("sheetGrab");
+    let y0 = 0;
+    grab.addEventListener("touchstart", e => { y0 = e.changedTouches[0].clientY; }, { passive: true });
+    grab.addEventListener("touchend", e => {
+      if (e.changedTouches[0].clientY - y0 > 48) closePanel();
+    }, { passive: true });
+  })();
+  window.addEventListener("resize", () => {
+    if (!isCompact()) closePanel();
+    map.invalidateSize();
+  });
+  compactMq.addEventListener("change", () => {
+    if (!isCompact()) closePanel();
+    map.invalidateSize();
+  });
   map.on("click", e => {
     const t = e.originalEvent && e.originalEvent.target;
     if (t && t.closest && t.closest(".hw-mk, .leaflet-popup, .leaflet-marker-icon")) return;
