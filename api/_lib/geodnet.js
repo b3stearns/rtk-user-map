@@ -3,7 +3,6 @@ const { sanitizeLog } = require("./sanitize");
 const { inferBrand } = require("./hardware");
 
 const RTKLOGS_URL = "https://rtk.geodnet.com/api/v3/user/rtklogs";
-// Geodnet silently clamps pageSize 200+ down to 20; 100 returns a full page.
 const PAGE_SIZE = 100;
 const MAX_SPAN_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_LOOKBACK_MS = 180 * 24 * 60 * 60 * 1000;
@@ -33,8 +32,6 @@ function credentials() {
 
 function fetchHours(hours) {
   const h = parseHours(hours);
-  // loginTime is session start. A rover still online after 12h would miss a
-  // strict 12h Geodnet window, so pull at least the last 24h then filter.
   if (h < 24) return 24;
   return h;
 }
@@ -92,14 +89,7 @@ async function fetchSpan(appId, appKey, startTime, endTime, now) {
   let page = 1;
   let total = Infinity;
   while (page <= MAX_PAGES_PER_SPAN && all.length < total) {
-    const params = {
-      appId,
-      page,
-      pageSize: PAGE_SIZE,
-      startTime,
-      endTime,
-      time: now
-    };
+    const params = { appId, page, pageSize: PAGE_SIZE, startTime, endTime, time: now };
     const geodnet = await postRtkLogs(appId, appKey, params);
     const code = geodnet && geodnet.code;
     if (code === 1010 && endTime - startTime > 60 * 60 * 1000) {
@@ -136,12 +126,7 @@ function dedupeLogs(logs) {
   const out = [];
   for (const log of logs || []) {
     const id = log && (log.id != null ? String(log.id) : "");
-    const fallback = id || [
-      log && log.username,
-      log && log.loginTime,
-      log && (log.mountpoint || log.station),
-      log && log.ip
-    ].join("|");
+    const fallback = id || [log && log.username, log && log.loginTime, log && (log.mountpoint || log.station), log && log.ip].join("|");
     if (seen.has(fallback)) continue;
     seen.add(fallback);
     out.push(log);
@@ -191,8 +176,8 @@ function toTracks(logs) {
   const grouped = new Map();
   (logs || []).forEach(log => {
     if (!log.latitude || !log.longitude) return;
-    const mount = log.mountpoint || log.mount || log.station || "";
-    const k = String(log.username || "Unknown") + "|" + mount;
+    const hw = log.hardware || "other";
+    const k = String(log.username || "Unknown") + "|" + hw;
     const arr = grouped.get(k) || [];
     arr.push(log);
     grouped.set(k, arr);
@@ -218,7 +203,7 @@ function toTracks(logs) {
         q: ggaQuality(p.nmea || p.GGA)
       }))
     };
-  }).sort((a, b) => Number(b.live) - Number(a.live) || (b.points[b.points.length - 1].t - a.points[a.points.length - 1].t));
+  }).sort((a, b) => Number(b.live) - Number(a.live) || (b.points[b.points.length - 1].t - a.points[b.points.length - 1].t));
 }
 
 module.exports = {
