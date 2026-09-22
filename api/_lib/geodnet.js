@@ -203,7 +203,7 @@ function toTracks(logs) {
         q: ggaQuality(p.nmea || p.GGA)
       }))
     };
-  }).sort((a, b) => Number(b.live) - Number(a.live) || (b.points[b.points.length - 1].t - a.points[b.points.length - 1].t));
+  }).sort((a, b) => Number(b.live) - Number(a.live) || ((b.points[b.points.length - 1] && b.points[b.points.length - 1].t) - (a.points[a.points.length - 1] && a.points[a.points.length - 1].t)));
 }
 
 module.exports = {
