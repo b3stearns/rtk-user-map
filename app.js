@@ -17,7 +17,7 @@
   const chicagoDay = ms => new Date(ms || Date.now()).toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
   const dayPoints = tr => (tr.points || []).filter(p => isFinite(p.lat) && isFinite(p.lng) && chicagoDay(p.t) === chicagoDay());
   const rtkColor = q => q === 4 ? "#22c55e" : q === 5 ? "#eab308" : "#ef4444";
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&", "<": "<", ">": ">", "\"": """ }[c]));
+  function esc(s) { return String(s); }
 
   const compactMq = window.matchMedia("(max-width: 860px), (max-height: 520px)");
   const isCompact = () => compactMq.matches;
@@ -143,7 +143,7 @@
         iconSize: [44, 44], iconAnchor: [22, 22], popupAnchor: [0, -22]
       });
       const m = L.marker([p.lat, p.lng], { icon, zIndexOffset: on ? 1000 : (t.live ? 400 : 0) });
-      m.bindPopup(`<b>${esc(t.username)}</b><br>${esc(brandLabel(t))}<br>${esc(t.mount || "—")}<br>${dayPoints(t).length} pts today`);
+      m.bindPopup(`<b>${esc(t.username)}</b><br>${esc(brandLabel(t))}<br>${esc(t.mount || "-")}<br>${dayPoints(t).length} pts today`);
       m.on("click", e => { L.DomEvent.stopPropagation(e); select(key(t), 1); });
       m.addTo(mkG);
       if (on) m.openPopup();
@@ -156,7 +156,7 @@
     const list = document.getElementById("list");
     list.innerHTML = rows.length ? rows.map(t => {
       const on = sel === key(t) ? " on" : "";
-      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} · ${esc(t.mount || "—")} · ${dayPoints(t).length} pts today</div></div>`;
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} | ${esc(t.mount || "-")} | ${dayPoints(t).length} pts today</div></div>`;
     }).join("") : '<div class="empty">No RTK users in this window</div>';
     list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
   }
@@ -167,7 +167,7 @@
     el.innerHTML = `<div class="k">Selected hardware</div>
       <div><b>username:</b> ${esc(tr.username)}</div>
       <div><b>hardware:</b> ${esc(brandLabel(tr))}</div>
-      <div><b>station:</b> ${esc(tr.mount || "—")}</div>
+      <div><b>station:</b> ${esc(tr.mount || "-")}</div>
       <div><b>today points:</b> ${dayPoints(tr).length + (liveTrail[key(tr)] || []).length}</div>`;
   }
 
