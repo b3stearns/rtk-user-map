@@ -2,27 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>TrueNav Live</title>
   <link rel="icon" href="https://images.squarespace-cdn.com/content/v1/6767a1cd8186c130e2f6694c/3d80691f-e6c1-4309-b415-e0b8f40064c2/TrueNav+icon2.1.png?format=100w">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}
-    body{display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#182230,transparent 60%),#07090c}
-    .box{width:min(400px,calc(100% - 32px));background:#0c1117;border:1px solid rgba(214,226,240,.09);border-radius:14px;padding:32px 28px;box-shadow:0 20px 60px #0008}
+    html{height:100%;height:100dvh;-webkit-text-size-adjust:100%;color-scheme:dark}
+    html,body{margin:0;background:#07090c;color:#edf2f7;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}
+    body{
+      min-height:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(1200px 600px at 50% -10%,#182230,transparent 60%),#07090c;
+      padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+      overflow-x:hidden;
+    }
+    .box{width:min(400px,100%);background:#0c1117;border:1px solid rgba(214,226,240,.09);border-radius:14px;padding:28px 22px;box-shadow:0 20px 60px #0008}
     .brand{display:flex;align-items:center;gap:10px;margin-bottom:8px}
     .brand img{width:34px;height:34px;border-radius:6px}
     .brand b{letter-spacing:.08em;text-transform:uppercase;font-size:14px}
     .brand b span{color:#c5a46e}
     .sub{color:#8e9aab;font-size:13px;margin:0 0 22px}
     label{display:block;font-size:12px;color:#8e9aab;margin:0 0 6px;letter-spacing:.04em;text-transform:uppercase}
-    input{width:100%;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:11px 12px;font:inherit;margin-bottom:14px}
+    input{width:100%;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:12px 14px;font:inherit;font-size:16px;min-height:44px;margin-bottom:14px}
     input:focus{outline:2px solid #c5a46e;outline-offset:1px}
-    button{width:100%;background:#c5a46e;color:#07090c;border:0;border-radius:8px;padding:12px;font-weight:700;cursor:pointer;font-size:15px;margin-top:6px}
+    button{width:100%;background:#c5a46e;color:#07090c;border:0;border-radius:8px;padding:12px;font-weight:700;cursor:pointer;font-size:16px;min-height:44px;margin-top:6px;touch-action:manipulation}
     button:hover{filter:brightness(1.08)}
     #err{display:none;color:#e05555;font-size:13px;margin:0 0 10px;background:#3a1515;border:1px solid #e0555544;border-radius:8px;padding:8px 10px}
     #err:empty{display:none}
+    @media(max-width:430px){.box{padding:24px 18px}}
   </style>
 </head>
 <body>
