@@ -19,6 +19,58 @@
   const rtkColor = q => q === 4 ? "#22c55e" : q === 5 ? "#eab308" : "#ef4444";
   function esc(s) { return String(s); }
 
+  function fmtClock(ms) {
+    if (!ms) return "—";
+    return new Date(ms).toLocaleString("en-US", { timeZone: "America/Chicago", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  }
+  function fmtDur(sec) {
+    const n = Number(sec);
+    if (!isFinite(n) || n === 0) return "—";
+    const s = Math.abs(n);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    if (h && m) return h + "h " + m + "m";
+    if (h) return h + "h";
+    if (m) return m + "m";
+    return Math.max(1, Math.round(s)) + "s";
+  }
+  function haversineMi(a, b) {
+    const R = 3958.8;
+    const dLat = (b.lat - a.lat) * Math.PI / 180;
+    const dLng = (b.lng - a.lng) * Math.PI / 180;
+    const s = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(s)));
+  }
+  function trackPts(tr) {
+    const pts = dayPoints(tr).concat(liveTrail[key(tr)] || []).filter(p => isFinite(p.lat) && isFinite(p.lng));
+    pts.sort((a, b) => (a.t || 0) - (b.t || 0));
+    return pts;
+  }
+  function trackStats(tr) {
+    const pts = trackPts(tr);
+    const last = tr.last || {};
+    let fix = 0, flt = 0, poor = 0;
+    pts.forEach(p => {
+      if (p.q === 4) fix++;
+      else if (p.q === 5) flt++;
+      else poor++;
+    });
+    const n = pts.length;
+    const pct = c => n ? Math.round((c / n) * 1000) / 10 : 0;
+    let dist = 0;
+    for (let i = 1; i < pts.length; i++) dist += haversineMi(pts[i - 1], pts[i]);
+    const t0 = pts[0] && pts[0].t;
+    const t1 = pts.length ? (pts[pts.length - 1].t || Date.now()) : 0;
+    const spanSec = t0 && t1 && t1 >= t0 ? (t1 - t0) / 1000 : 0;
+    const lastDur = parseFloat(tr.duration != null ? tr.duration : last.duration);
+    const sessionSec = (!isNaN(lastDur) && lastDur > 0) ? lastDur : spanSec;
+    return {
+      pts, n, fix, flt, poor,
+      fixPct: pct(fix), floatPct: pct(flt), poorPct: pct(poor),
+      dist, t0, t1, sessionSec, lastDur
+    };
+  }
+
   const compactMq = window.matchMedia("(max-width: 860px), (max-height: 520px)");
   const isCompact = () => compactMq.matches;
   function openPanel() {
@@ -96,8 +148,7 @@
 
   function drawStationLine(tr, fit) {
     if (lineG) { map.removeLayer(lineG); lineG = null; }
-    const pts = dayPoints(tr).concat(liveTrail[key(tr)] || []).filter(p => isFinite(p.lat) && isFinite(p.lng));
-    pts.sort((a, b) => (a.t || 0) - (b.t || 0));
+    const pts = trackPts(tr);
     if (!pts.length) return;
     lineG = L.layerGroup().addTo(map);
     const linePts = pts.map(p => [p.lat, p.lng]);
@@ -129,11 +180,24 @@
     return tracks.filter(t => !hw || brandId(t) === hw);
   }
 
+  function detailHtml(tr) {
+    const s = trackStats(tr);
+    const st = matchStation(tr);
+    return `<b>${esc(tr.username)}</b>${tr.live ? ' <span class="pill">LIVE</span>' : ""}<br>` +
+      `${esc(brandLabel(tr))}<br>` +
+      `Station: ${esc((st && (st.name || st.station)) || tr.mount || "-")}<br>` +
+      `Fix: <b style="color:#22c55e">${s.fixPct}%</b> · Float: <b style="color:#eab308">${s.floatPct}%</b> · Other: <b style="color:#ef4444">${s.poorPct}%</b><br>` +
+      `Session: ${fmtDur(s.sessionSec)} · ${s.n} pts today<br>` +
+      `Start: ${fmtClock(s.t0)}<br>` +
+      `End: ${tr.live ? "live" : fmtClock(s.t1)}<br>` +
+      `Distance: ${s.dist ? s.dist.toFixed(2) + " mi" : "—"}`;
+  }
+
   function markers() {
     if (mkG) map.removeLayer(mkG);
     mkG = L.layerGroup().addTo(map);
     for (const t of visibleTracks()) {
-      const today = dayPoints(t).concat(liveTrail[key(t)] || []);
+      const today = trackPts(t);
       const p = today.length ? today[today.length - 1] : (t.points && t.points[t.points.length - 1]);
       if (!p) continue;
       const on = sel && key(t) === sel;
@@ -143,7 +207,7 @@
         iconSize: [44, 44], iconAnchor: [22, 22], popupAnchor: [0, -22]
       });
       const m = L.marker([p.lat, p.lng], { icon, zIndexOffset: on ? 1000 : (t.live ? 400 : 0) });
-      m.bindPopup(`<b>${esc(t.username)}</b><br>${esc(brandLabel(t))}<br>${esc(t.mount || "-")}<br>${dayPoints(t).length} pts today`);
+      m.bindPopup(detailHtml(t));
       m.on("click", e => { L.DomEvent.stopPropagation(e); select(key(t), 1); });
       m.addTo(mkG);
       if (on) m.openPopup();
@@ -156,19 +220,67 @@
     const list = document.getElementById("list");
     list.innerHTML = rows.length ? rows.map(t => {
       const on = sel === key(t) ? " on" : "";
-      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} | ${esc(t.mount || "-")} | ${dayPoints(t).length} pts today</div></div>`;
+      const s = trackStats(t);
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} | ${esc(t.mount || "-")} | ${s.fixPct}% fix | ${fmtDur(s.sessionSec)}</div></div>`;
     }).join("") : '<div class="empty">No RTK users in this window</div>';
     list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
+  }
+
+  function renderAlerts() {
+    const box = document.getElementById("alertList");
+    const count = document.getElementById("alertCount");
+    const rows = allAlerts || [];
+    count.textContent = String(rows.length);
+    count.classList.toggle("ok", !rows.length);
+    if (!rows.length) {
+      box.innerHTML = '<div class="empty">No NTRIP alerts</div>';
+      return;
+    }
+    box.innerHTML = rows.slice(0, 40).map(a => {
+      const k = tracks.find(t => t.username === a.username);
+      return `<div class="al" data-user="${esc(a.username)}" data-k="${k ? esc(key(k)) : ""}"><div class="cat">${esc(a.categoryLabel || a.category || "alert")}</div><div>${esc(a.username)} · ${esc(a.mount || a.station || "-")}</div><div class="mt">${esc(a.timeLabel || "")} ${esc(a.msg || "")}</div></div>`;
+    }).join("");
+    box.querySelectorAll(".al").forEach(el => {
+      el.onclick = () => { if (el.dataset.k) select(el.dataset.k, 1); };
+    });
+  }
+
+  function renderSummary() {
+    const vis = visibleTracks();
+    const users = new Set(vis.map(t => t.username));
+    let fixN = 0, totN = 0, dist = 0, time = 0;
+    vis.forEach(t => {
+      const s = trackStats(t);
+      fixN += s.fix;
+      totN += s.n;
+      dist += s.dist;
+      time += s.sessionSec || 0;
+    });
+    document.getElementById("sumUsers").textContent = String(users.size);
+    document.getElementById("sumFix").textContent = totN ? (Math.round((fixN / totN) * 1000) / 10) + "%" : "—";
+    document.getElementById("sumDist").textContent = dist ? dist.toFixed(1) + " mi" : "—";
+    document.getElementById("sumTime").textContent = time ? fmtDur(time) : "—";
+    document.getElementById("nlive").textContent = vis.filter(t => t.live).length;
   }
 
   function showDetail(tr) {
     const el = document.getElementById("detail");
     el.style.display = "block";
-    el.innerHTML = `<div class="k">Selected hardware</div>
-      <div><b>username:</b> ${esc(tr.username)}</div>
+    const s = trackStats(tr);
+    const st = matchStation(tr);
+    const last = tr.last || {};
+    el.innerHTML = `<div class="k">Selected session</div>
+      <div><b>username:</b> ${esc(tr.username)}${tr.live ? ' <span class="pill">LIVE</span>' : ""}</div>
       <div><b>hardware:</b> ${esc(brandLabel(tr))}</div>
-      <div><b>station:</b> ${esc(tr.mount || "-")}</div>
-      <div><b>today points:</b> ${dayPoints(tr).length + (liveTrail[key(tr)] || []).length}</div>`;
+      <div><b>station:</b> ${esc((st && (st.name || st.station)) || tr.mount || last.station || "-")}</div>
+      <div><b>fix:</b> <span style="color:#22c55e">${s.fixPct}%</span> (${s.fix}/${s.n})</div>
+      <div><b>float:</b> <span style="color:#eab308">${s.floatPct}%</span> (${s.flt})</div>
+      <div><b>other:</b> <span style="color:#ef4444">${s.poorPct}%</span> (${s.poor})</div>
+      <div><b>session time:</b> ${fmtDur(s.sessionSec)}</div>
+      <div><b>start:</b> ${fmtClock(s.t0)}</div>
+      <div><b>end:</b> ${tr.live ? "live now" : fmtClock(s.t1)}</div>
+      <div><b>distance:</b> ${s.dist ? s.dist.toFixed(2) + " mi" : "—"}</div>
+      <div><b>today points:</b> ${s.n}</div>`;
   }
 
   function deselect() {
@@ -216,9 +328,10 @@
         tr.live = true;
       });
       markers();
+      renderSummary();
       if (sel) {
         const tr = tracks.find(x => key(x) === sel);
-        if (tr) drawStationLine(tr, 0);
+        if (tr) { drawStationLine(tr, 0); showDetail(tr); }
       }
     } catch (e) {}
   }
@@ -232,9 +345,8 @@
     allAlerts = json.alerts || [];
     tracks = json.tracks || [];
     document.getElementById("ref").textContent = new Date().toLocaleTimeString();
-    document.getElementById("nlive").textContent = tracks.filter(t => t.live).length;
-    const users = new Set(allData.map(d => d.username).filter(Boolean));
-    document.getElementById("sumUsers").textContent = users.size;
+    renderAlerts();
+    renderSummary();
     renderList();
     markers();
     if (sel) {
@@ -250,7 +362,7 @@
   }
 
   document.getElementById("q").oninput = renderList;
-  document.getElementById("hwFilter").onchange = () => { renderList(); markers(); };
+  document.getElementById("hwFilter").onchange = () => { renderList(); markers(); renderSummary(); };
   document.getElementById("timeFilter").onchange = () => loadWindow(0);
   document.getElementById("out").onclick = async () => {
     await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
