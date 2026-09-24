@@ -38,7 +38,7 @@
     .uh{margin:0;padding:12px 12px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
     .filters{padding:8px 12px 0;display:flex;flex-direction:column;gap:8px}
     .filters label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8e9aab}
-    #alerts{border-top:1px solid rgba(214,226,240,.09);flex:0 0 auto;max-height:34%;display:flex;flex-direction:column;min-height:0}
+    #alerts{border-top:1px solid rgba(214,226,240,.09);flex:0 1 auto;max-height:28%;display:flex;flex-direction:column;min-height:0}
     #alerts h2{margin:0;padding:10px 12px 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
     #alertCount{background:#3a1515;color:#e05555;border:1px solid #e0555544;border-radius:99px;padding:1px 7px;font-size:11px;font-family:IBM Plex Mono,ui-monospace,monospace}
     #alertCount.ok{background:#1a3d2a;color:#8fd4ae;border-color:#3dcc7a55}
@@ -47,14 +47,14 @@
     .al:hover{border-color:#e05555}
     .cat{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#e05555;font-weight:700}
     #q{margin:8px 12px 12px;background:#121922;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:10px 12px;font:inherit;font-size:16px;min-height:44px}
-    #list{overflow:auto;flex:1;padding:0 8px 12px;-webkit-overflow-scrolling:touch}
+    #list{overflow:auto;flex:1;min-height:0;padding:0 8px 12px;-webkit-overflow-scrolling:touch}
     .u{padding:12px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent;min-height:44px}
     .u:hover{background:#121922}
     .u.on{background:#182230;border-color:rgba(197,164,110,.45)}
     .un{font-weight:650;font-size:14px;display:flex;align-items:center;gap:8px}
     .mt{color:#8e9aab;font-size:12px;margin-top:2px;font-family:IBM Plex Mono,ui-monospace,monospace}
     .pill{font-size:10px;letter-spacing:.08em;background:#1a3d2a;color:#8fd4ae;border:1px solid #3dcc7a55;border-radius:99px;padding:2px 7px;font-weight:700}
-    #detail{display:none;border-top:1px solid rgba(214,226,240,.09);padding:10px 12px;font-size:13px;background:#0a0e13}
+    #detail{display:none;border-top:1px solid rgba(214,226,240,.09);padding:10px 12px;font-size:13px;background:#0a0e13;max-height:min(38vh,320px);overflow:auto;flex:0 0 auto;-webkit-overflow-scrolling:touch}
     #detail .k{color:#8e9aab;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
     #detail b{color:#c5a46e}
     #map{height:100%;min-height:0;background:#07090c}
@@ -168,6 +168,7 @@
   </aside>
   <div id="map"></div>
 </div>
+<script src="/selection-stats.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

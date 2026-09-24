@@ -2,7 +2,8 @@
   const me = await fetch("/api/me", { credentials: "same-origin" });
   if (me.status === 401) { location = "/login"; return; }
 
-  let tracks = [], allData = [], allAlerts = [], bases = [], sel = null, lineG = null, mkG = null;
+  let tracks = [], allData = [], allAlerts = [], bases = [], sel = null, selStation = null, lineG = null, mkG = null;
+  const stationMarkers = [];
   const liveTrail = {};
   const BRAND_ICONS = {
     "john-deere": "/brands/john-deere.png", trimble: "/brands/trimble.png", fjd: "/brands/fjd.png",
@@ -17,7 +18,81 @@
   const chicagoDay = ms => new Date(ms || Date.now()).toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
   const dayPoints = tr => (tr.points || []).filter(p => isFinite(p.lat) && isFinite(p.lng) && chicagoDay(p.t) === chicagoDay());
   const rtkColor = q => q === 4 ? "#22c55e" : q === 5 ? "#eab308" : "#ef4444";
-  function esc(s) { return String(s); }
+  function esc(s) { return TNStats.esc(s); }
+
+  function todaySamples(tr) {
+    const raw = dayPoints(tr).concat(liveTrail[key(tr)] || []);
+    const seen = new Set();
+    const out = [];
+    raw.forEach(p => {
+      if (!p || !isFinite(p.lat) || !isFinite(p.lng)) return;
+      if (chicagoDay(p.t) !== chicagoDay()) return;
+      const id = p.lat.toFixed(6) + "," + p.lng.toFixed(6) + "," + (p.t || 0);
+      if (seen.has(id)) return;
+      seen.add(id);
+      out.push(p);
+    });
+    out.sort((a, b) => (a.t || 0) - (b.t || 0));
+    return out;
+  }
+
+  function logsFor(tr) {
+    const hw = brandId(tr);
+    const today = chicagoDay();
+    return (allData || []).filter(x => {
+      if (String(x.username || "") !== String(tr.username || "")) return false;
+      if ((x.hardware || "other") !== hw) return false;
+      const t = Number(x.loginTime) || 0;
+      return chicagoDay(t || Date.now()) === today;
+    });
+  }
+
+  function formatSessionTime(tr) {
+    const last = (tr && tr.last) || {};
+    const lastToday = Number(last.loginTime) && chicagoDay(Number(last.loginTime)) === chicagoDay();
+    return TNStats.formatSessionTime({
+      duration: lastToday ? tr.duration : undefined,
+      logs: logsFor(tr),
+      points: todaySamples(tr),
+      now: Date.now()
+    });
+  }
+
+  function buildModel(tr) {
+    const last = tr.last || {};
+    const share = TNStats.qualityShare(todaySamples(tr));
+    const shortStation = last.station ? String(last.station).slice(-4) : (tr.mount || "N/A");
+    const matched = matchStation(tr);
+    const stationLabel = matched && (matched.name || matched.station) ? (matched.name || matched.station) : shortStation;
+    return {
+      username: tr.username,
+      hardware: brandLabel(tr),
+      partner: last.partner,
+      signIn: last.loginTime,
+      start: share.start,
+      end: share.end,
+      sessionTime: formatSessionTime(tr),
+      pointCount: share.n,
+      status: last.status != null ? last.status : last.msg,
+      fixPct: share.fixPct,
+      floatPct: share.floatPct,
+      lessPct: share.lessPct,
+      fixRate: last.fixRate != null ? last.fixRate : (last.rtkfix != null ? last.rtkfix : last["rtk fix rate(%)"]),
+      spp: last.spp,
+      dgps: last.dgps,
+      fixed: last.rtkFixed != null ? last.rtkFixed : last.rtkfix,
+      floatCount: last.rtkFloat != null ? last.rtkFloat : last.float,
+      avgAge: last.avgAge,
+      maxAge: last.maxAge,
+      ip: last.ip,
+      distanceKm: last.distance,
+      station: stationLabel
+    };
+  }
+
+  function createLogPopup(tr) {
+    return TNStats.selectionHtml(buildModel(tr));
+  }
 
   const compactMq = window.matchMedia("(max-width: 860px), (max-height: 520px)");
   const isCompact = () => compactMq.matches;
@@ -52,8 +127,52 @@
   ringSpecs.forEach(spec => { overlays[spec.key] = ringLayers[spec.key]; });
   L.control.layers({ Satellite: sat, Street: osm }, overlays, { position: "topright" }).addTo(map);
 
+  function stationKey(b) { return String((b && (b.id || b.name || b.station)) || ""); }
+
+  function sessionsOnStation(b) {
+    return tracks.filter(t => {
+      const st = matchStation(t);
+      if (!st) return false;
+      if (b.id && st.id && st.id === b.id) return true;
+      return String(st.name || "") === String(b.name || "") && String(b.name || "") !== "";
+    });
+  }
+
+  function stationHtml(b) {
+    const sessions = sessionsOnStation(b).map(t => createLogPopup(t));
+    const head = `<div class="k">Selected station</div><b>station:</b> ${esc(b.name || b.station || "Station")}<br><b>state:</b> ${esc(b.state || "N/A")}<br><b>status:</b> ${esc(b.status || "N/A")}<br>`;
+    if (!sessions.length) return head + `<div class="mt">No hardware on this station today</div>`;
+    return head + sessions.map(html => `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(214,226,240,.12)">${html}</div>`).join("");
+  }
+
+  function showStationDetail(b) {
+    const el = document.getElementById("detail");
+    el.style.display = "block";
+    el.innerHTML = stationHtml(b);
+    if (!isCompact()) el.scrollIntoView({ block: "nearest" });
+  }
+
+  function refreshStationPopups() {
+    if (!selStation) return;
+    const hit = stationMarkers.find(s => stationKey(s.b) === selStation);
+    if (!hit) return;
+    hit.marker.setPopupContent(stationHtml(hit.b));
+    if (hit.marker.isPopupOpen()) hit.marker.openPopup();
+    showStationDetail(hit.b);
+  }
+
+  function selectStation(b) {
+    sel = null;
+    selStation = stationKey(b);
+    if (lineG) { map.removeLayer(lineG); lineG = null; }
+    renderList();
+    markers();
+    showStationDetail(b);
+  }
+
   function plotStations(list) {
     bases = list || [];
+    stationMarkers.length = 0;
     stationsLayer.clearLayers();
     ringSpecs.forEach(spec => ringLayers[spec.key].clearLayers());
     bases.forEach(b => {
@@ -61,9 +180,16 @@
       const lng = parseFloat(b.longitude != null ? b.longitude : b.lng);
       if (!isFinite(lat) || !isFinite(lng)) return;
       const stable = String(b.status || "stable") === "stable";
-      L.circleMarker([lat, lng], { color: "#1a73e8", fillColor: stable ? "#34a853" : "#1a73e8", fillOpacity: 0.9, radius: 6, weight: 2 })
-        .bindPopup("<b>" + esc(b.name || b.station || "Station") + "</b>" + (b.state ? "<br>" + esc(b.state) : ""))
-        .addTo(stationsLayer);
+      const marker = L.circleMarker([lat, lng], { color: "#1a73e8", fillColor: stable ? "#34a853" : "#1a73e8", fillOpacity: 0.9, radius: 6, weight: 2 });
+      marker.bindPopup("<b>" + esc(b.name || b.station || "Station") + "</b>" + (b.state ? "<br>" + esc(b.state) : ""), { maxWidth: Math.max(200, Math.min(280, window.innerWidth - 48)), autoPanPadding: [16, 72] });
+      marker.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        marker.setPopupContent(stationHtml(b));
+        marker.openPopup();
+        selectStation(b);
+      });
+      marker.addTo(stationsLayer);
+      stationMarkers.push({ b, marker });
       ringSpecs.forEach(spec => {
         L.circle([lat, lng], { radius: spec.miles * MI, color: spec.color, weight: 1, fillColor: spec.color, fillOpacity: 0.04, opacity: 0.35 }).addTo(ringLayers[spec.key]);
       });
@@ -96,8 +222,7 @@
 
   function drawStationLine(tr, fit) {
     if (lineG) { map.removeLayer(lineG); lineG = null; }
-    const pts = dayPoints(tr).concat(liveTrail[key(tr)] || []).filter(p => isFinite(p.lat) && isFinite(p.lng));
-    pts.sort((a, b) => (a.t || 0) - (b.t || 0));
+    const pts = todaySamples(tr);
     if (!pts.length) return;
     lineG = L.layerGroup().addTo(map);
     const linePts = pts.map(p => [p.lat, p.lng]);
@@ -133,7 +258,7 @@
     if (mkG) map.removeLayer(mkG);
     mkG = L.layerGroup().addTo(map);
     for (const t of visibleTracks()) {
-      const today = dayPoints(t).concat(liveTrail[key(t)] || []);
+      const today = todaySamples(t);
       const p = today.length ? today[today.length - 1] : (t.points && t.points[t.points.length - 1]);
       if (!p) continue;
       const on = sel && key(t) === sel;
@@ -143,7 +268,8 @@
         iconSize: [44, 44], iconAnchor: [22, 22], popupAnchor: [0, -22]
       });
       const m = L.marker([p.lat, p.lng], { icon, zIndexOffset: on ? 1000 : (t.live ? 400 : 0) });
-      m.bindPopup(`<b>${esc(t.username)}</b><br>${esc(brandLabel(t))}<br>${esc(t.mount || "-")}<br>${dayPoints(t).length} pts today`);
+      const popW = Math.max(200, Math.min(280, window.innerWidth - 48));
+      m.bindPopup(createLogPopup(t), { maxWidth: popW, autoPanPadding: [16, 72], keepInView: true });
       m.on("click", e => { L.DomEvent.stopPropagation(e); select(key(t), 1); });
       m.addTo(mkG);
       if (on) m.openPopup();
@@ -156,7 +282,8 @@
     const list = document.getElementById("list");
     list.innerHTML = rows.length ? rows.map(t => {
       const on = sel === key(t) ? " on" : "";
-      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} | ${esc(t.mount || "-")} | ${dayPoints(t).length} pts today</div></div>`;
+      const share = TNStats.qualityShare(todaySamples(t));
+      return `<div class="u${on}" data-k="${esc(key(t))}"><div class="un"><img class="hw-li" src="${esc(brandIcon(brandId(t)))}" alt="">${esc(t.username)}${t.live ? ' <span class="pill">LIVE</span>' : ""}</div><div class="mt">${esc(brandLabel(t))} | ${esc(t.mount || "-")} | fix ${esc(share.fixPct)} | Session time ${esc(formatSessionTime(t))} | ${share.n} pts today</div></div>`;
     }).join("") : '<div class="empty">No RTK users in this window</div>';
     list.querySelectorAll(".u").forEach(el => { el.onclick = () => select(el.dataset.k, 1); });
   }
@@ -164,16 +291,60 @@
   function showDetail(tr) {
     const el = document.getElementById("detail");
     el.style.display = "block";
-    el.innerHTML = `<div class="k">Selected hardware</div>
-      <div><b>username:</b> ${esc(tr.username)}</div>
-      <div><b>hardware:</b> ${esc(brandLabel(tr))}</div>
-      <div><b>station:</b> ${esc(tr.mount || "-")}</div>
-      <div><b>today points:</b> ${dayPoints(tr).length + (liveTrail[key(tr)] || []).length}</div>`;
+    el.innerHTML = `<div class="k">Selected hardware</div>${createLogPopup(tr)}`;
+    if (!isCompact()) el.scrollIntoView({ block: "nearest" });
+  }
+
+  function renderAlerts(alerts) {
+    const n = (alerts || []).length;
+    const badge = document.getElementById("alertCount");
+    badge.textContent = n;
+    badge.classList.toggle("ok", n === 0);
+    const box = document.getElementById("alertList");
+    if (!n) {
+      box.innerHTML = '<div class="empty">No NTRIP issues in this window.</div>';
+      return;
+    }
+    box.innerHTML = alerts.map((a, i) => `
+      <div class="al" data-i="${i}">
+        <div class="cat">${esc(a.categoryLabel || a.category)}</div>
+        <div class="un">${esc(a.username || "Unknown")}</div>
+        <div class="mt">${esc(a.timeLabel || "")} · ${esc(a.station || a.mount || "—")}<br>${esc(a.msg || "")}</div>
+      </div>`).join("");
+    box.querySelectorAll(".al").forEach(el => {
+      el.onclick = () => {
+        const a = alerts[Number(el.dataset.i)];
+        if (!a) return;
+        const tr = tracks.find(t => t.username === a.username && (!a.hardware || brandId(t) === a.hardware))
+          || tracks.find(t => t.username === a.username);
+        if (tr) select(key(tr), 1);
+        else if (a.latitude && a.longitude) {
+          map.setView([a.latitude, a.longitude], 12);
+          if (isCompact()) closePanel();
+        }
+      };
+    });
+  }
+
+  function updateSummary(data) {
+    const users = new Set(data.map(d => d.username).filter(Boolean));
+    document.getElementById("sumUsers").textContent = users.size;
+    const fixRates = data.map(d => parseFloat(d.fixRate ?? d.rtkfix ?? d["rtk fix rate(%)"] ?? d.rtkFixRate)).filter(n => !isNaN(n) && n > 0);
+    const avgFix = fixRates.length ? (fixRates.reduce((a, b) => a + b, 0) / fixRates.length).toFixed(1) : "0";
+    document.getElementById("sumFix").textContent = avgFix + "%";
+    const dists = data.map(d => parseFloat(d.distance)).filter(n => !isNaN(n));
+    const avgDistKm = dists.length ? dists.reduce((a, b) => a + b, 0) / dists.length : 0;
+    document.getElementById("sumDist").textContent = (avgDistKm * 0.621371).toFixed(1) + " miles";
+    const durations = data.map(d => parseFloat(d.duration)).filter(n => !isNaN(n));
+    const totalHours = (durations.reduce((a, b) => a + b, 0) / 3600).toFixed(1);
+    document.getElementById("sumTime").textContent = totalHours + " hrs";
   }
 
   function deselect() {
     sel = null;
+    selStation = null;
     if (lineG) { map.removeLayer(lineG); lineG = null; }
+    stationMarkers.forEach(s => s.marker.closePopup());
     document.getElementById("detail").style.display = "none";
     renderList();
     markers();
@@ -181,8 +352,10 @@
 
   function select(k, fit) {
     sel = k;
+    selStation = null;
     const tr = tracks.find(t => key(t) === k);
     if (!tr) return;
+    stationMarkers.forEach(s => s.marker.closePopup());
     renderList();
     markers();
     drawStationLine(tr, fit);
@@ -216,9 +389,10 @@
         tr.live = true;
       });
       markers();
+      refreshStationPopups();
       if (sel) {
         const tr = tracks.find(x => key(x) === sel);
-        if (tr) drawStationLine(tr, 0);
+        if (tr) { drawStationLine(tr, 0); showDetail(tr); }
       }
     } catch (e) {}
   }
@@ -233,10 +407,11 @@
     tracks = json.tracks || [];
     document.getElementById("ref").textContent = new Date().toLocaleTimeString();
     document.getElementById("nlive").textContent = tracks.filter(t => t.live).length;
-    const users = new Set(allData.map(d => d.username).filter(Boolean));
-    document.getElementById("sumUsers").textContent = users.size;
+    updateSummary(allData);
+    renderAlerts(allAlerts);
     renderList();
     markers();
+    refreshStationPopups();
     if (sel) {
       const tr = tracks.find(t => key(t) === sel);
       if (tr) { drawStationLine(tr, 0); showDetail(tr); }
@@ -250,7 +425,15 @@
   }
 
   document.getElementById("q").oninput = renderList;
-  document.getElementById("hwFilter").onchange = () => { renderList(); markers(); };
+  document.getElementById("hwFilter").onchange = () => {
+    if (sel) {
+      const tr = tracks.find(t => key(t) === sel);
+      const hw = document.getElementById("hwFilter").value;
+      if (tr && hw && brandId(tr) !== hw) deselect();
+    }
+    renderList();
+    markers();
+  };
   document.getElementById("timeFilter").onchange = () => loadWindow(0);
   document.getElementById("out").onclick = async () => {
     await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
@@ -261,7 +444,11 @@
   };
   document.getElementById("sideClose").onclick = closePanel;
   document.getElementById("scrim").onclick = closePanel;
-  map.on("click", deselect);
+  map.on("click", e => {
+    const t = e.originalEvent && e.originalEvent.target;
+    if (t && t.closest && t.closest(".hw-mk, .leaflet-popup, .leaflet-marker-icon")) return;
+    if (sel || selStation) deselect();
+  });
 
   await loadWindow(1);
   pullLiveRtk();

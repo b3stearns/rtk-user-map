@@ -191,9 +191,12 @@ test("cookie name is tn_session", () => {
   assert.strictEqual(COOKIE_NAME, "tn_session");
 });
 
-test("index.html popup still contains required fields", () => {
+test("selection popup still contains required fields", () => {
   const fs = require("fs");
-  const html = fs.readFileSync(require("path").join(__dirname, "..", "index.html"), "utf8");
+  const path = require("path");
+  const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  const stats = fs.readFileSync(path.join(__dirname, "..", "selection-stats.js"), "utf8");
   [
     "<b>Distance to Station:</b>",
     "<b>username:</b>",
@@ -206,26 +209,107 @@ test("index.html popup still contains required fields", () => {
     "<b>spp / dgps / fixed / float:</b>",
     "<b>avg age / max age:</b>",
     "<b>ip:</b>",
-    "No NTRIP issues in this window.",
-    "formatSessionTime",
+    "<b>hardware:</b>",
+    "<b>fix %:</b>",
+    "<b>float %:</b>",
+    "<b>less than float %:</b>",
+    "<b>start:</b>",
+    "<b>end:</b>",
+    "<b>point count:</b>"
+  ].forEach(s => assert.ok(stats.includes(s), "missing " + s));
+  [
     "Last 6 Months",
     "Search users",
     "NTRIP alerts",
     "Live users",
-    'option value="12" selected'
+    'option value="12" selected',
+    "/selection-stats.js",
+    'id="detail"'
   ].forEach(s => assert.ok(html.includes(s), "missing " + s));
-  assert.ok(html.includes("parseInt(document.getElementById(\"timeFilter\").value, 10) || 12"));
-  assert.ok(html.includes("/api/live?hours="));
-  assert.ok(!html.includes("GeodnetLogo"));
-  assert.ok(!html.includes("549a2429d314ff17"), "must not hardcode APP_KEY");
-  [
-    "Powered by BD Solutions",
-    "nearest-three",
-    "Nearest three",
-    "accuracy rings",
-    "Accuracy rings",
-    "coverage-station"
-  ].forEach(s => assert.ok(!html.includes(s), "coverage copy leaked: " + s));
+  assert.ok(app.includes("function formatSessionTime"));
+  assert.ok(app.includes("function createLogPopup"));
+  assert.ok(app.includes("function showDetail"));
+  assert.ok(app.includes("function selectStation"));
+  assert.ok(app.includes("No NTRIP issues in this window."));
+  assert.ok(app.includes("parseInt(document.getElementById(\"timeFilter\").value, 10) || 12"));
+  assert.ok(app.includes("/api/sheets?hours="));
+  assert.ok(app.includes("todaySamples"));
+  [html, app, stats].forEach(src => {
+    assert.ok(!src.includes("GeodnetLogo"));
+    assert.ok(!src.includes("549a2429d314ff17"), "must not hardcode APP_KEY");
+    [
+      "Powered by BD Solutions",
+      "nearest-three",
+      "Nearest three",
+      "accuracy rings",
+      "Accuracy rings",
+      "coverage-station"
+    ].forEach(s => assert.ok(!src.includes(s), "coverage copy leaked: " + s));
+  });
+});
+
+test("today point qualities drive fix, float, and less-than-float", () => {
+  const { qualityShare, sessionSeconds, formatDuration, selectionHtml } = require("../selection-stats");
+  const share = qualityShare([
+    { q: 4, t: 1_000 },
+    { q: 4, t: 2_000 },
+    { q: 4, t: 3_000 },
+    { q: 4, t: 4_000 },
+    { q: 5, t: 5_000 },
+    { q: 1, t: 6_000 }
+  ]);
+  assert.strictEqual(share.n, 6);
+  assert.strictEqual(share.fix, 4);
+  assert.strictEqual(share.float, 1);
+  assert.strictEqual(share.less, 1);
+  assert.strictEqual(share.fixPct, "66.7%");
+  assert.strictEqual(share.floatPct, "16.7%");
+  assert.strictEqual(share.lessPct, "16.7%");
+  assert.strictEqual(share.start, 1000);
+  assert.strictEqual(share.end, 6000);
+  const empty = qualityShare([]);
+  assert.strictEqual(empty.n, 0);
+  assert.strictEqual(empty.fixPct, "N/A");
+  assert.strictEqual(sessionSeconds({ duration: 3661, points: [{ t: 0 }, { t: 1000 }] }), 3661);
+  assert.strictEqual(sessionSeconds({ duration: -1, logs: [{ duration: 125 }], points: [{ t: 0 }, { t: 999000 }] }), 125);
+  assert.strictEqual(sessionSeconds({ duration: -1, logs: [], points: [{ t: 1_000 }, { t: 6_000 }] }), 5);
+  assert.strictEqual(formatDuration(3661), "01:01:01");
+  const html = selectionHtml({
+    username: "MTIrtk",
+    hardware: "John Deere",
+    partner: "TrueNav",
+    signIn: Date.UTC(2026, 8, 24, 15, 0, 0),
+    start: 1_000,
+    end: 6_000,
+    sessionTime: "01:01:01",
+    pointCount: 6,
+    status: 0,
+    fixPct: share.fixPct,
+    floatPct: share.floatPct,
+    lessPct: share.lessPct,
+    fixRate: 98.2,
+    spp: 1,
+    dgps: 2,
+    fixed: 10,
+    floatCount: 3,
+    avgAge: 1.2,
+    maxAge: 4,
+    ip: "10.0.0.8",
+    distanceKm: 1.609344,
+    station: "DDAE5"
+  });
+  assert.ok(html.includes("MTIrtk"));
+  assert.ok(html.includes("John Deere"));
+  assert.ok(html.includes("66.7%"));
+  assert.ok(html.includes("16.7%"));
+  assert.ok(html.includes("01:01:01"));
+  assert.ok(html.includes(">6<") || html.includes("point count:</b> 6"));
+  assert.ok(html.includes("98.2"));
+  assert.ok(html.includes("1 / 2 / 10 / 3"));
+  assert.ok(html.includes("DDAE5"));
+  assert.ok(html.includes("CST"));
+  assert.ok(html.includes("miles"));
+  assert.ok(html.includes("10.0.0.8"));
 });
 
 test("login.html hides #err until failed POST", () => {
@@ -295,12 +379,13 @@ test("station dataset matches coverage ND+SD map", () => {
   const lats = stations.map(s => s.lat);
   assert.ok(Math.max(...lats) > 47, "North Dakota lats missing");
   const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-  assert.ok(html.includes("/api/bases"));
-  assert.ok(html.includes("Stations"));
-  assert.ok(html.includes("< 1 cm"));
-  assert.ok(!html.includes("const myStations"));
-  assert.ok(!html.includes("grok.me"));
-  assert.ok(!html.includes("iframe"));
+  const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  assert.ok(app.includes("/api/bases"));
+  assert.ok(app.includes("Stations"));
+  assert.ok(app.includes("< 1 cm"));
+  assert.ok(!html.includes("const myStations") && !app.includes("const myStations"));
+  assert.ok(!html.includes("grok.me") && !app.includes("grok.me"));
+  assert.ok(!html.includes("iframe") && !app.includes("iframe"));
   const bases = fs.readFileSync(path.join(__dirname, "..", "api/bases.js"), "utf8");
   assert.ok(bases.includes("stations.json"));
   assert.ok(!bases.includes("radius: 650"));
@@ -400,21 +485,24 @@ test("brand logo files exist and dealer map uses selected-session station line",
     assert.ok(fs.existsSync(path.join(__dirname, "..", "brands", f)), "missing /brands/" + f);
   });
   const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-  assert.ok(html.includes("drawStationLine"));
-  assert.ok(html.includes("function deselect"));
+  const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  assert.ok(app.includes("function drawStationLine"));
+  assert.ok(app.includes("function deselect"));
   assert.ok(html.includes("hw-mk"));
-  assert.ok(html.includes("/brands/john-deere.png"));
-  assert.ok(html.includes("L.divIcon"));
-  assert.ok(!html.includes("function drawLine"));
-  assert.ok(!html.includes("fill = t.live ? \"#c5a46e\""));
-  assert.ok(html.includes("[[p.lat, p.lng], [slat, slng]]"));
+  assert.ok(app.includes("/brands/john-deere.png"));
+  assert.ok(app.includes("L.divIcon"));
+  assert.ok(!app.includes("function drawLine"));
+  assert.ok(!app.includes("fill = t.live ? \"#c5a46e\""));
+  assert.ok(app.includes("[slat, slng]"));
+  assert.ok(app.includes('rtkColor = q => q === 4 ? "#22c55e" : q === 5 ? "#eab308" : "#ef4444"'));
+  assert.ok(app.includes("todaySamples"));
   assert.ok(html.includes("viewport-fit=cover"));
   assert.ok(html.includes("100dvh"));
   assert.ok(html.includes("panel-open"));
   assert.ok(html.includes("id=\"menuBtn\""));
   assert.ok(html.includes("id=\"hwFilter\""));
   assert.ok(html.includes("hw-hit"));
-  assert.ok(html.includes("iconSize: [44, 44]"));
+  assert.ok(app.includes("iconSize: [44, 44]"));
   assert.ok(html.includes("env(safe-area-inset-top)"));
   assert.ok(!html.includes("42vh"));
   const login = fs.readFileSync(path.join(__dirname, "..", "login.html"), "utf8");
