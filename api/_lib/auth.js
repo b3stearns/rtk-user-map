@@ -42,6 +42,11 @@ const DEALERS = {
     name: "Jon",
     saltEnv: "DEALER_JON_SALT",
     hashEnv: "DEALER_JON_HASH"
+  },
+  truenav: {
+    name: "TrueNav",
+    saltEnv: "DEALER_TRUENAV_SALT",
+    hashEnv: "DEALER_TRUENAV_HASH"
   }
 };
 
@@ -65,7 +70,10 @@ function envFlags() {
     bradPlain: Boolean(dealerField("brad", "plain")),
     jonSalt: Boolean(dealerField("jon", "salt")),
     jonHash: Boolean(dealerField("jon", "hash")),
-    jonPlain: Boolean(dealerField("jon", "plain"))
+    jonPlain: Boolean(dealerField("jon", "plain")),
+    truenavSalt: Boolean(dealerField("truenav", "salt")),
+    truenavHash: Boolean(dealerField("truenav", "hash")),
+    truenavPlain: Boolean(dealerField("truenav", "plain"))
   };
 }
 
