@@ -16,7 +16,7 @@
   const key = t => t.username + "|" + (t.hardware || brandId(t) || "other");
   const chicagoDay = ms => new Date(ms || Date.now()).toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
   const dayPoints = tr => (tr.points || []).filter(p => isFinite(p.lat) && isFinite(p.lng) && chicagoDay(p.t) === chicagoDay());
-  const rtkColor = q => q === 4 ? "#22c55e" : q === 5 ? "#eab308" : "#ef4444";
+  const rtkColor = q => TNQuality.rtkColor(q);
   function esc(s) { return String(s); }
 
   function fmtClock(ms) {
@@ -49,14 +49,7 @@
   function trackStats(tr) {
     const pts = trackPts(tr);
     const last = tr.last || {};
-    let fix = 0, flt = 0, poor = 0;
-    pts.forEach(p => {
-      if (p.q === 4) fix++;
-      else if (p.q === 5) flt++;
-      else poor++;
-    });
-    const n = pts.length;
-    const pct = c => n ? Math.round((c / n) * 1000) / 10 : 0;
+    const qsum = TNQuality.summarizeFixes(pts);
     let dist = 0;
     for (let i = 1; i < pts.length; i++) dist += haversineMi(pts[i - 1], pts[i]);
     const t0 = pts[0] && pts[0].t;
@@ -65,8 +58,10 @@
     const lastDur = parseFloat(tr.duration != null ? tr.duration : last.duration);
     const sessionSec = (!isNaN(lastDur) && lastDur > 0) ? lastDur : spanSec;
     return {
-      pts, n, fix, flt, poor,
-      fixPct: pct(fix), floatPct: pct(flt), poorPct: pct(poor),
+      pts, n: pts.length,
+      fix: qsum.fix, flt: qsum.float, poor: qsum.poor,
+      spp: qsum.spp, dgps: qsum.dgps, gga: qsum.gga,
+      fixPct: qsum.fixPct, floatPct: qsum.floatPct, poorPct: qsum.poorPct,
       dist, t0, t1, sessionSec, lastDur
     };
   }
@@ -151,27 +146,18 @@
     const pts = trackPts(tr);
     if (!pts.length) return;
     lineG = L.layerGroup().addTo(map);
-    const linePts = pts.map(p => [p.lat, p.lng]);
-    if (linePts.length >= 2) {
-      L.polyline(linePts, { color: "#22d3ee", weight: 4, opacity: 0.75 }).addTo(lineG);
+    if (pts.length >= 2) {
       for (let i = 1; i < pts.length; i++) {
-        L.polyline([[pts[i - 1].lat, pts[i - 1].lng], [pts[i].lat, pts[i].lng]], { color: rtkColor(pts[i].q), weight: 3, opacity: 0.95 }).addTo(lineG);
+        L.polyline([[pts[i - 1].lat, pts[i - 1].lng], [pts[i].lat, pts[i].lng]], { color: rtkColor(pts[i].q), weight: 4, opacity: 0.95 }).addTo(lineG);
       }
     }
     pts.forEach(p => {
       L.circleMarker([p.lat, p.lng], { radius: 5, color: "#0b1220", weight: 1, fillColor: rtkColor(p.q), fillOpacity: 1 }).addTo(lineG);
     });
-    const lastPt = pts[pts.length - 1];
-    const st = matchStation(tr);
-    const slat = st ? parseFloat(st.latitude != null ? st.latitude : st.lat) : NaN;
-    const slng = st ? parseFloat(st.longitude != null ? st.longitude : st.lng) : NaN;
-    if (isFinite(slat) && isFinite(slng)) {
-      L.polyline([[lastPt.lat, lastPt.lng], [slat, slng]], { color: "#3dcc7a", weight: 2, opacity: 0.7, dashArray: "6 6" }).addTo(lineG);
-    }
     if (fit) {
-      const b = linePts.slice();
-      if (isFinite(slat) && isFinite(slng)) b.push([slat, slng]);
-      if (b.length) map.fitBounds(b, { padding: [48, 48], maxZoom: 16 });
+      const b = pts.map(p => [p.lat, p.lng]);
+      if (b.length === 1) map.setView(b[0], 16);
+      else map.fitBounds(b, { padding: [48, 48], maxZoom: 16 });
     }
   }
 
@@ -187,6 +173,7 @@
       `${esc(brandLabel(tr))}<br>` +
       `Station: ${esc((st && (st.name || st.station)) || tr.mount || "-")}<br>` +
       `Fix: <b style="color:#22c55e">${s.fixPct}%</b> · Float: <b style="color:#eab308">${s.floatPct}%</b> · Other: <b style="color:#ef4444">${s.poorPct}%</b><br>` +
+      `GPS ${s.spp} · DGPS ${s.dgps} · ${s.gga} gga<br>` +
       `Session: ${fmtDur(s.sessionSec)} · ${s.n} pts today<br>` +
       `Start: ${fmtClock(s.t0)}<br>` +
       `End: ${tr.live ? "live" : fmtClock(s.t1)}<br>` +
@@ -252,7 +239,7 @@
     vis.forEach(t => {
       const s = trackStats(t);
       fixN += s.fix;
-      totN += s.n;
+      totN += s.gga;
       dist += s.dist;
       time += s.sessionSec || 0;
     });
@@ -273,9 +260,10 @@
       <div><b>username:</b> ${esc(tr.username)}${tr.live ? ' <span class="pill">LIVE</span>' : ""}</div>
       <div><b>hardware:</b> ${esc(brandLabel(tr))}</div>
       <div><b>station:</b> ${esc((st && (st.name || st.station)) || tr.mount || last.station || "-")}</div>
-      <div><b>fix:</b> <span style="color:#22c55e">${s.fixPct}%</span> (${s.fix}/${s.n})</div>
-      <div><b>float:</b> <span style="color:#eab308">${s.floatPct}%</span> (${s.flt})</div>
-      <div><b>other:</b> <span style="color:#ef4444">${s.poorPct}%</span> (${s.poor})</div>
+      <div><b>fix:</b> <span style="color:#22c55e">${s.fixPct}%</span> (${s.fix}/${s.gga})</div>
+      <div><b>float:</b> <span style="color:#eab308">${s.floatPct}%</span> (${s.flt}/${s.gga})</div>
+      <div><b>other:</b> <span style="color:#ef4444">${s.poorPct}%</span> (${s.poor}/${s.gga})</div>
+      <div><b>GPS / DGPS:</b> ${s.spp} / ${s.dgps}</div>
       <div><b>session time:</b> ${fmtDur(s.sessionSec)}</div>
       <div><b>start:</b> ${fmtClock(s.t0)}</div>
       <div><b>end:</b> ${tr.live ? "live now" : fmtClock(s.t1)}</div>
@@ -368,11 +356,26 @@
     await fetch("/api/logout", { method: "POST", credentials: "same-origin" });
     location = "/login";
   };
+  function setSidebar(open) {
+    document.body.classList.toggle("side-collapsed", !open);
+    const expand = document.getElementById("expandBtn");
+    if (expand) expand.hidden = open || isCompact();
+    const collapse = document.getElementById("collapseBtn");
+    if (collapse) collapse.setAttribute("aria-expanded", open ? "true" : "false");
+    if (expand) expand.setAttribute("aria-expanded", open ? "false" : "true");
+    try { sessionStorage.setItem("tn-side", open ? "1" : "0"); } catch (e) {}
+    setTimeout(() => map.invalidateSize(), 240);
+  }
   document.getElementById("menuBtn").onclick = () => {
     document.body.classList.contains("panel-open") ? closePanel() : openPanel();
   };
   document.getElementById("sideClose").onclick = closePanel;
   document.getElementById("scrim").onclick = closePanel;
+  document.getElementById("collapseBtn").onclick = () => setSidebar(false);
+  document.getElementById("expandBtn").onclick = () => setSidebar(true);
+  try {
+    if (!isCompact() && sessionStorage.getItem("tn-side") === "0") setSidebar(false);
+  } catch (e) {}
   map.on("click", deselect);
 
   await loadWindow(1);

@@ -194,30 +194,32 @@ test("cookie name is tn_session", () => {
 test("index.html popup still contains required fields", () => {
   const fs = require("fs");
   const html = fs.readFileSync(require("path").join(__dirname, "..", "index.html"), "utf8");
+  const app = fs.readFileSync(require("path").join(__dirname, "..", "app.js"), "utf8");
   [
-    "<b>Distance to Station:</b>",
-    "<b>username:</b>",
-    "<b>partner:</b>",
-    "<b>Sign in time (CST):</b>",
-    "<b>Session time:</b>",
-    "<b>status:</b>",
-    "<b>rtk fix rate(%):</b>",
-    "<b>station:</b>",
-    "<b>spp / dgps / fixed / float:</b>",
-    "<b>avg age / max age:</b>",
-    "<b>ip:</b>",
-    "No NTRIP issues in this window.",
-    "formatSessionTime",
     "Last 6 Months",
     "Search users",
     "NTRIP alerts",
     "Live users",
-    'option value="12" selected'
+    'option value="12" selected',
+    'id="collapseBtn"',
+    'id="expandBtn"',
+    "/quality.js"
   ].forEach(s => assert.ok(html.includes(s), "missing " + s));
-  assert.ok(html.includes("parseInt(document.getElementById(\"timeFilter\").value, 10) || 12"));
-  assert.ok(html.includes("/api/live?hours="));
+  [
+    "<b>username:</b>",
+    "<b>station:</b>",
+    "<b>fix:</b>",
+    "<b>float:</b>",
+    "<b>other:</b>",
+    "<b>GPS / DGPS:</b>",
+    "session time",
+    "summarizeFixes"
+  ].forEach(s => assert.ok(app.includes(s), "missing " + s));
+  assert.ok(app.includes("parseInt(document.getElementById(\"timeFilter\").value, 10) || 12"));
+  assert.ok(app.includes("/api/sheets?hours="));
   assert.ok(!html.includes("GeodnetLogo"));
   assert.ok(!html.includes("549a2429d314ff17"), "must not hardcode APP_KEY");
+  assert.ok(!app.includes("549a2429d314ff17"), "must not hardcode APP_KEY");
   [
     "Powered by BD Solutions",
     "nearest-three",
@@ -295,12 +297,14 @@ test("station dataset matches coverage ND+SD map", () => {
   const lats = stations.map(s => s.lat);
   assert.ok(Math.max(...lats) > 47, "North Dakota lats missing");
   const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-  assert.ok(html.includes("/api/bases"));
-  assert.ok(html.includes("Stations"));
-  assert.ok(html.includes("< 1 cm"));
-  assert.ok(!html.includes("const myStations"));
-  assert.ok(!html.includes("grok.me"));
-  assert.ok(!html.includes("iframe"));
+  const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  const ui = html + "\n" + app;
+  assert.ok(ui.includes("/api/bases"));
+  assert.ok(ui.includes("Stations"));
+  assert.ok(ui.includes("< 1 cm"));
+  assert.ok(!ui.includes("const myStations"));
+  assert.ok(!ui.includes("grok.me"));
+  assert.ok(!ui.includes("iframe"));
   const bases = fs.readFileSync(path.join(__dirname, "..", "api/bases.js"), "utf8");
   assert.ok(bases.includes("stations.json"));
   assert.ok(!bases.includes("radius: 650"));
@@ -385,6 +389,52 @@ test("toTracks copies hardware onto each session", () => {
   assert.strictEqual(tracks[0].hardware, "john-deere");
   assert.strictEqual(tracks[0].hardwareLabel, "John Deere");
   assert.strictEqual(tracks[0].points.length, 2);
+  assert.strictEqual(tracks[0].points[0].q, 4);
+  assert.strictEqual(tracks[0].points[1].q, 4);
+});
+
+test("space-separated caster NMEA quality is field 6, not other", () => {
+  const { ggaQuality, sessionQuality, summarizeFixes } = require("../quality");
+  const fixed = "$GPGGA 224047.00 4430.8346 N 09844.7913 W 4 34 0.4 438.8 M -25.9 M 2.0 0827*7D";
+  const fixedDbl = "$GPGGA 143633.20 4330.8328 N 09712.3077 W 4 37 0.8 0.1 M  M 1.0 *4E";
+  const floatSent = "$GNGGA,190744.00,4341.37,N,09800.19,W,5,31,0.5,411.9,M,-26.1,M,2.0,3250*64";
+  const gps = "$GPGGA,1,2,N,3,W,1,10,0.8,1,M,1,M,,";
+  assert.strictEqual(ggaQuality(fixed), 4);
+  assert.strictEqual(ggaQuality(fixedDbl), 4);
+  assert.strictEqual(ggaQuality(floatSent), 5);
+  assert.strictEqual(ggaQuality(gps), 1);
+  assert.strictEqual(ggaQuality("$GPGGA,,,,,,4,,,,,"), 4);
+  assert.strictEqual(ggaQuality("Success"), null);
+  const board = sessionQuality({
+    nmea: fixedDbl,
+    totalGGA: 319,
+    rtkFixed: 315,
+    rtkFloat: 0,
+    spp: 4,
+    dgps: 0,
+    fixRate: 100
+  });
+  assert.strictEqual(board.q, 4);
+  const sum = summarizeFixes([{ q: board.q, gga: board.gga, fix: board.fix, float: board.float, spp: board.spp, dgps: board.dgps }]);
+  assert.strictEqual(sum.fixPct, 98.7);
+  assert.strictEqual(sum.floatPct, 0);
+  assert.strictEqual(sum.poorPct, 1.3);
+  assert.strictEqual(sum.fix, 315);
+  assert.strictEqual(sum.gga, 319);
+  assert.strictEqual(sum.spp, 4);
+  const lakner = summarizeFixes([
+    { q: 4, gga: 1108, fix: 1108, float: 0, spp: 0, dgps: 0 },
+    { q: 4, gga: 1620, fix: 1620, float: 0, spp: 0, dgps: 0 }
+  ]);
+  assert.strictEqual(lakner.fixPct, 100);
+  assert.notStrictEqual(lakner.fixPct, 0);
+  const { rtkColor } = require("../quality");
+  assert.strictEqual(rtkColor(4), "#22c55e");
+  assert.strictEqual(rtkColor(5), "#eab308");
+  assert.strictEqual(rtkColor(1), "#ef4444");
+  assert.strictEqual(rtkColor(2), "#ef4444");
+  assert.strictEqual(rtkColor(6), "#ef4444");
+  assert.strictEqual(rtkColor(null), "#ef4444");
 });
 
 test("brand logo files exist and dealer map uses selected-session station line", () => {
@@ -400,21 +450,28 @@ test("brand logo files exist and dealer map uses selected-session station line",
     assert.ok(fs.existsSync(path.join(__dirname, "..", "brands", f)), "missing /brands/" + f);
   });
   const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-  assert.ok(html.includes("drawStationLine"));
-  assert.ok(html.includes("function deselect"));
-  assert.ok(html.includes("hw-mk"));
-  assert.ok(html.includes("/brands/john-deere.png"));
-  assert.ok(html.includes("L.divIcon"));
-  assert.ok(!html.includes("function drawLine"));
-  assert.ok(!html.includes("fill = t.live ? \"#c5a46e\""));
-  assert.ok(html.includes("[[p.lat, p.lng], [slat, slng]]"));
+  const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  const ui = html + "\n" + app;
+  assert.ok(app.includes("drawStationLine"));
+  assert.ok(app.includes("function deselect"));
+  assert.ok(ui.includes("hw-mk"));
+  assert.ok(app.includes("/brands/john-deere.png"));
+  assert.ok(app.includes("L.divIcon"));
+  assert.ok(!ui.includes("function drawLine"));
+  assert.ok(!app.includes("fill = t.live ? \"#c5a46e\""));
+  assert.ok(!app.includes("[[lastPt.lat, lastPt.lng], [slat, slng]]"), "station baseline must not be the track");
+  assert.ok(!app.includes('dashArray: "6 6"'));
+  assert.ok(app.includes("TNQuality.rtkColor"));
+  assert.ok(app.includes("TNQuality.summarizeFixes"));
   assert.ok(html.includes("viewport-fit=cover"));
   assert.ok(html.includes("100dvh"));
   assert.ok(html.includes("panel-open"));
   assert.ok(html.includes("id=\"menuBtn\""));
   assert.ok(html.includes("id=\"hwFilter\""));
-  assert.ok(html.includes("hw-hit"));
-  assert.ok(html.includes("iconSize: [44, 44]"));
+  assert.ok(html.includes("id=\"collapseBtn\""));
+  assert.ok(html.includes("side-collapsed"));
+  assert.ok(ui.includes("hw-hit"));
+  assert.ok(app.includes("iconSize: [44, 44]"));
   assert.ok(html.includes("env(safe-area-inset-top)"));
   assert.ok(!html.includes("42vh"));
   const login = fs.readFileSync(path.join(__dirname, "..", "login.html"), "utf8");
