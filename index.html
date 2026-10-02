@@ -35,6 +35,10 @@
     .side-head{display:flex;align-items:center;gap:8px;padding:4px 4px 0 0}
     .side-head .uh{flex:1}
     .side-close{display:none}
+    .collapse-btn{background:transparent;border:1px solid rgba(214,226,240,.16);color:#edf2f7;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px;min-height:44px;touch-action:manipulation}
+    .collapse-btn:hover{border-color:#c5a46e;color:#c5a46e}
+    #collapseBtn{margin:8px 8px 0 0}
+    #expandBtn{display:none}
     .uh{margin:0;padding:12px 12px 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#c5a46e;display:flex;align-items:center;gap:8px}
     .filters{padding:8px 12px 0;display:flex;flex-direction:column;gap:8px}
     .filters label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8e9aab}
@@ -78,9 +82,16 @@
     .leaflet-touch .leaflet-bar a{width:44px;height:44px;line-height:44px}
     .side-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:4px 12px 8px}
     .side-sum .sum{margin:0;display:contents}
+    @media (min-width:861px) and (min-height:521px){
+      #collapseBtn{display:inline-flex;align-items:center;justify-content:center}
+      body.side-collapsed #app{grid-template-columns:1fr}
+      body.side-collapsed #side{display:none}
+      body.side-collapsed #expandBtn{display:inline-flex;align-items:center;justify-content:center}
+    }
     @media(max-width:860px),(max-height:520px){
       header{flex-wrap:nowrap;gap:8px;min-height:48px}
       .icon-btn{display:inline-flex}
+      #collapseBtn{display:none}
       #app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
       #map{grid-column:1;grid-row:2;height:auto}
       #scrim{display:none;position:fixed;inset:0;background:#0008;z-index:1400;touch-action:none}
@@ -113,6 +124,7 @@
     <div class="meta ref-meta">refreshed <span id="ref">—</span></div>
     <div class="meta"><b id="nlive">0</b> live</div>
     <div class="sp"></div>
+    <button class="collapse-btn" id="expandBtn" type="button" hidden aria-controls="side" aria-expanded="false">Show panel</button>
     <button class="lo" id="out" type="button">Log out</button>
     <button class="icon-btn" id="menuBtn" type="button" aria-label="Open users and filters" aria-controls="side" aria-expanded="false">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -122,6 +134,7 @@
     <div class="sheet-grab" id="sheetGrab" aria-hidden="true"></div>
     <div class="side-head">
       <h2 class="uh">Live users</h2>
+      <button class="collapse-btn" id="collapseBtn" type="button" aria-controls="side" aria-expanded="true">Hide</button>
       <button class="icon-btn side-close" id="sideClose" type="button" aria-label="Close panel">×</button>
     </div>
     <div class="filters">
@@ -168,6 +181,7 @@
   </aside>
   <div id="map"></div>
 </div>
+<script src="/quality.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

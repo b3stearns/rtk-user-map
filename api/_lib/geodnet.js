@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { sanitizeLog } = require("./sanitize");
 const { inferBrand } = require("./hardware");
+const { ggaQuality, sessionQuality } = require("../../quality");
 
 const RTKLOGS_URL = "https://rtk.geodnet.com/api/v3/user/rtklogs";
 const PAGE_SIZE = 100;
@@ -166,12 +167,6 @@ async function fetchRtkLogs(hours) {
   });
 }
 
-function ggaQuality(nmea) {
-  if (!nmea) return null;
-  const q = parseInt(String(nmea).split(",")[6], 10);
-  return isNaN(q) ? null : q;
-}
-
 function toTracks(logs) {
   const grouped = new Map();
   (logs || []).forEach(log => {
@@ -196,12 +191,20 @@ function toTracks(logs) {
       hardware: last.hardware || "other",
       hardwareLabel: last.hardwareLabel || "Other",
       last,
-      points: items.map(p => ({
-        lat: p.latitude,
-        lng: p.longitude,
-        t: Number(p.loginTime) || 0,
-        q: ggaQuality(p.nmea || p.GGA)
-      }))
+      points: items.map(p => {
+        const qual = sessionQuality(p);
+        return {
+          lat: p.latitude,
+          lng: p.longitude,
+          t: Number(p.loginTime) || 0,
+          q: qual.q,
+          gga: qual.gga,
+          fix: qual.fix,
+          float: qual.float,
+          spp: qual.spp,
+          dgps: qual.dgps
+        };
+      })
     };
   }).sort((a, b) => Number(b.live) - Number(a.live) || ((b.points[b.points.length - 1] && b.points[b.points.length - 1].t) - (a.points[a.points.length - 1] && a.points[a.points.length - 1].t)));
 }
@@ -214,6 +217,7 @@ module.exports = {
   fetchRtkLogs,
   toTracks,
   ggaQuality,
+  sessionQuality,
   PAGE_SIZE,
   MAX_SPAN_MS,
   MAX_LOOKBACK_MS
